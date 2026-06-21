@@ -8,6 +8,7 @@ public class SubsonicConnectionBuilder
     private const string SUBSONIC_API_VERSION = "1.16.1";
     private const string API_CLIENT_NAME = "winsonic";
     private const string API_FORMAT = "json";
+    private const string ENV_SUBSONIC_URL = "SUBSONIC_URL";
 
     public SubsonicConnectionBuilder()
     {
@@ -29,7 +30,7 @@ public class SubsonicConnectionBuilder
 
     public SubsonicConnectionBuilder WithDefaultUserCredentials()
     {
-        var defaultUrl = Environment.GetEnvironmentVariable("SUBSONIC_URL") ?? "http://localhost:4040";
+        var defaultUrl = Environment.GetEnvironmentVariable(ENV_SUBSONIC_URL) ?? "http://localhost:4040";
         return WithUsernameAndPassword("winsonic", "winsonic").WithServerUrl(defaultUrl);
     }
 
