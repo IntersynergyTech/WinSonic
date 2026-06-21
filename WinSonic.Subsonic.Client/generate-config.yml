@@ -1,0 +1,32 @@
+generatorName: csharp
+
+# https://openapi-generator.tech/docs/generators/csharp
+additionalProperties:
+  packageGuid: '{CA72D2E6-C318-436E-8134-F57189C1D20D}'
+  packageName: WinSonic.Subsonic.Client
+  apiName: Client
+  netCoreProjectFile: true
+  enablePostProcessFile: true
+  library: restsharp #At the time of writing the generichost template is broken (in 7.23.0) and doesn't generate a client that even builds
+
+# https://openapi-generator.tech/docs/integrations/#github-integration
+# gitHost:
+# gitUserId:
+# gitRepoId:
+
+# https://openapi-generator.tech/docs/globals
+# globalProperties:
+
+# https://openapi-generator.tech/docs/customization/#inline-schema-naming
+# inlineSchemaOptions:
+
+# https://openapi-generator.tech/docs/customization/#name-mapping
+# modelNameMappings:
+# nameMappings:
+
+# https://openapi-generator.tech/docs/customization/#openapi-normalizer
+# openapiNormalizer:
+
+# templateDir: https://openapi-generator.tech/docs/templating/#modifying-templates
+
+# releaseNote:
