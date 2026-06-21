@@ -10,10 +10,13 @@ public class Song
     public Artist[] Artists { get; }
 
     public string CoverArtId { get; }
+    public TimeSpan Duration { get; }
 
     public bool IsExplicit { get; }
     
     public ReplayGain ReplayGain { get; }
+
+    public string Title { get; }
 
 
     public Song(string id, string album,
@@ -21,8 +24,10 @@ public class Song
         string artist,
         Artist[] artists,
         string coverArtId,
+        TimeSpan duration,
         bool isExplicit,
-        ReplayGain replayGain
+        ReplayGain replayGain,
+        string title
     )
     {
         Id = id;
@@ -31,7 +36,9 @@ public class Song
         Artist = artist;
         Artists = artists;
         CoverArtId = coverArtId;
+        Duration = duration;
         IsExplicit = isExplicit;
         ReplayGain = replayGain;
+        Title = title;
     }
 }

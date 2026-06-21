@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo><!-- setting GenerateAssemblyInfo to false causes this bug https://github.com/dotnet/project-system/issues/3934 -->
-    <TargetFramework>net10.0</TargetFramework>
+    <TargetFramework>net9.0-windows10.0.19041.0</TargetFramework>
     <AssemblyName>WinSonic.Subsonic.Client</AssemblyName>
     <PackageId>WinSonic.Subsonic.Client</PackageId>
     <OutputType>Library</OutputType>
