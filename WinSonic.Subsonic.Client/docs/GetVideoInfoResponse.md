@@ -1,0 +1,11 @@
+# WinSonic.Subsonic.Client.Model.GetVideoInfoResponse
+A subsonic-response element with a nested `videoInfo` element on success.
+
+## Properties
+
+Name | Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+**SubsonicResponse** | [**GetVideoInfoResponseSubsonicResponse**](GetVideoInfoResponseSubsonicResponse.md) |  | [optional] 
+
+[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
+

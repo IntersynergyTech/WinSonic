@@ -1,0 +1,13 @@
+# WinSonic.Subsonic.Client.Model.SubsonicBaseResponse
+
+## Properties
+
+Name | Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+**VarVersion** | **string** | The server supported Subsonic API version. | 
+**Type** | **string** | The server actual name. [Ex: Navidrome or gonic] | 
+**ServerVersion** | **string** | The server version. | 
+**OpenSubsonic** | **bool** | Must return true if the server support OpenSubsonic API v1 | 
+
+[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
+
