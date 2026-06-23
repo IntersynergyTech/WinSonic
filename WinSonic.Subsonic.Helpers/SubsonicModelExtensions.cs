@@ -31,9 +31,9 @@ public static class SubsonicModelExtensions
         );
     }
 
-    public static Playlist ToPlaylist(this Api.PlaylistWithSongs playlist)
+    public static PlaylistFull ToPlaylist(this Api.PlaylistWithSongs playlist)
     {
-        return new Playlist(
+        return new PlaylistFull(
             id: playlist.Id,
             name: playlist.Name,
             songCount: playlist.SongCount,
@@ -47,6 +47,24 @@ public static class SubsonicModelExtensions
             isReadOnly: playlist.Readonly,
             cacheExpiry: playlist.ValidUntil,
             entries: playlist.Entry.ConvertList(ToSong)
+        );
+    }
+    
+    public static PlaylistInfo ToPlaylist(this Api.Playlist playlist)
+    {
+        return new PlaylistInfo(
+            id: playlist.Id,
+            name: playlist.Name,
+            songCount: playlist.SongCount,
+            duration: TimeSpan.FromSeconds(playlist.Duration),
+            created: playlist.Created,
+            changed: playlist.Changed,
+            comment: playlist.Comment,
+            owner: playlist.Owner,
+            isPublic: playlist.Public,
+            coverArtId: playlist.CoverArt,
+            isReadOnly: playlist.Readonly,
+            cacheExpiry: playlist.ValidUntil
         );
     }
 

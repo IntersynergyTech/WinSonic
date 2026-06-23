@@ -1,6 +1,6 @@
 namespace WinSonic.Core.Models;
 
-public class Playlist
+public class PlaylistInfo
 {
     public string Id { get; }
     public string Name { get; }
@@ -15,9 +15,7 @@ public class Playlist
     public bool IsReadOnly { get; }
     public DateTime CacheExpiry { get; }
 
-    public List<Song> Entries { get; }
-
-    public Playlist(
+    public PlaylistInfo(
         string id,
         string name,
         int songCount,
@@ -29,8 +27,7 @@ public class Playlist
         bool isPublic,
         string coverArtId,
         bool isReadOnly,
-        DateTime cacheExpiry,
-        List<Song> entries
+        DateTime cacheExpiry
     )
     {
         Id = id;
@@ -45,6 +42,42 @@ public class Playlist
         CoverArtId = coverArtId;
         IsReadOnly = isReadOnly;
         CacheExpiry = cacheExpiry;
+    }
+}
+
+public class PlaylistFull : PlaylistInfo
+{
+    public PlaylistFull(
+        string id,
+        string name,
+        int songCount,
+        TimeSpan duration,
+        DateTime created,
+        DateTime changed,
+        string comment,
+        string owner,
+        bool isPublic,
+        string coverArtId,
+        bool isReadOnly,
+        DateTime cacheExpiry,
+        List<Song> entries
+    ) : base(
+        id,
+        name,
+        songCount,
+        duration,
+        created,
+        changed,
+        comment,
+        owner,
+        isPublic,
+        coverArtId,
+        isReadOnly,
+        cacheExpiry
+    )
+    {
         Entries = entries;
     }
+
+    public List<Song> Entries { get; }
 }

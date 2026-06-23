@@ -5,12 +5,12 @@ namespace WinSonic.Player;
 
 public class WaveAudioPlayer
 {
-    private readonly IWavePlayer _wavePlayer;
+    private readonly WasapiPlayer _wavePlayer;
     private float _volume;
     private bool _playerVolumeControl;
 
     public WaveAudioPlayer(
-        IWavePlayer wavePlayer,
+        WasapiPlayer wavePlayer,
         float volume,
         bool playerVolumeControl
     )
@@ -18,6 +18,12 @@ public class WaveAudioPlayer
         _wavePlayer = wavePlayer;
         _volume = volume;
         _playerVolumeControl = playerVolumeControl;
+        _wavePlayer.PlaybackStopped += WavePlayerOnPlaybackStopped;
+    }
+
+    private void WavePlayerOnPlaybackStopped(object? sender, StoppedEventArgs e)
+    {
+        Console.WriteLine($"Playback stopped {e.Exception}");
     }
 
     private IWaveProvider _nowPlaying;
@@ -46,6 +52,9 @@ public class WaveAudioPlayer
     
     private void LoadFromProvider(IWaveProvider provider)
     {
+        _wavePlayer.Pause();
+        _wavePlayer.Stop();
+        Thread.Sleep(200);
         _nowPlaying = provider;
         _wavePlayer.Init(provider);
     }
@@ -71,5 +80,11 @@ public class WaveAudioPlayer
     public void StartPlayback()
     {
         _wavePlayer.Play();
+    }
+    
+    
+    public void StopPlayback()
+    {
+        _wavePlayer.Stop();
     }
 }

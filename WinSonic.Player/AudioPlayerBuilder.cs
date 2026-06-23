@@ -24,7 +24,7 @@ public class AudioPlayerBuilder
         return player;
     }
 
-    private IWavePlayer? _wavePlayer;
+    private WasapiPlayer? _wavePlayer;
     private float _volume;
 
     public AudioPlayerBuilder WithWasapi(bool exclusiveMode = false)

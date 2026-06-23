@@ -1,0 +1,36 @@
+<Page x:Class="WinSonic.Gui.Pages.TestPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="clr-namespace:WinSonic.Gui.Pages"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:loc="clr-namespace:WinSonic.Resources.Localisation;assembly=WinSonic.Resources"
+      mc:Ignorable="d"
+      Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+      Title="TestPage" d:DataContext="{d:DesignInstance Type=local:TestPage, IsDesignTimeCreatable=True}">
+    <StackPanel>
+        <ui:TextBlock Text="TestPage" FontTypography="Title" ></ui:TextBlock>
+        <StackPanel Orientation="Horizontal">
+            <ui:Button Content="Load Playlists:" Click="LoadPlaylists_Click" ></ui:Button>
+            <ui:Button Content="Stop" Click="Stop_Click" ></ui:Button>
+        </StackPanel>
+        
+        <ui:TextBlock Text="{x:Static loc:Strings._Playlists}"></ui:TextBlock>
+        <ui:DataGrid ItemsSource="{Binding Playlists}" SelectionMode="Single" HorizontalAlignment="Stretch" SelectionChanged="PlaylistGrid_Selected" x:Name="PlaylistGrid">
+                
+        </ui:DataGrid>
+        <ui:TextBlock Text="{Binding SelectedPlaylist.Name}"></ui:TextBlock>
+        <ui:TextBlock Text="{x:Static loc:Strings._Tracks}"></ui:TextBlock>
+        <ui:DataGrid ItemsSource="{Binding Songs}" SelectionMode="Single" HorizontalAlignment="Stretch" AutoGenerateColumns="False" x:Name="SongsGrid" SelectionChanged="SongsGrid_Selected">
+            <ui:DataGrid.Columns>
+                <DataGridTextColumn Header="{x:Static loc:Strings._Title}" Binding="{Binding Title}"/>
+                <DataGridTextColumn Header="{x:Static loc:Strings._Artist}" Binding="{Binding Artist}"/>
+                <DataGridTextColumn Header="{x:Static loc:Strings._Album}" Binding="{Binding Album}"/>
+                <DataGridTextColumn Header="{x:Static loc:Strings._Duration}" Binding="{Binding Duration, StringFormat={}{0:mm\\:ss}}"/>
+                <DataGridTextColumn Header="ID" Binding="{Binding Id}"/>
+            </ui:DataGrid.Columns>
+        </ui:DataGrid>
+        
+    </StackPanel>
+</Page>
