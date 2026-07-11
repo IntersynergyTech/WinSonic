@@ -1,6 +1,7 @@
 ﻿using System.Configuration;
 using System.Data;
 using System.Windows;
+using System.Windows.Navigation;
 using WinSonic.Core;
 using WinSonic.Player;
 using WinSonic.Subsonic.Helpers;
@@ -12,9 +13,9 @@ namespace WinSonic.Gui;
 /// </summary>
 public partial class App : Application
 {
-    protected override void OnActivated(EventArgs e)
+    protected override void OnLoadCompleted(NavigationEventArgs e)
     {
-        base.OnActivated(e);
+        base.OnLoadCompleted(e);
         InitGlobalContext();
     }
 
@@ -34,7 +35,7 @@ public partial class App : Application
         GlobalContext.SongFetcher = new SongFetcher(GlobalContext.Subsonic, GlobalContext.StorageManager);
         
         var player = AudioPlayerBuilder.Default().Build();
-        GlobalContext.WaveAudioPlayer = player;
+        GlobalContext.AudioPlayer = player;
 
         Console.WriteLine("Initialised.");
     }

@@ -9,6 +9,7 @@
     <ItemGroup>
       <PackageReference Include="NAudio.Core" Version="3.0.0-preview.10" />
       <PackageReference Include="NAudio.Wasapi" Version="3.0.0-preview.10" />
+      <PackageReference Include="SoundFlow" Version="1.4.1" />
     </ItemGroup>
 
     <ItemGroup>

@@ -6,7 +6,7 @@ namespace WinSonic.Gui;
 
 public static class GlobalContext
 {
-    public static WaveAudioPlayer WaveAudioPlayer { get; set; }
+    public static AudioPlayer AudioPlayer { get; set; }
     public static PlayQueue PlayQueue { get; set; }
     public static StorageManager StorageManager { get; set; }
     public static SongFetcher SongFetcher { get; set; }

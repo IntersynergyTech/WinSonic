@@ -50,14 +50,14 @@ public partial class TestPage : Page
         if (selectedSong == null) return;
         
         var songStream = GlobalContext.SongFetcher.FetchSong(selectedSong);
-        GlobalContext.WaveAudioPlayer.LoadStream(songStream);
+        GlobalContext.AudioPlayer.LoadStream(songStream);
         
-        GlobalContext.WaveAudioPlayer.StartPlayback();
+        GlobalContext.AudioPlayer.StartPlayback();
     }
 
     private void Stop_Click(object sender, RoutedEventArgs e)
     {
-        GlobalContext.WaveAudioPlayer.StopPlayback();
+        GlobalContext.AudioPlayer.StopPlayback();
     }
 }
 

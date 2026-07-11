@@ -1,5 +1,8 @@
 using NAudio.CoreAudioApi;
 using NAudio.Wave;
+using SoundFlow.Abstracts.Devices;
+using SoundFlow.Backends.MiniAudio;
+using SoundFlow.Structs;
 
 namespace WinSonic.Player;
 
@@ -7,49 +10,37 @@ public class AudioPlayerBuilder
 {
     public const float DEFAULT_VOLUME = 0.25f;
     private bool _playerVolumeControl = true;
+    public static AudioFormat DEFAULT_FORMAT = AudioFormat.DvdHq;
+    private AudioPlaybackDevice? _playbackDevice;
 
     public static AudioPlayerBuilder Default()
     {
-        return new AudioPlayerBuilder().WithWasapi().WithVolume(DEFAULT_VOLUME);
+        return new AudioPlayerBuilder().WithSoundFlow().WithVolume(DEFAULT_VOLUME);
     }
 
-    public WaveAudioPlayer Build()
+    public AudioPlayer Build()
     {
-        var player = new WaveAudioPlayer(_wavePlayer, _volume, _playerVolumeControl);
-        
-        if (_playerVolumeControl)
-        {
-            _wavePlayer.Volume = _volume;
-        }
+        var player = new AudioPlayer(_miniAudio, _volume, DEFAULT_FORMAT, _playbackDevice);
+
         return player;
     }
 
-    private WasapiPlayer? _wavePlayer;
+    private MiniAudioEngine? _miniAudio;
     private float _volume;
 
-    public AudioPlayerBuilder WithWasapi(bool exclusiveMode = false)
+    public AudioPlayerBuilder WithSoundFlow(nint? audioDeviceId = null)
     {
-        var deviceEnumerator = new MMDeviceEnumerator();
-        var outputDevice = deviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
+        var miniAudio = new MiniAudioEngine();
 
-        var wasapiBuilder = new WasapiPlayerBuilder();
+        miniAudio.UpdateAudioDevicesInfo();
 
-        wasapiBuilder.WithCategory(AudioStreamCategory.Media).WithDevice(outputDevice).WithSharedMode();
+        var playbackDevice = miniAudio.PlaybackDevices.FirstOrDefault(d => d.Id == audioDeviceId);
+        var format = DEFAULT_FORMAT;
 
-        if (exclusiveMode)
-        {
-            wasapiBuilder.WithExclusiveMode();
-        }
-        else
-        {
-            wasapiBuilder.WithSharedMode();
-        }
+        _playbackDevice = miniAudio.InitializePlaybackDevice(playbackDevice, format);
 
-        var wasapi = wasapiBuilder.Build();
+        _miniAudio = miniAudio;
 
-        _wavePlayer = wasapi;
-
-        Console.WriteLine($"Activating WASAPI audio output on device {outputDevice.FriendlyName}");
         return this;
     }
 
