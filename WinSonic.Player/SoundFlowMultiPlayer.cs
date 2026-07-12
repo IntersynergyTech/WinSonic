@@ -2,12 +2,12 @@ using System.Diagnostics;
 using SoundFlow.Abstracts.Devices;
 using SoundFlow.Backends.MiniAudio;
 using SoundFlow.Backends.MiniAudio.Devices;
-using SoundFlow.Backends.MiniAudio.Enums;
 using SoundFlow.Components;
 using SoundFlow.Enums;
 using SoundFlow.Metadata.Models;
 using SoundFlow.Providers;
 using SoundFlow.Structs;
+using PlaybackState = WinSonic.Core.Enums.PlaybackState;
 
 namespace WinSonic.Player;
 
@@ -25,8 +25,9 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
     private AudioFormat _currentFormat;
     private AudioPlaybackDevice? _currentActivePlaybackDevice;
     private SoundPlayer? _currentActivePlayer;
+    private PlaybackState _playbackState;
 
-    public SoundFlowMultiPlayer(IntPtr? deviceId = null, bool exclusiveMode = false)
+    public SoundFlowMultiPlayer(IntPtr? deviceId = null)
     {
         var engine = new MiniAudioEngine();
         engine.UpdateAudioDevicesInfo();
@@ -34,14 +35,6 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
 
         _defaultOutputDevice = engine.PlaybackDevices.FirstOrDefault(d => d.IsDefault);
 
-        var shareMode = exclusiveMode ? ShareMode.Exclusive : ShareMode.Shared;
-
-        _playbackDeviceConfig = new MiniAudioDeviceConfig()
-        {
-            Playback = new DeviceSubConfig { ShareMode = shareMode },
-            
-        };
-        
         SelectOutputDevice(deviceId);
     }
 
@@ -86,8 +79,8 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
 
     private void InitFormatPlaybackDevice(AudioFormat format)
     {
-        Debug.WriteLine($"Initializing playback device for format: {format} on {_outputDevice.Name}");
-        
+        Debug.WriteLine($"Initializing playback device for format [{format.ToShortString()}] on {_outputDevice.Name}");
+
         var device = _engine.InitializePlaybackDevice(_outputDevice, format, _playbackDeviceConfig);
         _playbackDevices[format] = device;
     }
@@ -102,6 +95,8 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
     private void UnloadPlayer()
     {
         if (_currentActivePlayer == null) return;
+
+        _currentActivePlayer.PlaybackEnded -= PlayerOnPlaybackEnded;
 
         _currentActivePlayer.Stop();
         _currentActivePlaybackDevice?.MasterMixer.RemoveComponent(_currentActivePlayer);
@@ -120,13 +115,16 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
         {
             if (_currentActivePlaybackDevice != null)
             {
-                Debug.WriteLine($"Switching format from {_currentFormat} to {format}");
+                Debug.WriteLine(
+                    $"Switching format from [{_currentFormat.ToShortString()}] to [{format.ToShortString()}]"
+                );
+
                 if (_currentActivePlaybackDevice.IsRunning) _currentActivePlaybackDevice.Stop();
             }
 
             var playbackDevice = GetFormatPlaybackDevice(format);
 
-            Debug.WriteLine($"Starting playback device for format {format}");
+            Debug.WriteLine($"Starting playback device for format [{format.ToShortString()}]");
             _currentActivePlaybackDevice = playbackDevice;
             _currentActivePlaybackDevice.Start();
         }
@@ -134,15 +132,21 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
         _currentFormat = format;
         var player = new SoundPlayer(_engine, format, provider);
         player.Volume = VolumeLevel;
+
+        player.PlaybackEnded += PlayerOnPlaybackEnded;
+
         _currentActivePlaybackDevice.MasterMixer.AddComponent(player);
-        Debug.WriteLine($"Created player for format {format} with volume {VolumeLevel}. Ready to go");
+        Debug.WriteLine($"Created player for format [{format.ToShortString()}] with volume {VolumeLevel}. Ready to go");
         return player;
+    }
+
+    private void PlayerOnPlaybackEnded(object? sender, EventArgs e)
+    {
+        ChangePlaybackState(PlaybackState.Stopped);
     }
 
     private AudioFormat ParseFormatFrom(SoundFormatInfo info)
     {
-        Debug.WriteLine($"Parsing format from info: {info.FormatIdentifier}");
-
         var bitsPerSample = info.BitsPerSample switch
         {
             8 => SampleFormat.U8,
@@ -170,32 +174,46 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
             Layout = channelLayout
         };
 
+        Debug.WriteLine($"Parsed format from info: {newFormat.ToShortString()}");
         return newFormat;
     }
 
     public void Play()
     {
         _currentActivePlayer?.Play();
+        ChangePlaybackState(PlaybackState.Playing);
     }
 
     public void Pause()
     {
         _currentActivePlayer?.Pause();
+        ChangePlaybackState(PlaybackState.Paused);
     }
 
     public void Stop()
     {
         _currentActivePlayer?.Stop();
+        ChangePlaybackState(PlaybackState.Stopped);
     }
 
-    public PlaybackState PlaybackState => _currentActivePlayer?.State ?? PlaybackState.Stopped;
+    private void ChangePlaybackState(PlaybackState state)
+    {
+        Debug.WriteLine($"[PLAYER] Changing playback state from {PlaybackState} to {state}");
+        PlaybackState = state;
+        PlaybackStateChanged?.Invoke(this, state);
+    }
+
+    public PlaybackState PlaybackState { get; private set; }
+
+    public event EventHandler<PlaybackState>? PlaybackStateChanged;
+
     public float Volume
     {
         get => VolumeLevel;
         set
         {
             VolumeLevel = value;
-            _currentActivePlayer.Volume = value;
+            _currentActivePlayer!.Volume = value;
         }
     }
 }

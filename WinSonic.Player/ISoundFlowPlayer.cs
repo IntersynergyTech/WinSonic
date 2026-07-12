@@ -1,4 +1,4 @@
-using SoundFlow.Enums;
+using WinSonic.Core.Enums;
 
 namespace WinSonic.Player;
 
@@ -17,6 +17,8 @@ public interface ISoundFlowPlayer
     public void Stop();
 
     public PlaybackState PlaybackState { get; }
+    
+    public event EventHandler<PlaybackState> PlaybackStateChanged;
     public float Volume { get; set; }
     
 }

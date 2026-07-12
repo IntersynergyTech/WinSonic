@@ -1,4 +1,4 @@
-namespace WinSonic.Core;
+namespace WinSonic.Core.Enums;
 
 public enum QueueType
 {
