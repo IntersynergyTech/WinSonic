@@ -33,8 +33,8 @@ public partial class App : Application
         GlobalContext.Subsonic = client;
 
         GlobalContext.SongFetcher = new SongFetcher(GlobalContext.Subsonic, GlobalContext.StorageManager);
-        
-        var player = AudioPlayerBuilder.Default().Build();
+
+        var player = new SoundFlowMultiPlayer();
         GlobalContext.AudioPlayer = player;
 
         Console.WriteLine("Initialised.");

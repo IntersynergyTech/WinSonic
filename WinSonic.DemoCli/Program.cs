@@ -9,17 +9,18 @@ internal class Program
     public static void Main(string[] args)
     {
         Console.WriteLine("Hello, World!");
-        var player = AudioPlayerBuilder.Default().Build();
 
         _storageManager = new StorageManager();
         _storageManager.EnsureDirectoriesExist();
+        _player = new SoundFlowMultiPlayer(exclusiveMode: true);
         
         ConnectToServer();
         PlayAudio();
         
 
     }
-
+    
+    public static SoundFlowMultiPlayer _player { get; set; }
     public static PlayQueue _playQueue { get; set; }
     public static StorageManager _storageManager { get; set; }
     public static SongFetcher _songFetcher { get; set; }
@@ -73,7 +74,6 @@ internal class Program
     {
         var playlistItem = _playQueue.Dequeue();
         Console.WriteLine($"Now Playing: {playlistItem.Title} by {playlistItem.Artist}");
-        var player = AudioPlayerBuilder.Default().Build();
         var songStream = _songFetcher.FetchSong(playlistItem);
         Debug.WriteLine($"Song fetched for {playlistItem.Title} by {playlistItem.Artist}");
 
@@ -85,10 +85,10 @@ internal class Program
                 _songFetcher.PrefetchSong(nextPeek);
             })
         );
-        player.LoadStream(songStream);
-        //player.LoadFile(@"C:\Users\butle\Downloads\MUSICDOWNLOADS\05_Unravel.wav");
+        _player.LoadStream(songStream);
+        //_player.LoadFile(@"C:\Users\butle\Downloads\MUSICDOWNLOADS\05_Unravel.wav");
         Debug.WriteLine("Starting playback");
-        player.StartPlayback();
+        _player.Play();
         Console.ReadLine();
         PlayAudio();
     }

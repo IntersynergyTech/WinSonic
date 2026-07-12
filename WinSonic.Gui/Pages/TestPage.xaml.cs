@@ -52,12 +52,12 @@ public partial class TestPage : Page
         var songStream = GlobalContext.SongFetcher.FetchSong(selectedSong);
         GlobalContext.AudioPlayer.LoadStream(songStream);
         
-        GlobalContext.AudioPlayer.StartPlayback();
+        GlobalContext.AudioPlayer.Play();
     }
 
     private void Stop_Click(object sender, RoutedEventArgs e)
     {
-        GlobalContext.AudioPlayer.StopPlayback();
+        GlobalContext.AudioPlayer.Stop();
     }
 }
 
