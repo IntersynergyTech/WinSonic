@@ -20,5 +20,8 @@ public interface ISoundFlowPlayer
     
     public event EventHandler<PlaybackState> PlaybackStateChanged;
     public float Volume { get; set; }
+
+    public TimeSpan NowPlayingDuration { get; } 
+    public TimeSpan CurrentPosition { get; }
     
 }

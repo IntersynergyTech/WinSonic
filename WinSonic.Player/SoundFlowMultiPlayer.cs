@@ -106,6 +106,7 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
 
     private SoundPlayer GetPlayerForStream(Stream stream)
     {
+        Debug.WriteLine("GPFS");
         var provider = new StreamDataProvider(_engine, stream);
         var providerFormat = provider.FormatInfo!;
 
@@ -119,9 +120,17 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
                     $"Switching format from [{_currentFormat.ToShortString()}] to [{format.ToShortString()}]"
                 );
 
-                if (_currentActivePlaybackDevice.IsRunning) _currentActivePlaybackDevice.Stop();
+                if (_currentActivePlaybackDevice.IsRunning)
+                {
+                    Debug.WriteLine($"Stopping current playback device for format [{_currentFormat.ToShortString()}] : currently isRunning {_currentActivePlaybackDevice.IsRunning}");
+                    
+                    _currentActivePlaybackDevice.Stop();
+                    Debug.WriteLine($"Current playback device stopped");
+                }
             }
 
+            Debug.WriteLine($"Getting playback device for format [{format.ToShortString()}]");
+            
             var playbackDevice = GetFormatPlaybackDevice(format);
 
             Debug.WriteLine($"Starting playback device for format [{format.ToShortString()}]");
@@ -130,6 +139,7 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
         }
 
         _currentFormat = format;
+        Debug.WriteLine($"Creating sound player for stream {provider.FormatInfo.Tags.Title}");
         var player = new SoundPlayer(_engine, format, provider);
         player.Volume = VolumeLevel;
 
@@ -142,7 +152,14 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
 
     private void PlayerOnPlaybackEnded(object? sender, EventArgs e)
     {
-        ChangePlaybackState(PlaybackState.Stopped);
+        // This event needs to get off this thread ASAP, as this thread is blocking the device. If we do anything with the device in this thread it might deadlock, so just whack it into async land and hope for the best
+        Task.Run(
+            (() =>
+            {
+                ChangePlaybackState(PlaybackState.Ended);
+            })
+        );
+
     }
 
     private AudioFormat ParseFormatFrom(SoundFormatInfo info)
@@ -216,4 +233,8 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
             _currentActivePlayer!.Volume = value;
         }
     }
+
+    public TimeSpan NowPlayingDuration => TimeSpan.FromSeconds(_currentActivePlayer?.Duration ?? 0);
+    public TimeSpan CurrentPosition => TimeSpan.FromSeconds(_currentActivePlayer?.Time ?? 0);
+    
 }

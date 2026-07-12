@@ -5,6 +5,7 @@ using WinSonic.Core.Models;
 using WinSonic.Playback;
 using WinSonic.Player;
 using WinSonic.Subsonic.Helpers;
+using Timer = System.Timers.Timer;
 
 internal class Program
 {
@@ -25,6 +26,41 @@ internal class Program
     public static StorageManager _storageManager { get; set; }
     public static SongFetcher _songFetcher { get; set; }
     public static AutoPlaybackManager _autoPlaybackManager { get; set; }
+
+    private static bool _lastLineKeyPressed = false;
+    private static Timer _nowPlayingBarRefreshTimer = new (500);
+    private static int lastLineLength = 0;
+
+    private static void NowPlayingTimerTick(object? sender, System.Timers.ElapsedEventArgs e)
+    {
+        if (_autoPlaybackManager.NowPlaying == null)
+        {
+            ConsoleClearAndWrite("\r[nothing playing]");
+        }
+
+        var duration = _autoPlaybackManager.Player.NowPlayingDuration;
+        var currentPosition = _autoPlaybackManager.Player.CurrentPosition;
+        var complete = currentPosition.TotalMilliseconds / duration.TotalMilliseconds;
+        var progressBarLength = 66;
+        var progress = (int) (complete * progressBarLength);
+        var barSegments = new string('═', progress) + new string(' ', progressBarLength - progress);
+
+        var progressText =
+            $"[{barSegments}] {currentPosition.ToString(@"mm\:ss")}/{duration.ToString(@"mm\:ss")} {_autoPlaybackManager.Player.Volume:P2} {_autoPlaybackManager.NowPlaying?.Title} - {_autoPlaybackManager.NowPlaying?.Artist}";
+
+        ConsoleClearAndWrite($"\r{progressText}");
+    }
+
+    static void ConsoleClearAndWrite(string text)
+    {
+        if (text.Length < lastLineLength || Console.CursorLeft >= lastLineLength )
+        {
+            Console.Write("\r" + new string(' ', Console.WindowWidth));
+        }
+
+        Console.Write($"\r{text}");
+        lastLineLength = text.Length;
+    }
 
     static void ConnectToServer()
     {
@@ -66,21 +102,30 @@ internal class Program
 
         _autoPlaybackManager.Queue.ResetAndEnqueueFromSource(playlistObject.Entries, true);
 
-        Console.WriteLine($"Playing {fullPlaylist.Name}:");
+        Console.WriteLine($"Playing {fullPlaylist.Name} (first 50):");
 
-        foreach (var item in _playQueue.EnumerateQueue())
+        foreach (var item in _playQueue.EnumerateQueue().Take(50))
         {
             Console.WriteLine($"[{item.Id}] {item.Title} (by {item.Artist}, {item.Duration.ToString(@"mm\:ss")})");
         }
 
         Console.WriteLine("Starting Playback. (hopefully)");
+        Console.WriteLine("");
+        Console.WriteLine("");
     }
 
     static void PlayAudio()
     {
-        Console.WriteLine("Playing with APM. Press [x] to exit [n] to skip [+] volume up [-] volume down [p] pause/play ");
+        Console.WriteLine(
+            "Playing with APM. Press [x] to exit [n] to skip [+] volume up [-] volume down [p/space] pause/play "
+        );
+
         _autoPlaybackManager.NowPlayingChanged += AutoPlaybackManagerOnNowPlayingChanged;
-        _autoPlaybackManager.StartPlayback();
+        _nowPlayingBarRefreshTimer.Elapsed += NowPlayingTimerTick;
+        _nowPlayingBarRefreshTimer.Start();
+
+        _autoPlaybackManager.StartPlayback(); 
+
         while (true)
         {
             var input = Console.ReadKey();
@@ -90,33 +135,39 @@ internal class Program
                 _player.Stop();
                 break;
             }
-            
+
             switch (input.Key)
             {
                 case ConsoleKey.N:
                     _autoPlaybackManager.NextSong();
                     break;
                 case ConsoleKey.OemPlus:
-                    _player.Volume = Math.Min(2f, _player.Volume + 0.05f);
-                    Console.WriteLine($"Volume: {_player.Volume:P2}");
+                case ConsoleKey.Add:
+                    _player.Volume = Math.Min(5f, _player.Volume + 0.05f);
+                    //Console.Write($"Volume: {_player.Volume:P2}");
                     break;
                 case ConsoleKey.OemMinus:
+                case ConsoleKey.Subtract:
                     _player.Volume = Math.Max(0f, _player.Volume - 0.05f);
-                    Console.WriteLine($"Volume: {_player.Volume:P2}");
+                    //Console.Write($"Volume: {_player.Volume:P2}");
                     break;
                 case ConsoleKey.P:
+                case ConsoleKey.Spacebar:
                     if (_player.PlaybackState == PlaybackState.Playing)
                     {
                         _player.Pause();
+                        //Console.Write("Paused");
                     }
                     else
                     {
                         _player.Play();
+                        //Console.Write("Playing");
                     }
+
                     break;
             }
         }
-        
+
         /*
         var playlistItem = _playQueue.Dequeue();
         Console.WriteLine($"Now Playing: {playlistItem.Title} by {playlistItem.Artist}");
@@ -143,7 +194,7 @@ internal class Program
     {
         if (e != null)
         {
-            Console.WriteLine($"Now Playing: {e.Title} by {e.Artist} [{e.Duration}]");
+            //Console.Write($"\rNow Playing: {e.Title} by {e.Artist} [{e.Duration}]");
         }
     }
 }

@@ -41,6 +41,7 @@ public class AutoPlaybackManager
     
     private void OnPlaybackStateChanged(object? sender, PlaybackState e)
     {
+        Debug.WriteLine($"Playback state change reported: {e}");
         if (e == PlaybackState.Ended)
         {
             UpdateNowPlaying(null);
