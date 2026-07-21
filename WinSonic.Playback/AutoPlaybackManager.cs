@@ -60,7 +60,7 @@ public class AutoPlaybackManager
         {
             Debug.WriteLine($"Playing next song: {queuedSong.Title}");
             var stream = Fetcher.FetchSong(queuedSong);
-            Player.LoadStream(stream);
+            Player.LoadStream(stream, queuedSong);
             Player.Play();
             UpdateNowPlaying(queuedSong);
 

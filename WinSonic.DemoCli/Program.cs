@@ -4,6 +4,7 @@ using WinSonic.Core.Enums;
 using WinSonic.Core.Models;
 using WinSonic.Playback;
 using WinSonic.Player;
+using WinSonic.Player.ReplayGain;
 using WinSonic.Subsonic.Helpers;
 using Timer = System.Timers.Timer;
 
@@ -46,7 +47,7 @@ internal class Program
         var barSegments = new string('═', progress) + new string(' ', progressBarLength - progress);
 
         var progressText =
-            $"[{barSegments}] {currentPosition.ToString(@"mm\:ss")}/{duration.ToString(@"mm\:ss")} {_autoPlaybackManager.Player.Volume:P2} {_autoPlaybackManager.NowPlaying?.Title} - {_autoPlaybackManager.NowPlaying?.Artist}";
+            $"[{barSegments}] {currentPosition.ToString(@"mm\:ss")}/{duration.ToString(@"mm\:ss")} {_autoPlaybackManager.Player.Volume:P2} {_autoPlaybackManager.NowPlaying?.Title} - {_autoPlaybackManager.NowPlaying?.Artist} || RG {_player.ReplayGainConfiguration.Mode}";
 
         ConsoleClearAndWrite($"\r{progressText}");
     }
@@ -117,7 +118,7 @@ internal class Program
     static void PlayAudio()
     {
         Console.WriteLine(
-            "Playing with APM. Press [x] to exit [n] to skip [+] volume up [-] volume down [p/space] pause/play "
+            "Playing with APM. Press [x] to exit [n] to skip [+] volume up [-] volume down [p/space] pause/play [r] change ReplayGain mode"
         );
 
         _autoPlaybackManager.NowPlayingChanged += AutoPlaybackManagerOnNowPlayingChanged;
@@ -164,6 +165,25 @@ internal class Program
                         //Console.Write("Playing");
                     }
 
+                    break;
+                case ConsoleKey.R:
+                    var currentConfig = _player.ReplayGainConfiguration;
+                    var currentMode = currentConfig.Mode;
+
+                    var newMode = currentMode switch
+                    {
+                        ReplayGainMode.None => ReplayGainMode.Track,
+                        ReplayGainMode.Track => ReplayGainMode.Album,
+                        ReplayGainMode.Album => ReplayGainMode.None,
+                    };
+                    var newConfig = new ReplayGainConfiguration
+                    {
+                        Mode = newMode,
+                        PreampEnabled = currentConfig.PreampEnabled,
+                        PreampAdjustment = currentConfig.PreampAdjustment,
+                        ClippingPrevention = currentConfig.ClippingPrevention
+                    };
+                    _player.ReplayGainConfiguration = newConfig;
                     break;
             }
         }

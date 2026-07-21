@@ -7,6 +7,8 @@ using SoundFlow.Enums;
 using SoundFlow.Metadata.Models;
 using SoundFlow.Providers;
 using SoundFlow.Structs;
+using WinSonic.Core.Models;
+using WinSonic.Player.ReplayGain;
 using PlaybackState = WinSonic.Core.Enums.PlaybackState;
 
 namespace WinSonic.Player;
@@ -18,10 +20,12 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
     private Dictionary<AudioFormat, AudioPlaybackDevice> _playbackDevices = new ();
     private DeviceInfo _outputDevice;
     private DeviceInfo _defaultOutputDevice;
+    private readonly ReplayGainProcessor _replayGainProcessor = new (ReplayGainConfiguration.Default);
     private float VolumeLevel = 1f;
 
     private MiniAudioDeviceConfig? _playbackDeviceConfig;
 
+    private Song? _currentSong;
     private AudioFormat _currentFormat;
     private AudioPlaybackDevice? _currentActivePlaybackDevice;
     private SoundPlayer? _currentActivePlayer;
@@ -34,6 +38,8 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
         _engine = engine;
 
         _defaultOutputDevice = engine.PlaybackDevices.FirstOrDefault(d => d.IsDefault);
+        
+        _replayGainProcessor.UpdateVolume(VolumeLevel);
 
         SelectOutputDevice(deviceId);
     }
@@ -85,11 +91,12 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
         _playbackDevices[format] = device;
     }
 
-    public void LoadStream(Stream stream)
+    public void LoadStream(Stream stream, Song song)
     {
         UnloadPlayer();
-        var player = GetPlayerForStream(stream);
+        var player = GetPlayerForStream(stream, song);
         _currentActivePlayer = player;
+        _currentSong = song;
     }
 
     private void UnloadPlayer()
@@ -104,7 +111,7 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
         _currentActivePlayer = null;
     }
 
-    private SoundPlayer GetPlayerForStream(Stream stream)
+    private SoundPlayer GetPlayerForStream(Stream stream, Song song)
     {
         Debug.WriteLine("GPFS");
         var provider = new StreamDataProvider(_engine, stream);
@@ -137,16 +144,19 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
             _currentActivePlaybackDevice = playbackDevice;
             _currentActivePlaybackDevice.Start();
         }
+        
+        
+        var replayGainedVolume = _replayGainProcessor.UpdateTrackGain(song.ReplayGain.TrackGain, song.ReplayGain.AlbumGain);
 
         _currentFormat = format;
         Debug.WriteLine($"Creating sound player for stream {provider.FormatInfo.Tags.Title}");
         var player = new SoundPlayer(_engine, format, provider);
-        player.Volume = VolumeLevel;
+        player.Volume = replayGainedVolume;
 
         player.PlaybackEnded += PlayerOnPlaybackEnded;
 
         _currentActivePlaybackDevice.MasterMixer.AddComponent(player);
-        Debug.WriteLine($"Created player for format [{format.ToShortString()}] with volume {VolumeLevel}. Ready to go");
+        Debug.WriteLine($"Created player for format [{format.ToShortString()}] with volume {VolumeLevel} (RG: {replayGainedVolume}). Ready to go");
         return player;
     }
 
@@ -230,7 +240,18 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
         set
         {
             VolumeLevel = value;
-            _currentActivePlayer!.Volume = value;
+            var rgVolume = _replayGainProcessor.UpdateVolume(value);
+            _currentActivePlayer!.Volume = rgVolume;
+        }
+    }
+    
+    public ReplayGainConfiguration ReplayGainConfiguration
+    {
+        get => _replayGainProcessor.GetConfiguration();
+        set
+        {
+            _replayGainProcessor.UpdateConfiguration(value);
+            _currentActivePlayer.Volume = _replayGainProcessor.GetVolume();
         }
     }
 

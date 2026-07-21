@@ -50,7 +50,7 @@ public partial class TestPage : Page
         if (selectedSong == null) return;
         
         var songStream = GlobalContext.SongFetcher.FetchSong(selectedSong);
-        GlobalContext.AudioPlayer.LoadStream(songStream);
+        GlobalContext.AudioPlayer.LoadStream(songStream, selectedSong);
         
         GlobalContext.AudioPlayer.Play();
     }

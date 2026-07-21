@@ -1,4 +1,6 @@
 using WinSonic.Core.Enums;
+using WinSonic.Core.Models;
+using WinSonic.Player.ReplayGain;
 
 namespace WinSonic.Player;
 
@@ -10,7 +12,7 @@ public interface ISoundFlowPlayer
     /// <param name="deviceId"></param>
     public void SetOutputDevice(IntPtr? deviceId);
     
-    public void LoadStream(Stream stream);
+    public void LoadStream(Stream stream, Song song);
     
     public void Play();
     public void Pause();
@@ -23,5 +25,7 @@ public interface ISoundFlowPlayer
 
     public TimeSpan NowPlayingDuration { get; } 
     public TimeSpan CurrentPosition { get; }
+    
+    public ReplayGainConfiguration ReplayGainConfiguration { get; set; }
     
 }
