@@ -7,7 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Folder Include="Models\"/>
         <AvaloniaResource Include="Assets\**"/>
     </ItemGroup>
 
@@ -25,6 +24,8 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\WinSonic.Core\WinSonic.Core.csproj" />
+      <ProjectReference Include="..\WinSonic.Player\WinSonic.Player.csproj" />
       <ProjectReference Include="..\WinSonic.Resources\WinSonic.Resources.csproj" />
     </ItemGroup>
 </Project>
