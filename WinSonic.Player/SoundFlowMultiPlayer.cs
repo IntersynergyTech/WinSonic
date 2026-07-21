@@ -247,6 +247,7 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
         }
     }
 
+    public Song? NowPlaying => _currentSong;
     public ReplayGainConfiguration ReplayGainConfiguration
     {
         get => _replayGainProcessor.GetConfiguration();
@@ -258,5 +259,9 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
     }
 
     public TimeSpan NowPlayingDuration => TimeSpan.FromSeconds(_currentActivePlayer?.Duration ?? 0);
-    public TimeSpan CurrentPosition => TimeSpan.FromSeconds(_currentActivePlayer?.Time ?? 0);
+    public TimeSpan CurrentPosition
+    {
+        get { return TimeSpan.FromSeconds(_currentActivePlayer?.Time ?? 0); }
+        set { _currentActivePlayer?.Seek(value); }
+    }
 }

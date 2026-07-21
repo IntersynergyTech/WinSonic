@@ -59,5 +59,11 @@ public partial class TestPage : Page
     {
         GlobalContext.AudioPlayer.Stop();
     }
+
+    private void PlayPlaylistButton(object sender, RoutedEventArgs e)
+    {
+        GlobalContext.AutoPlaybackManager.Queue.ResetAndEnqueueFromSource(Songs.ToList(), true);
+        GlobalContext.AutoPlaybackManager.StartPlayback();
+    }
 }
 

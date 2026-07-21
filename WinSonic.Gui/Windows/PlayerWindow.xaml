@@ -9,6 +9,8 @@
         xmlns:pages="clr-namespace:WinSonic.Gui.Pages"
         xmlns:loc="clr-namespace:WinSonic.Resources.Localisation;assembly=WinSonic.Resources"
         mc:Ignorable="d"
+        
+        Loaded="PlayerWindow_OnLoaded"
         Title="Player" Height="600" Width="900">
     <Grid>
         <Grid.RowDefinitions>
@@ -27,7 +29,7 @@
                 <ui:NavigationViewItem Content="{x:Static loc:Strings._Settings}" Icon="{ui:SymbolIcon Settings32}" TargetPageType="pages:SettingsPage"></ui:NavigationViewItem>
             </ui:NavigationView.FooterMenuItems>
         </ui:NavigationView>
-        <components:PlaybackControls Grid.Row="1" Height="80px"/>
+        <components:PlaybackControls x:Name="PlayerControls" Grid.Row="1" Height="80px"/>
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="340px" />

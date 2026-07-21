@@ -51,6 +51,11 @@ public class AutoPlaybackManager
         {
             UpdateNowPlaying(null);
         }
+
+        if (NowPlaying?.Id != Player.NowPlaying?.Id)
+        {
+            UpdateNowPlaying(Player.NowPlaying);
+        }
     }
 
     private void PlayNextSongIfAvailable()

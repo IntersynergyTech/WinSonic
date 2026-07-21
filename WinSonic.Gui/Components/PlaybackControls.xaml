@@ -4,9 +4,77 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:WinSonic.Gui.Components"
-             mc:Ignorable="d"
-             d:DesignHeight="80" d:DesignWidth="600" Background="DarkRed">
-    <Grid>
-        <TextBlock Text="PlaybackControls"></TextBlock>
+             xmlns:converters="clr-namespace:WinSonic.Gui.Misc.Converters"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             mc:Ignorable="d" d:DataContext="{d:DesignInstance local:PlaybackControls}"
+             d:DesignHeight="80" d:DesignWidth="800" Background="DarkRed" Loaded="PlaybackControls_OnLoaded">
+    <UserControl.Resources>
+        <converters:TimecodeToTextConverter x:Key="Timecode"/>
+    </UserControl.Resources>
+    <UserControl.InputBindings>
+        <KeyBinding Key="Play" Command="TogglePlayPause" />
+        <KeyBinding Key="MediaNextTrack" Command="NextTrack" />
+        <KeyBinding Key="MediaPreviousTrack" Command="PreviousTrack" />
+    </UserControl.InputBindings>
+    <UserControl.CommandBindings>
+        <CommandBinding Command="TogglePlayPause" x:Name="PlayPauseCommandBinding" Executed="PlayPauseCommandBinding_OnExecuted"></CommandBinding>
+        <CommandBinding Command="NextTrack" x:Name="NextCommandBinding" Executed="NextCommandBinding_OnExecuted"></CommandBinding>
+        <CommandBinding Command="PreviousTrack" x:Name="PrevCommandBinding" Executed="PrevCommandBinding_OnExecuted" ></CommandBinding>
+    </UserControl.CommandBindings>
+    <Grid >
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="3*" MaxWidth="1000" MinWidth="400"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Column="0" Background="DarkOliveGreen" Margin="8,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="64"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <!-- Now playing left section -->
+            <Grid Grid.Column="0" Background="#502f4d" Width="64" Height="64">
+                <!-- Album art -->
+            </Grid>
+            <StackPanel Grid.Column="1" Margin="4,6" Background="#053644" VerticalAlignment="Center">
+                <TextBlock FontSize="14" Text="{Binding Title}"></TextBlock>
+                <TextBlock FontSize="12" Text="{Binding Artist}"></TextBlock>
+            </StackPanel>
+            
+        </Grid>
+        <Grid Grid.Column="1" Background="Indigo">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="2*"/>
+                <RowDefinition Height="1*"/>
+            </Grid.RowDefinitions>
+            <!-- play pause etc controls -->
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Background="#344724">
+                <ui:Button Icon="{ui:SymbolIcon ArrowShuffle24, Filled=True}" FontSize="16" Padding="4" Margin="4,0" Command="{Binding ShuffleCommand}"/>
+                <ui:Button Icon="{ui:SymbolIcon Previous24, Filled=True}" FontSize="16" Padding="4" Margin="4,0" Command="{DynamicResource NextCommandBinding}"/>
+                <ui:Button Appearance="Primary" Icon="{ui:SymbolIcon  Play48, Filled=True}" Content="{Binding PlaybackState}" x:Name="PlayPauseButton" Command="TogglePlayPause" FontSize="28" Margin="8,0" Padding="4">
+                    
+                </ui:Button>
+                <ui:Button Icon="{ui:SymbolIcon Next24, Filled=True}" FontSize="16" Padding="4" Margin="4,0" Command="NextTrack" />
+                <ui:Button Icon="{ui:SymbolIcon ArrowRepeatAll24, Filled=True}" FontSize="16" Padding="4" Margin="4,0" Command="{Binding RepeatCommand}" />
+            </StackPanel>
+            
+            <!-- Seek Bar controls -->
+            <Grid Grid.Row="1" Background="DarkSlateGray">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="60"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="60"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{Binding Position, Converter={StaticResource Timecode}}" Grid.Column="0" HorizontalAlignment="Right"></TextBlock>
+                <Grid Column="1" Background="DarkCyan">
+                    <Slider Margin="8,0" Value="{Binding SliderCurrent}" Maximum="{Binding SliderDuration}" Background="Aqua" Thumb.DragCompleted="Thumb_OnDragCompleted" ></Slider>
+                </Grid>
+                <TextBlock Text="{Binding Duration, Converter={StaticResource Timecode}}" Grid.Column="2" HorizontalAlignment="Left"></TextBlock>
+            </Grid>
+        </Grid>
+        <Grid Grid.Column="3" Background="Purple">
+            <!-- right controls volume etc -->
+        </Grid>
+    
     </Grid>
 </UserControl>

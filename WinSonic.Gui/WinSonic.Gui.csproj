@@ -9,11 +9,13 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="PropertyChanged.Fody" Version="4.1.0" />
       <PackageReference Include="WPF-UI" Version="4.3.0" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\WinSonic.Core\WinSonic.Core.csproj" />
+      <ProjectReference Include="..\WinSonic.Playback\WinSonic.Playback.csproj" />
       <ProjectReference Include="..\WinSonic.Player\WinSonic.Player.csproj" />
       <ProjectReference Include="..\WinSonic.Resources\WinSonic.Resources.csproj" />
     </ItemGroup>

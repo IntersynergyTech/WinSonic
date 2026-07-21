@@ -21,6 +21,7 @@
                 
         </ui:DataGrid>
         <ui:TextBlock Text="{Binding SelectedPlaylist.Name}"></ui:TextBlock>
+        <ui:Button Content="Play playlist" Click="PlayPlaylistButton"></ui:Button>
         <ui:TextBlock Text="{x:Static loc:Strings._Tracks}"></ui:TextBlock>
         <ui:DataGrid ItemsSource="{Binding Songs}" SelectionMode="Single" HorizontalAlignment="Stretch" AutoGenerateColumns="False" x:Name="SongsGrid" SelectionChanged="SongsGrid_Selected">
             <ui:DataGrid.Columns>
