@@ -1,0 +1,17 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:pages="clr-namespace:WinSonic.Gui.Avalonia.ViewModels.Pages"
+             xmlns:localisation="clr-namespace:WinSonic.Resources.Localisation;assembly=WinSonic.Resources"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             d:DataContext="{d:DesignInstance Type=pages:ServerConfigViewModel, IsDesignTimeCreatable=True}"
+             x:Class="WinSonic.Gui.Avalonia.Views.Pages.ServerConfigView"
+             x:DataType="pages:ServerConfigViewModel">
+    <StackPanel>
+        <TextBlock Text="{Binding Title}"></TextBlock>
+        <TextBox Text="{Binding ServerUrl}" PlaceholderText="url"></TextBox>
+        <TextBox Text="{Binding ServerUsername}" PlaceholderText="user"></TextBox>
+        <TextBox Text="{Binding ServerPassword}" PlaceholderText="pass"></TextBox>
+    </StackPanel>
+</UserControl>

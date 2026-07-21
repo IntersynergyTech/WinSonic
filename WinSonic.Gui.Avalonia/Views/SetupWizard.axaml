@@ -1,0 +1,19 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewModels="clr-namespace:WinSonic.Gui.Avalonia.ViewModels"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" d:DataContext="{d:DesignInstance Type=viewModels:SetupWizardViewModel, IsDesignTimeCreatable=True}"
+        x:Class="WinSonic.Gui.Avalonia.Views.SetupWizard"
+        x:DataType="viewModels:SetupWizardViewModel"
+        Title="SetupWizard">
+    <Grid RowDefinitions="*, Auto" Margin="10">
+        <TransitioningContentControl Grid.Row="0" Content="{Binding CurrentPage}"/>
+        <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Spacing="5" Grid.Row="1">
+            <Button Command="{Binding NextPageCommand}" Content="{Binding NextButtonText}"></Button>
+            <Button Command="{Binding PreviousPageCommand}" Content="{Binding BackButtonText}"></Button>
+        </StackPanel>
+        
+        
+    </Grid>
+</Window>

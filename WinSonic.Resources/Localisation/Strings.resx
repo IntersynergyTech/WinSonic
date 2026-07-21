@@ -57,4 +57,43 @@
     <data name="_Duration" xml:space="preserve">
         <value>Duration</value>
     </data>
+    <data name="_LandingTitle" xml:space="preserve">
+        <value>Welcome to WinSonic!</value>
+    </data>
+    <data name="_ServerConfiguration" xml:space="preserve">
+        <value>Server Configuration</value>
+    </data>
+    <data name="_ServerHostname" xml:space="preserve">
+        <value>Server URL</value>
+    </data>
+    <data name="_ServerUsername" xml:space="preserve">
+        <value>Password</value>
+    </data>
+    <data name="_ServerPassword" xml:space="preserve">
+        <value>Username</value>
+    </data>
+    <data name="_SyncServerTitle" xml:space="preserve">
+        <value>Synchronising Server</value>
+    </data>
+    <data name="_SyncServerSubtitle" xml:space="preserve">
+        <value>Testing Connection and synchronising data with the server, please wait...</value>
+    </data>
+    <data name="_SetupCompleteTitle" xml:space="preserve">
+        <value>Setup Complete</value>
+    </data>
+    <data name="_SetupCompleteBody" xml:space="preserve">
+        <value>We've synced everything with the server and ready to play</value>
+    </data>
+    <data name="_LandingGetStarted" xml:space="preserve">
+        <value>Let's get started!</value>
+    </data>
+    <data name="_LetsGo" xml:space="preserve">
+        <value>Lets go!</value>
+    </data>
+    <data name="_Next" xml:space="preserve">
+        <value>Next</value>
+    </data>
+    <data name="_Back" xml:space="preserve">
+        <value>Back</value>
+    </data>
 </root>

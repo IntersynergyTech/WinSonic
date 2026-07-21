@@ -105,11 +105,56 @@ namespace WinSonic.Resources.Localisation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Back.
+        /// </summary>
+        public static string _Back {
+            get {
+                return ResourceManager.GetString("_Back", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Duration.
         /// </summary>
         public static string _Duration {
             get {
                 return ResourceManager.GetString("_Duration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Let&apos;s get started!.
+        /// </summary>
+        public static string _LandingGetStarted {
+            get {
+                return ResourceManager.GetString("_LandingGetStarted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Welcome to WinSonic!.
+        /// </summary>
+        public static string _LandingTitle {
+            get {
+                return ResourceManager.GetString("_LandingTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lets go!.
+        /// </summary>
+        public static string _LetsGo {
+            get {
+                return ResourceManager.GetString("_LetsGo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Next.
+        /// </summary>
+        public static string _Next {
+            get {
+                return ResourceManager.GetString("_Next", resourceCulture);
             }
         }
         
@@ -123,11 +168,83 @@ namespace WinSonic.Resources.Localisation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Server Configuration.
+        /// </summary>
+        public static string _ServerConfiguration {
+            get {
+                return ResourceManager.GetString("_ServerConfiguration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Server URL.
+        /// </summary>
+        public static string _ServerHostname {
+            get {
+                return ResourceManager.GetString("_ServerHostname", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Username.
+        /// </summary>
+        public static string _ServerPassword {
+            get {
+                return ResourceManager.GetString("_ServerPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Password.
+        /// </summary>
+        public static string _ServerUsername {
+            get {
+                return ResourceManager.GetString("_ServerUsername", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Settings.
         /// </summary>
         public static string _Settings {
             get {
                 return ResourceManager.GetString("_Settings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to We&apos;ve synced everything with the server and ready to play.
+        /// </summary>
+        public static string _SetupCompleteBody {
+            get {
+                return ResourceManager.GetString("_SetupCompleteBody", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Setup Complete.
+        /// </summary>
+        public static string _SetupCompleteTitle {
+            get {
+                return ResourceManager.GetString("_SetupCompleteTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Testing Connection and synchronising data with the server, please wait....
+        /// </summary>
+        public static string _SyncServerSubtitle {
+            get {
+                return ResourceManager.GetString("_SyncServerSubtitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Synchronising Server.
+        /// </summary>
+        public static string _SyncServerTitle {
+            get {
+                return ResourceManager.GetString("_SyncServerTitle", resourceCulture);
             }
         }
         
