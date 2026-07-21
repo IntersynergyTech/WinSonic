@@ -38,7 +38,7 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
         _engine = engine;
 
         _defaultOutputDevice = engine.PlaybackDevices.FirstOrDefault(d => d.IsDefault);
-        
+
         _replayGainProcessor.UpdateVolume(VolumeLevel);
 
         SelectOutputDevice(deviceId);
@@ -129,24 +129,28 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
 
                 if (_currentActivePlaybackDevice.IsRunning)
                 {
-                    Debug.WriteLine($"Stopping current playback device for format [{_currentFormat.ToShortString()}] : currently isRunning {_currentActivePlaybackDevice.IsRunning}");
-                    
+                    Debug.WriteLine(
+                        $"Stopping current playback device for format [{_currentFormat.ToShortString()}] : currently isRunning {_currentActivePlaybackDevice.IsRunning}"
+                    );
+
                     _currentActivePlaybackDevice.Stop();
                     Debug.WriteLine($"Current playback device stopped");
                 }
             }
 
             Debug.WriteLine($"Getting playback device for format [{format.ToShortString()}]");
-            
+
             var playbackDevice = GetFormatPlaybackDevice(format);
 
             Debug.WriteLine($"Starting playback device for format [{format.ToShortString()}]");
             _currentActivePlaybackDevice = playbackDevice;
             _currentActivePlaybackDevice.Start();
         }
-        
-        
-        var replayGainedVolume = _replayGainProcessor.UpdateTrackGain(song.ReplayGain.TrackGain, song.ReplayGain.AlbumGain);
+
+        var replayGainedVolume = _replayGainProcessor.UpdateTrackGain(
+            song.ReplayGain.TrackGain,
+            song.ReplayGain.AlbumGain
+        );
 
         _currentFormat = format;
         Debug.WriteLine($"Creating sound player for stream {provider.FormatInfo.Tags.Title}");
@@ -156,20 +160,18 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
         player.PlaybackEnded += PlayerOnPlaybackEnded;
 
         _currentActivePlaybackDevice.MasterMixer.AddComponent(player);
-        Debug.WriteLine($"Created player for format [{format.ToShortString()}] with volume {VolumeLevel} (RG: {replayGainedVolume}). Ready to go");
+
+        Debug.WriteLine(
+            $"Created player for format [{format.ToShortString()}] with volume {VolumeLevel} (RG: {replayGainedVolume}). Ready to go"
+        );
+
         return player;
     }
 
     private void PlayerOnPlaybackEnded(object? sender, EventArgs e)
     {
         // This event needs to get off this thread ASAP, as this thread is blocking the device. If we do anything with the device in this thread it might deadlock, so just whack it into async land and hope for the best
-        Task.Run(
-            (() =>
-            {
-                ChangePlaybackState(PlaybackState.Ended);
-            })
-        );
-
+        Task.Run((() => { ChangePlaybackState(PlaybackState.Ended); }));
     }
 
     private AudioFormat ParseFormatFrom(SoundFormatInfo info)
@@ -244,7 +246,7 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
             _currentActivePlayer!.Volume = rgVolume;
         }
     }
-    
+
     public ReplayGainConfiguration ReplayGainConfiguration
     {
         get => _replayGainProcessor.GetConfiguration();
@@ -257,5 +259,4 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
 
     public TimeSpan NowPlayingDuration => TimeSpan.FromSeconds(_currentActivePlayer?.Duration ?? 0);
     public TimeSpan CurrentPosition => TimeSpan.FromSeconds(_currentActivePlayer?.Time ?? 0);
-    
 }
