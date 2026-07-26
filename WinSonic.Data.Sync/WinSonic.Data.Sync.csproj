@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>net10.0;net9.0-windows10.0.19041.0</TargetFrameworks>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\WinSonic.Data.Sqlite\WinSonic.Data.Sqlite.csproj" />
+      <ProjectReference Include="..\WinSonic.Subsonic.Client\src\WinSonic.Subsonic.Client\WinSonic.Subsonic.Client.csproj" />
+      <ProjectReference Include="..\WinSonic.Subsonic.Helpers\WinSonic.Subsonic.Helpers.csproj" />
+    </ItemGroup>
+
+</Project>

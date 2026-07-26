@@ -93,4 +93,19 @@ public class SubsonicApiWrapper
     {
         get { return field ??= new UserManagementApi(_configuration); }
     }
+
+    public bool IsAvailable()
+    {
+        try
+        {
+            var pingResult = System.Ping();
+            pingResult.VarSubsonicResponse.GetSubsonicSuccessResponse();
+            return true;
+        }
+        catch (Exception exception)
+        {
+            return false;
+        }
+        
+    }
 }

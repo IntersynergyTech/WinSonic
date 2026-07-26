@@ -4,6 +4,8 @@ using System.Windows;
 using System.Windows.Navigation;
 using System.Windows.Threading;
 using WinSonic.Core;
+using WinSonic.Data.Sqlite;
+using WinSonic.Data.Sync;
 using WinSonic.Playback;
 using WinSonic.Player;
 using WinSonic.Subsonic.Helpers;
@@ -51,6 +53,10 @@ public partial class App : Application
             GlobalContext.SongFetcher,
             GlobalContext.AudioPlayer
         );
+
+        GlobalContext.DbContextFactory = new SqliteDataContextFactory(storageManager: GlobalContext.StorageManager);
+
+        GlobalContext.SyncManager = new SyncManager(client, GlobalContext.DbContextFactory);
 
         Console.WriteLine("Initialised.");
     }

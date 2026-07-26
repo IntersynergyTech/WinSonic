@@ -13,6 +13,8 @@
         <ui:TextBlock Text="TestPage" FontTypography="Title" ></ui:TextBlock>
         <StackPanel Orientation="Horizontal">
             <ui:Button Content="Load Playlists:" Click="LoadPlaylists_Click" ></ui:Button>
+            <ui:Button Content="Run big sync:" Click="RunBigSyncClicked" ></ui:Button>
+            <ui:Button Content="Stop big sync:" Click="StopBigSyncClicked" ></ui:Button>
             <ui:Button Content="Stop" Click="Stop_Click" ></ui:Button>
         </StackPanel>
         

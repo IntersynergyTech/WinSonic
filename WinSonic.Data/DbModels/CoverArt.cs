@@ -4,6 +4,12 @@ namespace WinSonic.Data.DbModels;
 
 public class CoverArt : ICacheableEntity
 {
+    
+    public CoverArt(string id)
+    {
+        Id = id;
+    }
+    
     [Required]
     public string Id { get; set; }
     

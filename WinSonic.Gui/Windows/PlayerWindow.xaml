@@ -27,6 +27,7 @@
             
             <ui:NavigationView.FooterMenuItems>
                 <ui:NavigationViewItem Content="{x:Static loc:Strings._Settings}" Icon="{ui:SymbolIcon Settings32}" TargetPageType="pages:SettingsPage"></ui:NavigationViewItem>
+                <ui:NavigationViewItem Content="Debug" Icon="{ui:SymbolIcon DeveloperBoard24}" TargetPageType="pages:ConsolePage"></ui:NavigationViewItem>
             </ui:NavigationView.FooterMenuItems>
         </ui:NavigationView>
         <components:PlaybackControls x:Name="PlayerControls" Grid.Row="1" Height="80px"/>

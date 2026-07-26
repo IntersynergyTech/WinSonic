@@ -65,5 +65,15 @@ public partial class TestPage : Page
         GlobalContext.AutoPlaybackManager.Queue.ResetAndEnqueueFromSource(Songs.ToList(), true);
         GlobalContext.AutoPlaybackManager.StartPlayback();
     }
+
+    private  void RunBigSyncClicked(object sender, RoutedEventArgs e)
+    {
+        GlobalContext.SyncManager.StartBigSync();
+    }
+
+    private async void StopBigSyncClicked(object sender, RoutedEventArgs e)
+    {
+        await GlobalContext.SyncManager.CancelAll();
+    }
 }
 

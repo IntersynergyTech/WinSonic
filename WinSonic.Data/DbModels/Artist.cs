@@ -3,12 +3,14 @@ using WinSonic.Data.Enums;
 
 namespace WinSonic.Data.DbModels;
 
-public class Artist: ICacheableEntity, IStarrable, IRateable
+public class Artist: ICacheableEntity, IStarrable, IRateable, ISortable
 {
     [Key]
     public string Id { get; set; }
     [Required]
-    public string Name { get; set; }
+    public string Title { get; set; }
+    
+    public string? SortTitle { get; set; }
     public CoverArt? CoverArt { get; set; }
     public int? AlbumCount { get; set; }
     public ArtistType? Type { get; set; }

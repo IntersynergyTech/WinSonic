@@ -17,8 +17,20 @@ public class StorageManager
 
     private string GetArtworkFolder() => Path.Combine(GetBaseFolder(), ARTWORK_FOLDER);
     
-    public string GetDatabasePath => Path.Combine(GetBaseFolder(), DATABASE_NAME);
+    public string GetDatabaseFile() => EnsureDbFileExists(Path.Combine(GetBaseFolder(), DATABASE_NAME));
 
+    private string EnsureDbFileExists(string fileName)
+    {
+        var fileInfo = new FileInfo(fileName);
+
+        if (!fileInfo.Exists)
+        {
+            fileInfo.Create();
+        }
+
+        return fileName;
+    }
+    
     public void EnsureDirectoriesExist()
     {
         Directory.CreateDirectory(GetBaseFolder());

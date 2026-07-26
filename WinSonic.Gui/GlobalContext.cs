@@ -1,5 +1,7 @@
 using System.Windows.Threading;
 using WinSonic.Core;
+using WinSonic.Data.Sqlite;
+using WinSonic.Data.Sync;
 using WinSonic.Playback;
 using WinSonic.Player;
 using WinSonic.Subsonic.Helpers;
@@ -14,6 +16,8 @@ public static class GlobalContext
     public static SongFetcher SongFetcher { get; set; }
     public static SubsonicApiWrapper Subsonic { get; set; }
     public static AutoPlaybackManager AutoPlaybackManager { get; set; }
+    public static SyncManager SyncManager { get; set; }
+    public static SqliteDataContextFactory DbContextFactory { get; set; }
     
     public static Dispatcher Dispatcher { get; set; }
 
