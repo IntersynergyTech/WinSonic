@@ -8,7 +8,7 @@
       xmlns:loc="clr-namespace:WinSonic.Resources.Localisation;assembly=WinSonic.Resources"
       mc:Ignorable="d"
       Foreground="{DynamicResource TextFillColorPrimaryBrush}"
-      Title="TestPage" d:DataContext="{d:DesignInstance Type=local:TestPage, IsDesignTimeCreatable=True}">
+      Title="TestPage" d:DataContext="{d:DesignInstance Type=local:TestPage, IsDesignTimeCreatable=True}" Loaded="TestPage_OnLoaded">
     <StackPanel>
         <ui:TextBlock Text="TestPage" FontTypography="Title" ></ui:TextBlock>
         <StackPanel Orientation="Horizontal">
@@ -34,6 +34,7 @@
                 <DataGridTextColumn Header="ID" Binding="{Binding Id}"/>
             </ui:DataGrid.Columns>
         </ui:DataGrid>
+        <ui:DataGrid ItemsSource="{Binding SongsCache}" SelectionMode="Single" HorizontalAlignment="Stretch" SelectionChanged="SongsCacheGrid_OnSelectionChanged" x:Name="SongsCacheGrid"/>
         
     </StackPanel>
 </Page>

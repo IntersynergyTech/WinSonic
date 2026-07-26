@@ -11,7 +11,7 @@ using WinSonic.Data.Sqlite;
 namespace WinSonic.Data.Sqlite.Migrations
 {
     [DbContext(typeof(SqliteDataContext))]
-    [Migration("20260726141012_InitialData")]
+    [Migration("20260726145807_InitialData")]
     partial class InitialData
     {
         /// <inheritdoc />
@@ -385,11 +385,17 @@ namespace WinSonic.Data.Sqlite.Migrations
                     b.Property<string>("DisplayArtist")
                         .HasColumnType("TEXT");
 
+                    b.Property<int?>("Duration")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("Filesize")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Genre")
                         .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsExplicit")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("PlaylistId")
                         .HasColumnType("TEXT");

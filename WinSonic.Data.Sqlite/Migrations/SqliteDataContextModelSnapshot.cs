@@ -382,11 +382,17 @@ namespace WinSonic.Data.Sqlite.Migrations
                     b.Property<string>("DisplayArtist")
                         .HasColumnType("TEXT");
 
+                    b.Property<int?>("Duration")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("Filesize")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Genre")
                         .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsExplicit")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("PlaylistId")
                         .HasColumnType("TEXT");

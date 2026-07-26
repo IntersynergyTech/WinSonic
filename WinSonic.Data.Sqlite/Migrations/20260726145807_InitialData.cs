@@ -185,6 +185,8 @@ namespace WinSonic.Data.Sqlite.Migrations
                     Bpm = table.Column<int>(type: "INTEGER", nullable: true),
                     Comment = table.Column<string>(type: "TEXT", nullable: true),
                     SortTitle = table.Column<string>(type: "TEXT", nullable: true),
+                    Duration = table.Column<int>(type: "INTEGER", nullable: true),
+                    IsExplicit = table.Column<bool>(type: "INTEGER", nullable: false),
                     CacheLastUpdated = table.Column<DateTime>(type: "TEXT", nullable: false),
                     CacheExpires = table.Column<DateTime>(type: "TEXT", nullable: true),
                     CacheId = table.Column<Guid>(type: "TEXT", nullable: false),

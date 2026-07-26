@@ -7,7 +7,7 @@
              xmlns:converters="clr-namespace:WinSonic.Gui.Misc.Converters"
              xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
              mc:Ignorable="d" d:DataContext="{d:DesignInstance local:PlaybackControls}"
-             d:DesignHeight="80" d:DesignWidth="800" Background="DarkRed" Loaded="PlaybackControls_OnLoaded">
+             d:DesignHeight="80" d:DesignWidth="800" Loaded="PlaybackControls_OnLoaded">
     <UserControl.Resources>
         <converters:TimecodeToTextConverter x:Key="Timecode"/>
     </UserControl.Resources>
@@ -27,7 +27,7 @@
             <ColumnDefinition Width="3*" MaxWidth="1000" MinWidth="400"/>
             <ColumnDefinition Width="1*"/>
         </Grid.ColumnDefinitions>
-        <Grid Grid.Column="0" Background="DarkOliveGreen" Margin="8,0">
+        <Grid Grid.Column="0" Margin="8,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="64"/>
                 <ColumnDefinition/>
@@ -36,19 +36,19 @@
             <Grid Grid.Column="0" Background="#502f4d" Width="64" Height="64">
                 <!-- Album art -->
             </Grid>
-            <StackPanel Grid.Column="1" Margin="4,6" Background="#053644" VerticalAlignment="Center">
+            <StackPanel Grid.Column="1" Margin="12,6" VerticalAlignment="Center">
                 <TextBlock FontSize="14" Text="{Binding Title}"></TextBlock>
                 <TextBlock FontSize="12" Text="{Binding Artist}"></TextBlock>
             </StackPanel>
             
         </Grid>
-        <Grid Grid.Column="1" Background="Indigo">
+        <Grid Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="2*"/>
                 <RowDefinition Height="1*"/>
             </Grid.RowDefinitions>
             <!-- play pause etc controls -->
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Background="#344724">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                 <ui:Button Icon="{ui:SymbolIcon ArrowShuffle24, Filled=True}" FontSize="16" Padding="4" Margin="4,0" Command="{Binding ShuffleCommand}"/>
                 <ui:Button Icon="{ui:SymbolIcon Previous24, Filled=True}" FontSize="16" Padding="4" Margin="4,0" Command="{DynamicResource NextCommandBinding}"/>
                 <ui:Button Appearance="Primary" Icon="{ui:SymbolIcon  Play48, Filled=True}" Content="{Binding PlaybackState}" x:Name="PlayPauseButton" Command="TogglePlayPause" FontSize="28" Margin="8,0" Padding="4">
@@ -59,20 +59,20 @@
             </StackPanel>
             
             <!-- Seek Bar controls -->
-            <Grid Grid.Row="1" Background="DarkSlateGray">
+            <Grid Grid.Row="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="60"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="60"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Text="{Binding Position, Converter={StaticResource Timecode}}" Grid.Column="0" HorizontalAlignment="Right"></TextBlock>
-                <Grid Column="1" Background="DarkCyan">
-                    <Slider Margin="8,0" Value="{Binding SliderCurrent}" Maximum="{Binding SliderDuration}" Background="Aqua" Thumb.DragCompleted="Thumb_OnDragCompleted" ></Slider>
+                <ui:TextBlock FontTypography="Caption" Text="{Binding Position, Converter={StaticResource Timecode}}" Grid.Column="0" HorizontalAlignment="Right"></ui:TextBlock>
+                <Grid Column="1">
+                    <Slider Margin="8,0" Value="{Binding SliderCurrent}" Maximum="{Binding SliderDuration}" Thumb.DragCompleted="Thumb_OnDragCompleted" ></Slider>
                 </Grid>
-                <TextBlock Text="{Binding Duration, Converter={StaticResource Timecode}}" Grid.Column="2" HorizontalAlignment="Left"></TextBlock>
+                <ui:TextBlock FontTypography="Caption" Text="{Binding Duration, Converter={StaticResource Timecode}}" Grid.Column="2" HorizontalAlignment="Left"></ui:TextBlock>
             </Grid>
         </Grid>
-        <Grid Grid.Column="3" Background="Purple">
+        <Grid Grid.Column="3" Background="#112">
             <!-- right controls volume etc -->
         </Grid>
     

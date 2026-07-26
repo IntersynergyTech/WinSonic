@@ -24,6 +24,8 @@ public class Song: ICacheableEntity, IReleaseDate, IRateable, IStarrable, IMedia
     public int? Bpm { get; set; }
     public string? Comment { get; set; }
     public string? SortTitle { get; set; }
+    public int? Duration { get; set; }
+    public bool IsExplicit { get; set; }
     
     
     public ICollection<Artist>? Artists { get; set; }
