@@ -11,8 +11,8 @@ using WinSonic.Data.Sqlite;
 namespace WinSonic.Data.Sqlite.Migrations
 {
     [DbContext(typeof(SqliteDataContext))]
-    [Migration("20260726145807_InitialData")]
-    partial class InitialData
+    [Migration("20260801202437_InitialStructure")]
+    partial class InitialStructure
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -20,12 +20,69 @@ namespace WinSonic.Data.Sqlite.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.18");
 
+            modelBuilder.Entity("AlbumArtist", b =>
+                {
+                    b.Property<string>("AlbumsId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ArtistsId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("AlbumsId", "ArtistsId");
+
+                    b.HasIndex("ArtistsId");
+
+                    b.ToTable("AlbumArtist");
+                });
+
+            modelBuilder.Entity("PlaylistSong", b =>
+                {
+                    b.Property<string>("AppearsInPlaylistsId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("SongsId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("AppearsInPlaylistsId", "SongsId");
+
+                    b.HasIndex("SongsId");
+
+                    b.ToTable("PlaylistSong");
+                });
+
+            modelBuilder.Entity("SongToAlbumArtists", b =>
+                {
+                    b.Property<string>("AlbumArtistsId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("SongsAsAlbumArtistId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("AlbumArtistsId", "SongsAsAlbumArtistId");
+
+                    b.HasIndex("SongsAsAlbumArtistId");
+
+                    b.ToTable("SongToAlbumArtists");
+                });
+
+            modelBuilder.Entity("SongToArtists", b =>
+                {
+                    b.Property<string>("ArtistsId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("SongsId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("ArtistsId", "SongsId");
+
+                    b.HasIndex("SongsId");
+
+                    b.ToTable("SongToArtists");
+                });
+
             modelBuilder.Entity("WinSonic.Data.DbModels.Album", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("ArtistId")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("ArtistName")
@@ -75,6 +132,7 @@ namespace WinSonic.Data.Sqlite.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("SortTitle")
+                        .HasMaxLength(200)
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime?>("StarredAt")
@@ -82,14 +140,13 @@ namespace WinSonic.Data.Sqlite.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
+                        .HasMaxLength(200)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Version")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ArtistId");
 
                     b.HasIndex("CoverArtId");
 
@@ -103,6 +160,7 @@ namespace WinSonic.Data.Sqlite.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("AlbumId")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime?>("CacheExpires")
@@ -141,9 +199,6 @@ namespace WinSonic.Data.Sqlite.Migrations
                     b.Property<int?>("AlbumCount")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("AlbumId")
-                        .HasColumnType("TEXT");
-
                     b.Property<DateTime?>("CacheExpires")
                         .HasColumnType("TEXT");
 
@@ -162,13 +217,8 @@ namespace WinSonic.Data.Sqlite.Migrations
                     b.Property<int?>("Rating")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("SongId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("SongId1")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("SortTitle")
+                        .HasMaxLength(200)
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime?>("StarredAt")
@@ -176,20 +226,19 @@ namespace WinSonic.Data.Sqlite.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
+                        .HasMaxLength(200)
                         .HasColumnType("TEXT");
 
                     b.Property<int?>("Type")
                         .HasColumnType("INTEGER");
 
+                    b.PrimitiveCollection<string>("Types")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("AlbumId");
-
                     b.HasIndex("CoverArtId");
-
-                    b.HasIndex("SongId");
-
-                    b.HasIndex("SongId1");
 
                     b.ToTable("Artists");
                 });
@@ -236,6 +285,7 @@ namespace WinSonic.Data.Sqlite.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("ParentItemId")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Width")
@@ -283,6 +333,7 @@ namespace WinSonic.Data.Sqlite.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("ParentItemId")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<int>("SampleRate")
@@ -324,11 +375,15 @@ namespace WinSonic.Data.Sqlite.Migrations
                     b.Property<bool>("IsReadOnly")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Owner")
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("SongCount")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Title")
                         .IsRequired()
+                        .HasMaxLength(200)
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("UpdatedAt")
@@ -397,9 +452,6 @@ namespace WinSonic.Data.Sqlite.Migrations
                     b.Property<bool>("IsExplicit")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("PlaylistId")
-                        .HasColumnType("TEXT");
-
                     b.Property<int?>("Rating")
                         .HasColumnType("INTEGER");
 
@@ -408,6 +460,18 @@ namespace WinSonic.Data.Sqlite.Migrations
 
                     b.Property<int?>("ReleaseDateType")
                         .HasColumnType("INTEGER");
+
+                    b.Property<decimal?>("RgAlbumGain")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal?>("RgAlbumPeak")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal?>("RgTrackGain")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal?>("RgTrackPeak")
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("SampleRate")
                         .HasColumnType("INTEGER");
@@ -420,6 +484,7 @@ namespace WinSonic.Data.Sqlite.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
+                        .HasMaxLength(200)
                         .HasColumnType("TEXT");
 
                     b.Property<int?>("Track")
@@ -433,22 +498,74 @@ namespace WinSonic.Data.Sqlite.Migrations
 
                     b.HasIndex("CoverArtId");
 
-                    b.HasIndex("PlaylistId");
-
                     b.ToTable("Songs");
+                });
+
+            modelBuilder.Entity("AlbumArtist", b =>
+                {
+                    b.HasOne("WinSonic.Data.DbModels.Album", null)
+                        .WithMany()
+                        .HasForeignKey("AlbumsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WinSonic.Data.DbModels.Artist", null)
+                        .WithMany()
+                        .HasForeignKey("ArtistsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("PlaylistSong", b =>
+                {
+                    b.HasOne("WinSonic.Data.DbModels.Playlist", null)
+                        .WithMany()
+                        .HasForeignKey("AppearsInPlaylistsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WinSonic.Data.DbModels.Song", null)
+                        .WithMany()
+                        .HasForeignKey("SongsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("SongToAlbumArtists", b =>
+                {
+                    b.HasOne("WinSonic.Data.DbModels.Artist", null)
+                        .WithMany()
+                        .HasForeignKey("AlbumArtistsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WinSonic.Data.DbModels.Song", null)
+                        .WithMany()
+                        .HasForeignKey("SongsAsAlbumArtistId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("SongToArtists", b =>
+                {
+                    b.HasOne("WinSonic.Data.DbModels.Artist", null)
+                        .WithMany()
+                        .HasForeignKey("ArtistsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WinSonic.Data.DbModels.Song", null)
+                        .WithMany()
+                        .HasForeignKey("SongsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("WinSonic.Data.DbModels.Album", b =>
                 {
-                    b.HasOne("WinSonic.Data.DbModels.Artist", "Artist")
-                        .WithMany()
-                        .HasForeignKey("ArtistId");
-
                     b.HasOne("WinSonic.Data.DbModels.CoverArt", "CoverArt")
                         .WithMany()
                         .HasForeignKey("CoverArtId");
-
-                    b.Navigation("Artist");
 
                     b.Navigation("CoverArt");
                 });
@@ -457,7 +574,9 @@ namespace WinSonic.Data.Sqlite.Migrations
                 {
                     b.HasOne("WinSonic.Data.DbModels.Album", "Album")
                         .WithMany("Media")
-                        .HasForeignKey("AlbumId");
+                        .HasForeignKey("AlbumId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("WinSonic.Data.DbModels.CoverArt", "CoverArt")
                         .WithMany()
@@ -470,21 +589,9 @@ namespace WinSonic.Data.Sqlite.Migrations
 
             modelBuilder.Entity("WinSonic.Data.DbModels.Artist", b =>
                 {
-                    b.HasOne("WinSonic.Data.DbModels.Album", null)
-                        .WithMany("Artists")
-                        .HasForeignKey("AlbumId");
-
                     b.HasOne("WinSonic.Data.DbModels.CoverArt", "CoverArt")
                         .WithMany()
                         .HasForeignKey("CoverArtId");
-
-                    b.HasOne("WinSonic.Data.DbModels.Song", null)
-                        .WithMany("AlbumArtists")
-                        .HasForeignKey("SongId");
-
-                    b.HasOne("WinSonic.Data.DbModels.Song", null)
-                        .WithMany("Artists")
-                        .HasForeignKey("SongId1");
 
                     b.Navigation("CoverArt");
                 });
@@ -492,8 +599,10 @@ namespace WinSonic.Data.Sqlite.Migrations
             modelBuilder.Entity("WinSonic.Data.DbModels.LocalCacheEntries.CachedCoverArt", b =>
                 {
                     b.HasOne("WinSonic.Data.DbModels.CoverArt", "ParentItem")
-                        .WithMany()
-                        .HasForeignKey("ParentItemId");
+                        .WithMany("LocalCacheEntries")
+                        .HasForeignKey("ParentItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("ParentItem");
                 });
@@ -501,8 +610,10 @@ namespace WinSonic.Data.Sqlite.Migrations
             modelBuilder.Entity("WinSonic.Data.DbModels.LocalCacheEntries.CachedSong", b =>
                 {
                     b.HasOne("WinSonic.Data.DbModels.Song", "ParentItem")
-                        .WithMany()
-                        .HasForeignKey("ParentItemId");
+                        .WithMany("LocalCacheEntries")
+                        .HasForeignKey("ParentItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("ParentItem");
                 });
@@ -530,10 +641,6 @@ namespace WinSonic.Data.Sqlite.Migrations
                         .WithMany()
                         .HasForeignKey("CoverArtId");
 
-                    b.HasOne("WinSonic.Data.DbModels.Playlist", null)
-                        .WithMany("Songs")
-                        .HasForeignKey("PlaylistId");
-
                     b.Navigation("Album");
 
                     b.Navigation("Artist");
@@ -543,23 +650,19 @@ namespace WinSonic.Data.Sqlite.Migrations
 
             modelBuilder.Entity("WinSonic.Data.DbModels.Album", b =>
                 {
-                    b.Navigation("Artists");
-
                     b.Navigation("Media");
 
                     b.Navigation("Songs");
                 });
 
-            modelBuilder.Entity("WinSonic.Data.DbModels.Playlist", b =>
+            modelBuilder.Entity("WinSonic.Data.DbModels.CoverArt", b =>
                 {
-                    b.Navigation("Songs");
+                    b.Navigation("LocalCacheEntries");
                 });
 
             modelBuilder.Entity("WinSonic.Data.DbModels.Song", b =>
                 {
-                    b.Navigation("AlbumArtists");
-
-                    b.Navigation("Artists");
+                    b.Navigation("LocalCacheEntries");
                 });
 #pragma warning restore 612, 618
         }

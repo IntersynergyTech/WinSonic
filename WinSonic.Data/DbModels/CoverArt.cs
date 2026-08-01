@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using WinSonic.Data.DbModels.LocalCacheEntries;
 
 namespace WinSonic.Data.DbModels;
 
@@ -16,4 +17,6 @@ public class CoverArt : ICacheableEntity
     public DateTime CacheLastUpdated { get; set; }
     public DateTime? CacheExpires { get; set; }
     public Guid CacheId { get; set; }
+
+    public virtual ICollection<CachedCoverArt> LocalCacheEntries { get; set; }
 }

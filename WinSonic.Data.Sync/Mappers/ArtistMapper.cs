@@ -15,6 +15,7 @@ public static class ArtistMapper
             AlbumCount = source.AlbumCount,
             StarredAt = source.Starred,
             SortTitle = source.SortName,
+            Types = source.Roles
         };
 
         if (!string.IsNullOrEmpty(source.CoverArt))

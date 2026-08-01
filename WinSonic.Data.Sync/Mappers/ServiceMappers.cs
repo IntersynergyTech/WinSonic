@@ -16,7 +16,7 @@ public static class ServiceMappers
             song.CoverArt?.Id,
             TimeSpan.FromSeconds(song.Duration ?? 0),
             song.IsExplicit,
-            new ReplayGain(-8, 0, -8, 0),
+            new ReplayGain(song.RgAlbumGain, song.RgAlbumPeak, song.RgTrackGain, song.RgTrackPeak),
             song.Title
         );
     }

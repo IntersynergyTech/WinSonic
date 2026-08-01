@@ -12,11 +12,6 @@ public class SqliteDataContext : BaseDataContext
         _dbFileName = sqliteFileName;
     }
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        base.OnModelCreating(modelBuilder);
-    }
-
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         var builder = new DbConnectionStringBuilder();

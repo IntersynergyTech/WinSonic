@@ -45,7 +45,10 @@ public class BigSync
 
         Log($"Getting songs...");
         BigSyncSongs.SyncSongs(cancellationToken, ITEMS_PER_REQUEST, _api, _database);
-
+        
+        Log($"Getting playlists...");
+        BigSyncPlaylists.SyncPlaylists(cancellationToken, ITEMS_PER_REQUEST, _api, _database);
+        
         Log("Finishing up.");
     }
 

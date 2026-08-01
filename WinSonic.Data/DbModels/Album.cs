@@ -16,9 +16,9 @@ public class Album : ICacheableEntity, IStarrable, IRateable, IReleaseDate, ISor
     public string? Version { get; set; }
     
     public string? ArtistName { get; set; }
-    public Artist? Artist { get; set; }
+    //public Artist? Artist { get; set; }
 
-    public CoverArt? CoverArt { get; set; }
+    public virtual CoverArt? CoverArt { get; set; }
 
     [Required]
     public int SongCount { get; set; }
@@ -37,9 +37,9 @@ public class Album : ICacheableEntity, IStarrable, IRateable, IReleaseDate, ISor
 
     public int? Rating { get; set; }
     
-    public ICollection<AlbumMedia> Media { get; set; }
-    public ICollection<Song> Songs { get; set; }
-    public ICollection<Artist> Artists { get; set; }
+    public virtual ICollection<AlbumMedia> Media { get; set; }
+    public virtual ICollection<Song> Songs { get; set; }
+    public virtual ICollection<Artist> Artists { get; set; }
    
     
     public DateTime CacheLastUpdated { get; set; }

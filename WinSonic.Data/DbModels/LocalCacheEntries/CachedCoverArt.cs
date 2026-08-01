@@ -7,7 +7,7 @@ public class CachedCoverArt: ICacheableEntity, ILocalCacheItem<CoverArt>
     public Guid CacheId { get; set; }
     public Guid Id { get; set; }
     public string Filename { get; set; }
-    public CoverArt ParentItem { get; set; }
+    public virtual CoverArt ParentItem { get; set; }
     public int Length { get; set; }
     public int Width { get; set; }
 }

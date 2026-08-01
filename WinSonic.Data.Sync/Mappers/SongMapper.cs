@@ -30,7 +30,11 @@ public static class SongMapper
             BitDepth = source.BitDepth,
             Bitrate = source.BitRate,
             ChannelCount = source.ChannelCount,
-            Filesize = source.Size
+            Filesize = source.Size,
+            RgAlbumGain = source.ReplayGain.AlbumGain,
+            RgTrackGain = source.ReplayGain.TrackGain,
+            RgAlbumPeak = source.ReplayGain.AlbumPeak,
+            RgTrackPeak = source.ReplayGain.TrackPeak
         };
 
         song.AddDefaultCacheables();
