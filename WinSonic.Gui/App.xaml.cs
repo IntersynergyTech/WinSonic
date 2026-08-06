@@ -3,12 +3,22 @@ using System.Data;
 using System.Windows;
 using System.Windows.Navigation;
 using System.Windows.Threading;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using WinSonic.Core;
+using WinSonic.Data;
 using WinSonic.Data.Sqlite;
 using WinSonic.Data.Sync;
+using WinSonic.Gui.Pages;
+using WinSonic.Gui.Windows;
 using WinSonic.Playback;
 using WinSonic.Player;
+using WinSonic.Service.Playlist;
 using WinSonic.Subsonic.Helpers;
+using Wpf.Ui;
+using Wpf.Ui.Abstractions;
+using Wpf.Ui.DependencyInjection;
+using NavigationService = Wpf.Ui.NavigationService;
 
 namespace WinSonic.Gui;
 
@@ -17,17 +27,61 @@ namespace WinSonic.Gui;
 /// </summary>
 public partial class App : Application
 {
+    private IServiceProvider _serviceProvider;
+
+    public static App Instance { get; private set; }
+
+    public static IServiceProvider ServiceProvider { get; private set; }
+
     protected override void OnStartup(StartupEventArgs e)
     {
+        Instance = this;
         base.OnStartup(e);
         GlobalContext.Dispatcher = Dispatcher.CurrentDispatcher;
         InitGlobalContext();
+        var serviceCollection = new ServiceCollection();
+        ConfigureServices(serviceCollection);
+        _serviceProvider = serviceCollection.BuildServiceProvider();
+        ServiceProvider = _serviceProvider;
+        var mainWindow = _serviceProvider.GetRequiredService<PlayerWindow>();
+        mainWindow.Show();
     }
 
-    protected override void OnLoadCompleted(NavigationEventArgs e)
+    private void ConfigureServices(IServiceCollection services)
     {
-        base.OnLoadCompleted(e);
+        // Basics
+        services.AddDbContextFactory<BaseDataContext, SqliteDataContextFactory>();
+        services.AddDbContext<BaseDataContext, SqliteDataContext>();
+        services.AddLogging(builder => builder.AddDebug().SetMinimumLevel(LogLevel.Trace));
+
+        // UI Stuff
+        services.AddSingleton<INavigationService, NavigationService>();
+        services.AddSingleton<INavigationViewPageProvider, DependencyInjectionNavigationViewPageProvider>();
+        services.AddNavigationViewPageProvider();
         
+        //Window
+        services.AddSingleton<PlayerWindow>();
+        
+        // Core bits
+        services.AddSingleton<StorageManager>();
+        services.AddSingleton<SyncManager>();
+        services.AddSingleton<AutoPlaybackManager>();
+        services.AddSingleton<SongFetcher>();
+
+        //Data services
+        services.AddScoped<IPlaylistService, CachedPlaylistService>();
+
+        services.ConfigurePages();
+    }
+
+    protected override void OnExit(ExitEventArgs e)
+    {
+        if (_serviceProvider is IDisposable disposable)
+        {
+            disposable.Dispose();
+        }
+
+        base.OnExit(e);
     }
 
     private static void InitGlobalContext()
@@ -67,5 +121,3 @@ public partial class App : Application
         throw e.Exception;
     }
 }
-
-

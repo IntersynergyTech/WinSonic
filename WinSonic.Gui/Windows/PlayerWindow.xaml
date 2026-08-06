@@ -8,8 +8,9 @@
         xmlns:components="clr-namespace:WinSonic.Gui.Components"
         xmlns:pages="clr-namespace:WinSonic.Gui.Pages"
         xmlns:loc="clr-namespace:WinSonic.Resources.Localisation;assembly=WinSonic.Resources"
+        xmlns:models="clr-namespace:WinSonic.Core.Models;assembly=WinSonic.Core"
         mc:Ignorable="d"
-        
+        d:DataContext="{d:DesignInstance Type=local:PlayerWindow, IsDesignTimeCreatable=True}"
         Loaded="PlayerWindow_OnLoaded"
         Title="Player" Height="600" Width="900">
     <Grid>
@@ -17,13 +18,18 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <ui:NavigationView Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <ui:NavigationView Navigated="MainNavigationView_OnNavigated" PaneDisplayMode="Left" IsBackButtonVisible="Collapsed" Navigating="MainNavigationView_OnNavigating" SelectionChanged="MainNavigationView_OnSelectionChanged" MenuItemsSource="{Binding SidebarPlaylists}" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" x:Name="MainNavigationView">
             <ui:NavigationView.Header>
-                <ui:TitleBar VerticalAlignment="Top"><ui:TitleBar.Header><TextBlock>WinSonic</TextBlock></ui:TitleBar.Header></ui:TitleBar>
+                <ui:TitleBar VerticalAlignment="Top" HorizontalAlignment="Stretch" Background="{ui:ThemeResource SubtleFillColorTertiaryBrush}">
+                    <ui:TitleBar.Header>
+                        <Grid HorizontalAlignment="Stretch">
+                        <ui:TextBlock FontTypography="Body" VerticalAlignment="Center" Margin="12,8">WinSonic</ui:TextBlock>
+                            
+                        </Grid>
+                    </ui:TitleBar.Header>
+                </ui:TitleBar>
             </ui:NavigationView.Header>
-            <ui:NavigationView.MenuItems>
-                <ui:NavigationViewItem Content="Test Wee" Icon="{ui:SymbolIcon Home32}" TargetPageType="{x:Type pages:TestPage}"></ui:NavigationViewItem>
-            </ui:NavigationView.MenuItems>
+            
             
             <ui:NavigationView.FooterMenuItems>
                 <ui:NavigationViewItem Content="{x:Static loc:Strings._Settings}" Icon="{ui:SymbolIcon Settings32}" TargetPageType="pages:SettingsPage"></ui:NavigationViewItem>

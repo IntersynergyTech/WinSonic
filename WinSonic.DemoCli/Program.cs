@@ -5,6 +5,7 @@ using WinSonic.Core.Models;
 using WinSonic.Playback;
 using WinSonic.Player;
 using WinSonic.Player.ReplayGain;
+using WinSonic.Service.Playlist;
 using WinSonic.Subsonic.Helpers;
 using Timer = System.Timers.Timer;
 
@@ -93,7 +94,7 @@ internal class Program
 
         var fullPlaylist = fullPlaylistResponse.SubsonicResponse.GetGetPlaylistSuccessResponse().Playlist;
 
-        var playlistObject = fullPlaylist.ToPlaylist();
+        var playlistObject = fullPlaylist.ApiToPlaylistFull();
 
         _playQueue = new PlayQueue();
 

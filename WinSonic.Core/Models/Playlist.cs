@@ -8,12 +8,11 @@ public class PlaylistInfo
     public TimeSpan Duration { get; }
     public DateTime Created { get; }
     public DateTime Changed { get; }
-    public string Comment { get; }
-    public string Owner { get; }
+    public string? Comment { get; }
+    public string? Owner { get; }
     public bool IsPublic { get; }
-    public string CoverArtId { get; }
+    public string? CoverArtId { get; }
     public bool IsReadOnly { get; }
-    public DateTime CacheExpiry { get; }
 
     public PlaylistInfo(
         string id,
@@ -22,12 +21,11 @@ public class PlaylistInfo
         TimeSpan duration,
         DateTime created,
         DateTime changed,
-        string comment,
-        string owner,
+        string? comment,
+        string? owner,
         bool isPublic,
-        string coverArtId,
-        bool isReadOnly,
-        DateTime cacheExpiry
+        string? coverArtId,
+        bool isReadOnly
     )
     {
         Id = id;
@@ -41,7 +39,6 @@ public class PlaylistInfo
         IsPublic = isPublic;
         CoverArtId = coverArtId;
         IsReadOnly = isReadOnly;
-        CacheExpiry = cacheExpiry;
     }
 }
 
@@ -54,12 +51,11 @@ public class PlaylistFull : PlaylistInfo
         TimeSpan duration,
         DateTime created,
         DateTime changed,
-        string comment,
-        string owner,
+        string? comment,
+        string? owner,
         bool isPublic,
-        string coverArtId,
+        string? coverArtId,
         bool isReadOnly,
-        DateTime cacheExpiry,
         List<Song> entries
     ) : base(
         id,
@@ -72,12 +68,13 @@ public class PlaylistFull : PlaylistInfo
         owner,
         isPublic,
         coverArtId,
-        isReadOnly,
-        cacheExpiry
+        isReadOnly
     )
     {
         Entries = entries;
     }
+    
+    
 
-    public List<Song> Entries { get; }
+    public List<Song> Entries { get; set; }
 }

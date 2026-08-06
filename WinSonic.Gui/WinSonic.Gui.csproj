@@ -9,8 +9,14 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.10" />
+      <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.10" />
+      <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.10" />
       <PackageReference Include="PropertyChanged.Fody" Version="4.1.0" />
       <PackageReference Include="WPF-UI" Version="4.3.0" />
+      <PackageReference Include="WPF-UI.Abstractions" Version="4.3.0" />
+      <PackageReference Include="WPF-UI.DependencyInjection" Version="4.3.0" />
     </ItemGroup>
 
     <ItemGroup>
@@ -20,9 +26,11 @@
       <ProjectReference Include="..\WinSonic.Playback\WinSonic.Playback.csproj" />
       <ProjectReference Include="..\WinSonic.Player\WinSonic.Player.csproj" />
       <ProjectReference Include="..\WinSonic.Resources\WinSonic.Resources.csproj" />
+      <ProjectReference Include="..\WinSonic.Service\WinSonic.Service.csproj" />
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Pages\NavigationStubs\" />
       <Folder Include="Utils\" />
     </ItemGroup>
 

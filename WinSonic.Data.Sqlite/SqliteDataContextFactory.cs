@@ -1,8 +1,9 @@
+using Microsoft.EntityFrameworkCore;
 using WinSonic.Core;
 
 namespace WinSonic.Data.Sqlite;
 
-public class SqliteDataContextFactory
+public class SqliteDataContextFactory : IDbContextFactory<BaseDataContext>
 {
     private readonly StorageManager _storageManager;
     private readonly string _dbFileName;
@@ -29,5 +30,10 @@ public class SqliteDataContextFactory
         }
 
         return context;
+    }
+
+    public BaseDataContext CreateDbContext()
+    {
+        return Create();
     }
 }

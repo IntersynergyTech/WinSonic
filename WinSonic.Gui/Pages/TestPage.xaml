@@ -7,7 +7,7 @@
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
       xmlns:loc="clr-namespace:WinSonic.Resources.Localisation;assembly=WinSonic.Resources"
       mc:Ignorable="d"
-      Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+      Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}"
       Title="TestPage" d:DataContext="{d:DesignInstance Type=local:TestPage, IsDesignTimeCreatable=True}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Loaded="TestPage_OnLoaded">
     <StackPanel>
         <ui:TextBlock Text="TestPage" FontTypography="Title" ></ui:TextBlock>

@@ -2,8 +2,10 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.EntityFrameworkCore;
+using WinSonic.Core;
 using WinSonic.Core.Models;
 using WinSonic.Data.Sync.Mappers;
+using WinSonic.Service.Playlist;
 using WinSonic.Subsonic.Helpers;
 
 namespace WinSonic.Gui.Pages;
@@ -31,7 +33,7 @@ public partial class TestPage : Page
 
         foreach (var playlist in playlists)
         {
-            Playlists.Add(playlist.ToPlaylist());
+            Playlists.Add(PlaylistMappers.ApiToPlaylistInfo(playlist));
         }
     }
 
@@ -42,7 +44,7 @@ public partial class TestPage : Page
         if (selectedPlaylist == null) return;
 
         var fullPlaylistResponse = GlobalContext.Subsonic.Playlists.GetPlaylist(selectedPlaylist.Id);
-        var fullPlayList = fullPlaylistResponse.SubsonicResponse.GetGetPlaylistSuccessResponse().Playlist.ToPlaylist();
+        var fullPlayList = fullPlaylistResponse.SubsonicResponse.GetGetPlaylistSuccessResponse().Playlist.ApiToPlaylistFull();
         Songs.Clear();
 
         foreach (var song in fullPlayList.Entries)
