@@ -1,7 +1,4 @@
-﻿using System.Configuration;
-using System.Data;
-using System.Windows;
-using System.Windows.Navigation;
+﻿using System.Windows;
 using System.Windows.Threading;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -9,6 +6,7 @@ using WinSonic.Core;
 using WinSonic.Data;
 using WinSonic.Data.Sqlite;
 using WinSonic.Data.Sync;
+using WinSonic.Gui.Common;
 using WinSonic.Gui.Pages;
 using WinSonic.Gui.Windows;
 using WinSonic.Playback;
@@ -49,10 +47,7 @@ public partial class App : Application
 
     private void ConfigureServices(IServiceCollection services)
     {
-        // Basics
-        services.AddDbContextFactory<BaseDataContext, SqliteDataContextFactory>();
-        services.AddDbContext<BaseDataContext, SqliteDataContext>();
-        services.AddLogging(builder => builder.AddDebug().SetMinimumLevel(LogLevel.Trace));
+        services.AddCommonGuiServices();
 
         // UI Stuff
         services.AddSingleton<INavigationService, NavigationService>();

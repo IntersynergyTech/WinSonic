@@ -1,0 +1,47 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewModels="clr-namespace:WinSonic.Gui.Common.ViewModels;assembly=WinSonic.Gui.Common"
+        xmlns:components="clr-namespace:WinSonic.Gui.Common.Components;assembly=WinSonic.Gui.Common"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="WinSonic.Gui.Xplat.Views.PlayerWindow"
+        x:DataType="viewModels:PlayerWindowViewModel"
+        Title="PlayerWindow">
+    <Design.DataContext>
+        <viewModels:PlayerWindowViewModel />
+    </Design.DataContext>
+    <SplitView IsPaneOpen="True"
+               OpenPaneLength="300"
+               DisplayMode="CompactInline"
+               CompactPaneLength="50">
+        <SplitView.Pane>
+            <ItemsControl ItemsSource="{Binding NavigationMenuItems}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="components:NavigationMenuItemModel">
+                        <Button Content="{Binding Name}"
+                                Command="{Binding Command}"
+                                CommandParameter="{Binding}" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+                
+            </ItemsControl>
+        </SplitView.Pane>
+        <SplitView.Content>
+            <Grid HorizontalAlignment="Stretch"
+                  VerticalAlignment="Stretch">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="60" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <StackPanel Grid.Row="0" VerticalAlignment="Stretch">
+                    <TextBlock Text="Player Window" />
+                    <Button Command="{Binding LoadedCommand}">Load</Button>
+                </StackPanel>
+                <TransitioningContentControl VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Row="1" Content="{Binding CurrentViewModel}" />
+            </Grid>
+            
+        </SplitView.Content>
+        
+    </SplitView>
+</Window>

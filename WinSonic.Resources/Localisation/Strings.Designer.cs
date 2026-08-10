@@ -123,6 +123,15 @@ namespace WinSonic.Resources.Localisation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Home.
+        /// </summary>
+        public static string _Home {
+            get {
+                return ResourceManager.GetString("_Home", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Let&apos;s get started!.
         /// </summary>
         public static string _LandingGetStarted {
@@ -245,6 +254,15 @@ namespace WinSonic.Resources.Localisation {
         public static string _SyncServerTitle {
             get {
                 return ResourceManager.GetString("_SyncServerTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Test Page.
+        /// </summary>
+        public static string _TestPage {
+            get {
+                return ResourceManager.GetString("_TestPage", resourceCulture);
             }
         }
         

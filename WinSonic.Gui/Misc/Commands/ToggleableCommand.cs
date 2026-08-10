@@ -1,5 +1,4 @@
 using System.Windows.Input;
-using System.Windows.Threading;
 
 namespace WinSonic.Gui.Misc.Commands;
 

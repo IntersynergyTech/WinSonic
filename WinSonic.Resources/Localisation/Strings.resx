@@ -96,4 +96,10 @@
     <data name="_Back" xml:space="preserve">
         <value>Back</value>
     </data>
+    <data name="_Home" xml:space="preserve">
+        <value>Home</value>
+    </data>
+    <data name="_TestPage" xml:space="preserve">
+        <value>Test Page</value>
+    </data>
 </root>

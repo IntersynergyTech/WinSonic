@@ -9,24 +9,26 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
-      <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.10" />
-      <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.10" />
-      <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.10" />
-      <PackageReference Include="PropertyChanged.Fody" Version="4.1.0" />
-      <PackageReference Include="WPF-UI" Version="4.3.0" />
-      <PackageReference Include="WPF-UI.Abstractions" Version="4.3.0" />
-      <PackageReference Include="WPF-UI.DependencyInjection" Version="4.3.0" />
+      <PackageReference Include="CommunityToolkit.Mvvm" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+      <PackageReference Include="Microsoft.Extensions.Logging" />
+      <PackageReference Include="Microsoft.Extensions.Logging.Debug" />
+      <PackageReference Include="PropertyChanged.Fody" />
+      <PackageReference Include="WPF-UI" />
+      <PackageReference Include="WPF-UI.Abstractions" />
+      <PackageReference Include="WPF-UI.DependencyInjection" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\WinSonic.Core\WinSonic.Core.csproj" />
       <ProjectReference Include="..\WinSonic.Data.Sqlite\WinSonic.Data.Sqlite.csproj" />
       <ProjectReference Include="..\WinSonic.Data.Sync\WinSonic.Data.Sync.csproj" />
+      <ProjectReference Include="..\WinSonic.Gui.Common\WinSonic.Gui.Common.csproj" />
       <ProjectReference Include="..\WinSonic.Playback\WinSonic.Playback.csproj" />
       <ProjectReference Include="..\WinSonic.Player\WinSonic.Player.csproj" />
       <ProjectReference Include="..\WinSonic.Resources\WinSonic.Resources.csproj" />
       <ProjectReference Include="..\WinSonic.Service\WinSonic.Service.csproj" />
+      <ProjectReference Include="..\WinSonic.Subsonic.Helpers\WinSonic.Subsonic.Helpers.csproj" />
     </ItemGroup>
 
     <ItemGroup>

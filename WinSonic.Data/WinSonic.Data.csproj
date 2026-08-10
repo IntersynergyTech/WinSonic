@@ -7,9 +7,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.10" />
-      <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="10.0.10" />
-      <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Relational"/>
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies"/>
+      <PackageReference Include="System.ComponentModel.Annotations"/>
     </ItemGroup>
 
 

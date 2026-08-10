@@ -6,7 +6,6 @@ using WinSonic.Core;
 using WinSonic.Core.Models;
 using WinSonic.Data.Sync.Mappers;
 using WinSonic.Service.Playlist;
-using WinSonic.Subsonic.Helpers;
 
 namespace WinSonic.Gui.Pages;
 
