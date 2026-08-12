@@ -7,7 +7,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using WinSonic.Core.Enums;
 using WinSonic.Core.Models;
-using WinSonic.Gui.Misc;
+using WinSonic.Gui.Common.Utility;
 using WinSonic.Gui.Misc.Commands;
 using Timer = System.Timers.Timer;
 

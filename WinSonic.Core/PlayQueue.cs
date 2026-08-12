@@ -51,7 +51,7 @@ public class PlayQueue
         }
     }
 
-    public void ResetAndEnqueueFromSource(List<Song> source, bool shuffle)
+    public void ResetAndEnqueueFromSource(ICollection<Song> source, bool shuffle)
     {
         UpcomingFromSource.Clear();
         if (shuffle)

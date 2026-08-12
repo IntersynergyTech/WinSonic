@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using WinSonic.Gui.Common.Components;
 using WinSonic.Gui.Common.GuiServices;
 using WinSonic.Gui.Common.ViewModels.BrowsePages;
+using WinSonic.Gui.Common.ViewModels.Components;
 using WinSonic.Gui.Common.ViewModels.DetailPages;
 using WinSonic.Resources.Localisation;
 using WinSonic.Service.Playlist;
@@ -13,20 +14,37 @@ namespace WinSonic.Gui.Common.ViewModels;
 
 public partial class PlayerWindowViewModel : PageModelBase
 {
-    
-    NavigationMenuItemModel[] BaseNavigationMenuItems() => new NavigationMenuItemModel[]
-    {
-        new (GenericNavigateCommand, Strings._Home, NavigationMenuItemActionType.Home),
-        new (GenericNavigateCommand, Strings._TestPage, NavigationMenuItemActionType.None, typeof(TestViewModel)),
-        new (GenericNavigateCommand, Strings._Playlists, NavigationMenuItemActionType.None, typeof(PlaylistsViewModel)),
-        new (GenericNavigateCommand, Strings._Settings,  NavigationMenuItemActionType.Settings)
-    };
+    NavigationMenuItemModel[] BaseNavigationMenuItems() =>
+        new NavigationMenuItemModel[]
+        {
+            new (GenericNavigateCommand, Strings._Home, NavigationMenuItemActionType.Home),
+            new (
+                GenericNavigateCommand,
+                Strings._TestPage,
+                NavigationMenuItemActionType.None,
+                typeof(TestViewModel)
+            ),
+            new (
+                GenericNavigateCommand,
+                Strings._Playlists,
+                NavigationMenuItemActionType.None,
+                typeof(PlaylistsViewModel)
+            ),
+            new (GenericNavigateCommand, Strings._Settings, NavigationMenuItemActionType.Settings)
+        };
+
+    [ObservableProperty] public partial ViewModelBase CurrentViewModel { get; set; }
+
+    [ObservableProperty]
+    public partial ObservableCollection<NavigationMenuItemModel> NavigationMenuItems { get; set; } = new ();
+
+    [ObservableProperty] public partial PlaybackControlsViewModel PlaybackControls { get; set; }
 
     public PlayerWindowViewModel()
     {
         Init();
     }
-    
+
     public PlayerWindowViewModel(IPlaylistService playlistService)
     {
         Init();
@@ -34,23 +52,12 @@ public partial class PlayerWindowViewModel : PageModelBase
 
     private void Init()
     {
-        NavigationMenuItems = new ObservableCollection<NavigationMenuItemModel>(BaseNavigationMenuItems());
         NavigationService.RegisterNavigationHandler(
             this,
-            async (message) =>
-            {
-                CurrentViewModel = message.DestinationViewModel;
-            }
+            async (message) => { CurrentViewModel = message.DestinationViewModel; }
         );
     }
 
-    [ObservableProperty]
-    public partial ViewModelBase CurrentViewModel { get; set; }
-    
-    [ObservableProperty]
-    
-    public partial ObservableCollection<NavigationMenuItemModel> NavigationMenuItems { get; set; } = new ();
-    
     [RelayCommand]
     public async Task GenericNavigate(NavigationMenuItemModel menuItem)
     {
@@ -64,6 +71,7 @@ public partial class PlayerWindowViewModel : PageModelBase
             try
             {
                 var viewModel = DependencyService.Services.GetService(menuItem.ModelType!) as ViewModelBase;
+
                 if (viewModel != null)
                 {
                     CurrentViewModel = viewModel;
@@ -74,13 +82,13 @@ public partial class PlayerWindowViewModel : PageModelBase
                 Console.WriteLine(ex);
                 throw;
             }
-            
         }
     }
 
     public async Task NavigatePlaylist(NavigationMenuItemModel menuItem)
     {
         var viewModel = DependencyService.Services.GetService<SinglePlaylistViewModel>();
+
         if (viewModel != null)
         {
             CurrentViewModel = viewModel;
@@ -100,8 +108,6 @@ public partial class PlayerWindowViewModel : PageModelBase
     public override void OnLoaded()
     {
         NavigationMenuItems = new ObservableCollection<NavigationMenuItemModel>(BaseNavigationMenuItems());
+        PlaybackControls = DependencyService.Services.GetService<PlaybackControlsViewModel>();
     }
-    
-    
-    
 }

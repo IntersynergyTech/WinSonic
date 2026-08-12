@@ -56,11 +56,21 @@ public class SongFetcher
 
     private Stream StreamSong(Song song)
     {
-        var downloadStream = _api.MediaRetrieval.Stream(song.Id, format: DOWNLOAD_FORMAT);
-        var memoryStream = new MemoryStream();
-        downloadStream.CopyToAsync(memoryStream);
-        memoryStream.Position = 0;
-        return memoryStream;
+        var download = _api.MediaRetrieval.StreamWithHttpInfo(song.Id, format: DOWNLOAD_FORMAT);
+
+        try
+        {
+            var downloadStream = download.Data;
+            var memoryStream = new MemoryStream();
+            downloadStream.CopyToAsync(memoryStream);
+            memoryStream.Position = 0;
+            return memoryStream;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"[{song.Id}] Error streaming song: {ex.Message}");
+            throw;
+        }
     }
 
     private void DownloadSong(Song song)

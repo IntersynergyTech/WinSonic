@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace WinSonic.Gui.Misc;
+namespace WinSonic.Gui.Common.Utility;
 
 public class CommandDebouncer
 {

@@ -16,24 +16,34 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid Grid.Row="0">
-            <StackPanel>
+            <StackPanel Margin="10">
                 <TextBlock Text="{Binding PlaylistInfo.Name}" FontSize="18" FontWeight="Bold" Margin="10" />
                 <TextBlock Text="{Binding PlaylistInfo.Owner}" Margin="10" />
                 <TextBlock Text="{Binding PlaylistInfo.SongCount}" Margin="10" />
                 <TextBlock Text="{Binding PlaylistInfo.Duration}" Margin="10" />
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                    <Button Content="▶️" Command="{Binding PlayPlaylistCommand}" CommandParameter="{x:False}"></Button>
+                    <Button Content="🔀" Command="{Binding PlayPlaylistCommand}" CommandParameter="{x:True}"></Button>
+                </StackPanel>
             </StackPanel>
         </Grid>
-        <ItemsControl Grid.Row="1" Margin="10" ItemsSource="{Binding Songs}">
-            <ItemsControl.ItemTemplate>
-                <DataTemplate DataType="models:Song">
-                    <StackPanel Orientation="Horizontal" Margin="5">
-                        <TextBlock Text="{Binding Title}" Width="200" />
-                        <TextBlock Text="{Binding Artist}" Width="150" />
-                        <TextBlock Text="{Binding Album}" Width="150" />
-                        <TextBlock Text="{Binding Duration}" Width="100" />
-                    </StackPanel>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
+        <ScrollViewer Grid.Row="1" Margin="10">
+            <ItemsRepeater ItemsSource="{Binding Songs}" VerticalAlignment="Stretch">
+                <ItemsRepeater.Layout>
+                    <StackLayout Spacing="4"></StackLayout>
+                </ItemsRepeater.Layout>
+                <ItemsRepeater.ItemTemplate>
+                    <DataTemplate DataType="models:Song">
+                        <StackPanel Orientation="Horizontal" Margin="5">
+                            <TextBlock Text="{Binding Title}" Width="200" />
+                            <TextBlock Text="{Binding Artist}" Width="150" />
+                            <TextBlock Text="{Binding Album}" Width="150" />
+                            <TextBlock Text="{Binding Duration}" Width="100" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsRepeater.ItemTemplate>
+            </ItemsRepeater>
+        </ScrollViewer>
+        
     </Grid>
 </ContentPage>

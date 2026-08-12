@@ -1,6 +1,8 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using WinSonic.Core.Models;
+using WinSonic.Playback;
 using WinSonic.Service.Playlist;
 
 namespace WinSonic.Gui.Common.ViewModels.DetailPages;
@@ -8,6 +10,7 @@ namespace WinSonic.Gui.Common.ViewModels.DetailPages;
 public partial class SinglePlaylistViewModel : PageModelBase
 {
     private readonly IPlaylistService _playlistService;
+    private readonly AutoPlaybackManager _autoPlaybackManager;
 
     public void SetPlaylist(PlaylistInfo playlistInfo)
     {
@@ -16,9 +19,10 @@ public partial class SinglePlaylistViewModel : PageModelBase
         Console.WriteLine($"Loading playlist: {playlistInfo.Name}");
     }
 
-    public SinglePlaylistViewModel(IPlaylistService playlistService)
+    public SinglePlaylistViewModel(IPlaylistService playlistService, AutoPlaybackManager autoPlaybackManager)
     {
         _playlistService = playlistService;
+        _autoPlaybackManager = autoPlaybackManager;
     }
 
     public override void OnLoaded()
@@ -37,4 +41,15 @@ public partial class SinglePlaylistViewModel : PageModelBase
 
     [ObservableProperty] public partial PlaylistInfo PlaylistInfo { get; set; }
     [ObservableProperty] public partial ObservableCollection<Song> Songs { get; set; } = new ();
+    
+    [RelayCommand]
+    public void PlayPlaylist(bool shuffle = false)
+    {
+        if (PlaylistInfo == null) return;
+
+        Console.WriteLine($"Playing playlist: {PlaylistInfo.Name}, Shuffle: {shuffle}");
+        
+        _autoPlaybackManager.Queue.ResetAndEnqueueFromSource(Songs, shuffle);
+        _autoPlaybackManager.StartPlayback();
+    }
 }

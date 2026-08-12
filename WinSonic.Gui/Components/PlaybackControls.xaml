@@ -33,7 +33,7 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <!-- Now playing left section -->
-            <Grid Grid.Column="0" Background="#502f4d" Width="64" Height="64">
+            <Grid Grid.Column="0" Background="#44502f4d" Width="64" Height="64">
                 <!-- Album art -->
             </Grid>
             <StackPanel Grid.Column="1" Margin="12,6" VerticalAlignment="Center">
@@ -72,7 +72,7 @@
                 <ui:TextBlock FontTypography="Caption" Text="{Binding Duration, Converter={StaticResource Timecode}}" Grid.Column="2" HorizontalAlignment="Left"></ui:TextBlock>
             </Grid>
         </Grid>
-        <Grid Grid.Column="3" Background="#112">
+        <Grid Grid.Column="3" Background="#44111122">
             <!-- right controls volume etc -->
         </Grid>
     

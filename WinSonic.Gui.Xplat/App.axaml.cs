@@ -19,7 +19,7 @@ public partial class App : Application
         this.AttachDeveloperTools();
 #endif
     }
-    
+
     public override void OnFrameworkInitializationCompleted()
     {
         // Register all the services needed for the application to run
@@ -28,22 +28,20 @@ public partial class App : Application
 
         // Creates a ServiceProvider containing services from the provided IServiceCollection
         var services = collection.BuildServiceProvider();
+
+        services.InitialiseServices();
+
         DependencyService.Services = services;
 
         var vm = services.GetRequiredService<PlayerWindowViewModel>();
+
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            desktop.MainWindow = new PlayerWindow
-            {
-                DataContext = vm
-            };
+            desktop.MainWindow = new PlayerWindow { DataContext = vm };
         }
         else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
         {
-            singleViewPlatform.MainView = new PlayerWindow
-            {
-                DataContext = vm
-            };
+            singleViewPlatform.MainView = new PlayerWindow { DataContext = vm };
         }
 
         base.OnFrameworkInitializationCompleted();

@@ -7,14 +7,17 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="WinSonic.Gui.Xplat.Views.PlayerWindow"
         x:DataType="viewModels:PlayerWindowViewModel"
+        Loaded="Control_OnLoaded"
         Title="PlayerWindow">
     <Design.DataContext>
         <viewModels:PlayerWindowViewModel />
     </Design.DataContext>
-    <SplitView IsPaneOpen="True"
-               OpenPaneLength="300"
-               DisplayMode="CompactInline"
-               CompactPaneLength="50">
+    <Grid RowDefinitions="*, 96">
+        <ContentControl Grid.Row="1" Content="{Binding PlaybackControls}"></ContentControl>
+        <SplitView Grid.Row="0" IsPaneOpen="True"
+                   OpenPaneLength="300"
+                   DisplayMode="CompactInline"
+                   CompactPaneLength="50">
         <SplitView.Pane>
             <ItemsControl ItemsSource="{Binding NavigationMenuItems}">
                 <ItemsControl.ItemTemplate>
@@ -44,4 +47,5 @@
         </SplitView.Content>
         
     </SplitView>
+    </Grid>
 </Window>
