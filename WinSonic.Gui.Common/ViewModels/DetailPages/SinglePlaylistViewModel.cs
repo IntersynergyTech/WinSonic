@@ -30,7 +30,6 @@ public partial class SinglePlaylistViewModel : PageModelBase
         Console.WriteLine("SinglePlaylistViewModel OnLoadCommand called");
         Task.Run(async () =>
         {
-            await Task.Delay(1000); // Simulate delay
             if (PlaylistInfo != null)
             {
                 var fullPlaylist = await _playlistService.GetPlaylistByIdAsync(PlaylistInfo.Id);

@@ -40,7 +40,6 @@ public partial class ArtistsViewModel : PageModelBase
     {
         Task.Run(async () =>
             {
-                await Task.Delay(1000);
                 var artists = await _artistService.GetArtistsAsync();
                 Artists = new ObservableCollection<Artist>(artists.OrderBy(a => a.SortName));
             }

@@ -1,5 +1,6 @@
 using WinSonic.Data.DbModels;
 using WinSonic.Data.Enums;
+using WinSonic.Data.Utilities;
 using Child = WinSonic.Subsonic.Client.Model.Child;
 
 namespace WinSonic.Data.Sync.Mappers;
@@ -37,7 +38,7 @@ public static class SongMapper
             RgTrackPeak = source.ReplayGain.TrackPeak
         };
 
-        song.AddDefaultCacheables();
+        song.AddDefaultCacheables(SyncManager.DefaultCacheExpiryMins);
 
         if (source.Year != 0)
         {
@@ -64,7 +65,7 @@ public static class SongMapper
 
         if (!string.IsNullOrEmpty(source.CoverArt))
         {
-            var coverArt = new CoverArt(source.CoverArt).AddDefaultCacheables();
+            var coverArt = new CoverArt(source.CoverArt).AddDefaultCacheables(SyncManager.DefaultCacheExpiryMins);
             song.CoverArt = coverArt;
         }
 

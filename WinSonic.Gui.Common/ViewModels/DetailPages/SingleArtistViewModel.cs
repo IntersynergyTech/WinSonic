@@ -36,8 +36,6 @@ public partial class SingleArtistViewModel : PageModelBase
     {
         Task.Run(async () =>
         {
-            await Task.Delay(1000);
-
             if (ArtistInfo == null)
             {
                 return;

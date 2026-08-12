@@ -39,7 +39,6 @@ public partial class PlaylistsViewModel : PageModelBase
     {
         Task.Run(async () =>
             {
-                await Task.Delay(1000); // Simulate a delay for loading data
                 var playlists = await _playlistService.GetPlaylistsAsync();
                 Playlists = new ObservableCollection<PlaylistInfo>(playlists);
             }

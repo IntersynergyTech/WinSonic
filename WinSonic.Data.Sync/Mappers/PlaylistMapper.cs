@@ -1,4 +1,5 @@
 using WinSonic.Data.DbModels;
+using WinSonic.Data.Utilities;
 using WinSonic.Subsonic.Client.Model;
 using Playlist = WinSonic.Data.DbModels.Playlist;
 
@@ -20,7 +21,7 @@ public static class PlaylistMapper
             UpdatedAt = source.Changed
         };
 
-        playlist.AddDefaultCacheables();
+        playlist.AddDefaultCacheables(SyncManager.DefaultCacheExpiryMins);
         
         var songs = source.Entry.Select(x => GetSongForId(x.Id)).ToList();
 

@@ -40,12 +40,12 @@ public class StorageManager
 
     public FileStream OpenSongFile(string fileName)
     {
-        return OpenFileInFolder(GetSongsFolder(), fileName);
+        return OpenFileInFolder(GetSongsFolder(), fileName, false);
     }
 
     public FileStream OpenArtworkFile(string fileName)
     {
-        return OpenFileInFolder(GetArtworkFolder(), fileName);
+        return OpenFileInFolder(GetArtworkFolder(), fileName, false);
     }
 
     private void SaveFile(
@@ -54,7 +54,7 @@ public class StorageManager
         Stream stream
     )
     {
-        var fileStream = OpenFileInFolder(folder, fileName);
+        var fileStream = OpenFileInFolder(folder, fileName, true);
         stream.CopyTo(fileStream);
         fileStream.SetLength(fileStream.Position); // Truncate if the new content is smaller than the old content
         fileStream.Close();
@@ -76,10 +76,10 @@ public class StorageManager
         SaveFile(fileName, GetArtworkFolder(), stream);
     }
 
-    private FileStream OpenFileInFolder(string folderPath, string fileName)
+    private FileStream OpenFileInFolder(string folderPath, string fileName, bool writable)
     {
         var filePath = Path.Combine(folderPath, fileName);
-        return new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+        return new FileStream(filePath, writable ? FileMode.OpenOrCreate : FileMode.Open, writable ? FileAccess.ReadWrite : FileAccess.Read);
     }
 
     private FileInfo GetFileInfo(string fileName, string folder)

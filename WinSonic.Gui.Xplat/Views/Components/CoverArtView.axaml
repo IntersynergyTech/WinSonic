@@ -1,0 +1,22 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:WinSonic.Gui.Common.ViewModels.Components;assembly=WinSonic.Gui.Common"
+             xmlns:local="clr-namespace:WinSonic.Gui.Xplat.Views.Components"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="vm:CoverArtViewModel"
+             x:Class="WinSonic.Gui.Xplat.Views.Components.CoverArtView" Loaded="Control_OnLoaded">
+    <UserControl.Resources>
+        <local:CoverArtImageConverter x:Key="CoverArtImageConverter" />
+    </UserControl.Resources>
+    <Grid>
+        <Image Source="avares://WinSonic.Resources/Assets/cd.png"></Image>
+        <Grid>
+            <Image Source="{Binding CoverArtSourceData}"></Image>
+            <TextBlock Text="{Binding CoverArtId}" Background="#AAFFFFFF" Margin="2" TextWrapping="Wrap" FontSize="8" VerticalAlignment="Top" Foreground="#000" FontWeight="Bold"/>
+        </Grid>
+    </Grid>
+    
+    
+</UserControl>

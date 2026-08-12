@@ -31,8 +31,6 @@ public partial class SingleAlbumViewModel : PageModelBase
     {
         Task.Run(async () =>
         {
-            await Task.Delay(1000);
-
             if (AlbumInfo == null)
             {
                 return;

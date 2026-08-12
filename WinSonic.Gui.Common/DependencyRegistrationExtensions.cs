@@ -12,6 +12,7 @@ using WinSonic.Playback;
 using WinSonic.Player;
 using WinSonic.Service.Album;
 using WinSonic.Service.Artist;
+using WinSonic.Service.Artwork;
 using WinSonic.Service.Playlist;
 using WinSonic.Subsonic.Helpers;
 
@@ -57,6 +58,7 @@ public static class DependencyRegistrationExtensions
         
         // Components
         services.AddScoped<PlaybackControlsViewModel>();
+        services.AddScoped<CoverArtViewModel>();
         
         return services;
     }
@@ -72,6 +74,10 @@ public static class DependencyRegistrationExtensions
         services.AddScoped<IAlbumService, CachedAlbumService>();
         services.AddScoped<IArtistService, CachedArtistService>();
         services.AddScoped<IPlaylistService, CachedPlaylistService>();
+        services.AddScoped<IArtworkService, CachedArtworkService>();
+        
+        // Extra data services
+        services.AddScoped<LiveArtworkService>();
         
         //Playback services
         services.AddSingleton<PlayQueue>();

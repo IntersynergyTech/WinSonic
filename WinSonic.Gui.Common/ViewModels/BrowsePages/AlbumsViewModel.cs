@@ -40,7 +40,6 @@ public partial class AlbumsViewModel : PageModelBase
     {
         Task.Run(async () =>
             {
-                await Task.Delay(1000);
                 var albums = await _albumService.GetAlbumsAsync();
                 Albums = new ObservableCollection<AlbumInfo>(albums.OrderBy(a => a.SortTitle ?? a.Title));
             }

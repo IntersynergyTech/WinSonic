@@ -1,4 +1,5 @@
 using WinSonic.Data.DbModels;
+using WinSonic.Data.Utilities;
 using WinSonic.Subsonic.Client.Model;
 using Artist = WinSonic.Data.DbModels.Artist;
 
@@ -9,7 +10,7 @@ public static class AlbumMapper
     public static Album CreateDbAlbum(
         this AlbumID3 source,
         Artist existingArtist,
-        Dictionary<string,Artist> existingArtists
+        Dictionary<string, Artist> existingArtists
     )
     {
         var album = new Album
@@ -30,16 +31,21 @@ public static class AlbumMapper
             Rating = source.UserRating
         };
 
-        album.AddDefaultCacheables();
+        album.AddDefaultCacheables(SyncManager.DefaultCacheExpiryMins);
 
         if (!string.IsNullOrEmpty(source.CoverArt))
         {
-            var coverArt = new CoverArt(source.CoverArt).AddDefaultCacheables();
+            var coverArt = new CoverArt(source.CoverArt).AddDefaultCacheables(SyncManager.DefaultCacheExpiryMins);
             album.CoverArt = coverArt;
         }
 
         var media = source.DiscTitles
-            .Select(x => new AlbumMedia { Name = x.Title, CoverArt = new CoverArt(x.CoverArt).AddDefaultCacheables() })
+            .Select(x => new AlbumMedia
+                {
+                    Name = x.Title,
+                    CoverArt = new CoverArt(x.CoverArt).AddDefaultCacheables(SyncManager.DefaultCacheExpiryMins)
+                }
+            )
             .ToList();
 
         album.Media = media;
