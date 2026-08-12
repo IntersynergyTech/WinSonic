@@ -26,9 +26,21 @@ public partial class PlayerWindowViewModel : PageModelBase
             ),
             new (
                 GenericNavigateCommand,
+                Strings._Albums,
+                NavigationMenuItemActionType.None,
+                typeof(AlbumsViewModel)
+            ),
+            new (
+                GenericNavigateCommand,
                 Strings._Playlists,
                 NavigationMenuItemActionType.None,
                 typeof(PlaylistsViewModel)
+            ),
+            new (
+                GenericNavigateCommand,
+                Strings._Artists,
+                NavigationMenuItemActionType.None,
+                typeof(ArtistsViewModel)
             ),
             new (GenericNavigateCommand, Strings._Settings, NavigationMenuItemActionType.Settings)
         };

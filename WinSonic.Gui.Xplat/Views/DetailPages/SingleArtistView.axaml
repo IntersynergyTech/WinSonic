@@ -1,0 +1,65 @@
+<ContentPage xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:WinSonic.Gui.Common.ViewModels.DetailPages;assembly=WinSonic.Gui.Common"
+             xmlns:localisation="clr-namespace:WinSonic.Resources.Localisation;assembly=WinSonic.Resources"
+             xmlns:models="clr-namespace:WinSonic.Core.Models;assembly=WinSonic.Core"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="vm:SingleArtistViewModel"
+             x:Class="WinSonic.Gui.Xplat.Views.DetailPages.SingleArtistView" Loaded="Control_OnLoaded">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Margin="10" Grid.Row="0" Background="#33000080">
+            <TextBlock Text="{Binding ArtistInfo.Name}" FontSize="18" FontWeight="Bold" Margin="10" />
+            <StackPanel Orientation="Horizontal" Margin="10" Spacing="6">
+                <TextBlock Text="{x:Static localisation:Strings._Albums}" />
+                <TextBlock Text="{Binding Albums.Count}" />
+                <TextBlock Text="Songs" Margin="12,0,0,0" />
+                <TextBlock Text="{Binding Songs.Count}" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Spacing="6" Margin="10,0,10,10">
+                <Button Content="▶️" Command="{Binding PlayArtistCommand}" CommandParameter="{x:False}"></Button>
+                <Button Content="🔀" Command="{Binding PlayArtistCommand}" CommandParameter="{x:True}"></Button>
+            </StackPanel>
+        </StackPanel>
+
+        <StackPanel Grid.Row="1" Margin="10" Background="#33800000">
+            <TextBlock Text="{x:Static localisation:Strings._Albums}" FontWeight="Bold" Margin="0,0,0,6" />
+            <Button Command="{Binding NavigateToAlbumDetailCommand}" Content="Load"></Button>
+            <ListBox ItemsSource="{Binding Albums}" SelectedItem="{Binding SelectedAlbum}" MaxHeight="220">
+                <ListBox.ItemTemplate>
+                    <DataTemplate DataType="models:AlbumInfo">
+                        <StackPanel Orientation="Horizontal" Margin="5" Spacing="8">
+                            <TextBlock Text="{Binding Title}" Width="220" />
+                            <TextBlock Text="{Binding SongCount}" Width="50" />
+                            <TextBlock Text="{Binding Duration}" Width="120" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </StackPanel>
+
+        <ScrollViewer Grid.Row="2" Margin="10">
+            <ItemsRepeater ItemsSource="{Binding Songs}" Background="#33008000" VerticalAlignment="Stretch">
+                <ItemsRepeater.Layout>
+                    <StackLayout Spacing="4"></StackLayout>
+                </ItemsRepeater.Layout>
+                <ItemsRepeater.ItemTemplate>
+                    <DataTemplate DataType="models:Song">
+                        <StackPanel Orientation="Horizontal" Margin="5">
+                            <TextBlock Text="{Binding Title}" Width="220" />
+                            <TextBlock Text="{Binding Album}" Width="220" />
+                            <TextBlock Text="{Binding Duration}" Width="120" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsRepeater.ItemTemplate>
+            </ItemsRepeater>
+        </ScrollViewer>
+    </Grid>
+</ContentPage>

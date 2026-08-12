@@ -1,0 +1,44 @@
+<ContentPage xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:WinSonic.Gui.Common.ViewModels.DetailPages;assembly=WinSonic.Gui.Common"
+             xmlns:models="clr-namespace:WinSonic.Core.Models;assembly=WinSonic.Core"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="vm:SingleAlbumViewModel"
+             x:Class="WinSonic.Gui.Xplat.Views.DetailPages.SingleAlbumView" Loaded="Control_OnLoaded">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <StackPanel Margin="10">
+                <TextBlock Text="{Binding AlbumInfo.Title}" FontSize="18" FontWeight="Bold" Margin="10" />
+                <TextBlock Text="{Binding AlbumInfo.Artist}" Margin="10" />
+                <TextBlock Text="{Binding AlbumInfo.SongCount}" Margin="10" />
+                <TextBlock Text="{Binding AlbumInfo.Duration}" Margin="10" />
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                    <Button Content="▶️" Command="{Binding PlayAlbumCommand}" CommandParameter="{x:False}"></Button>
+                    <Button Content="🔀" Command="{Binding PlayAlbumCommand}" CommandParameter="{x:True}"></Button>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+        <ScrollViewer Grid.Row="1" Margin="10">
+            <ItemsRepeater ItemsSource="{Binding Songs}" VerticalAlignment="Stretch">
+                <ItemsRepeater.Layout>
+                    <StackLayout Spacing="4"></StackLayout>
+                </ItemsRepeater.Layout>
+                <ItemsRepeater.ItemTemplate>
+                    <DataTemplate DataType="models:Song">
+                        <StackPanel Orientation="Horizontal" Margin="5">
+                            <TextBlock Text="{Binding Title}" Width="220" />
+                            <TextBlock Text="{Binding Artist}" Width="180" />
+                            <TextBlock Text="{Binding Duration}" Width="120" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsRepeater.ItemTemplate>
+            </ItemsRepeater>
+        </ScrollViewer>
+    </Grid>
+</ContentPage>

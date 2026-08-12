@@ -11,6 +11,7 @@ using WinSonic.Gui.Pages;
 using WinSonic.Gui.Windows;
 using WinSonic.Playback;
 using WinSonic.Player;
+using WinSonic.Service.Artist;
 using WinSonic.Service.Playlist;
 using WinSonic.Subsonic.Helpers;
 using Wpf.Ui;
@@ -64,6 +65,7 @@ public partial class App : Application
         services.AddSingleton<SongFetcher>();
 
         //Data services
+        services.AddScoped<IArtistService, CachedArtistService>();
         services.AddScoped<IPlaylistService, CachedPlaylistService>();
 
         services.ConfigurePages();

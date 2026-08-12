@@ -1,0 +1,34 @@
+<ContentPage xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:WinSonic.Gui.Common.ViewModels.BrowsePages;assembly=WinSonic.Gui.Common"
+             xmlns:localisation="clr-namespace:WinSonic.Resources.Localisation;assembly=WinSonic.Resources"
+             xmlns:models="clr-namespace:WinSonic.Core.Models;assembly=WinSonic.Core"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="vm:AlbumsViewModel"
+             x:Class="WinSonic.Gui.Xplat.Views.BrowsePages.AlbumsView" Loaded="Control_OnLoaded">
+    <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <TextBlock Text="{x:Static localisation:Strings._Albums}"/>
+        <DockPanel Grid.Row="1">
+            <Button DockPanel.Dock="Top" Command="{Binding NavigateToAlbumDetailCommand}" Content="Load"></Button>
+            <ListBox DockPanel.Dock="Bottom" ItemsSource="{Binding Albums}" SelectedItem="{Binding SelectedAlbum}" SelectionMode="Single">
+                <ListBox.ItemTemplate>
+                    <DataTemplate DataType="models:AlbumInfo">
+                        <Border>
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <TextBlock Text="{Binding Title}" Width="220"/>
+                                <TextBlock Text="{Binding Artist}" Width="150"/>
+                                <TextBlock Text="{Binding SongCount}" Width="50"/>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </DockPanel>
+    </Grid>
+</ContentPage>

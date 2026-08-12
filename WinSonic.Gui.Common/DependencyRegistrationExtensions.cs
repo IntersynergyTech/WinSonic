@@ -10,6 +10,8 @@ using WinSonic.Gui.Common.ViewModels.Components;
 using WinSonic.Gui.Common.ViewModels.DetailPages;
 using WinSonic.Playback;
 using WinSonic.Player;
+using WinSonic.Service.Album;
+using WinSonic.Service.Artist;
 using WinSonic.Service.Playlist;
 using WinSonic.Subsonic.Helpers;
 
@@ -44,10 +46,14 @@ public static class DependencyRegistrationExtensions
         services.AddScoped<PlayerWindowViewModel>();
         
         // Browse
+        services.AddScoped<AlbumsViewModel>();
         services.AddScoped<PlaylistsViewModel>();
+        services.AddScoped<ArtistsViewModel>();
         
         // Detail
+        services.AddScoped<SingleAlbumViewModel>();
         services.AddScoped<SinglePlaylistViewModel>();
+        services.AddScoped<SingleArtistViewModel>();
         
         // Components
         services.AddScoped<PlaybackControlsViewModel>();
@@ -63,6 +69,8 @@ public static class DependencyRegistrationExtensions
     private static IServiceCollection AddDomainServices(this IServiceCollection services)
     {
         //Data services
+        services.AddScoped<IAlbumService, CachedAlbumService>();
+        services.AddScoped<IArtistService, CachedArtistService>();
         services.AddScoped<IPlaylistService, CachedPlaylistService>();
         
         //Playback services

@@ -12,6 +12,11 @@
     <Design.DataContext>
         <vm:PlaybackControlsViewModel />
     </Design.DataContext>
+    <UserControl.KeyBindings>
+        <KeyBinding   Gesture="MediaPlayPause" Command="{Binding TogglePlayPauseCommand}" />
+        <KeyBinding Gesture="MediaNextTrack" Command="{Binding NextTrackCommand}" />
+        <KeyBinding Gesture="MediaPreviousTrack" Command="{Binding PreviousTrackCommand}" />
+    </UserControl.KeyBindings>
     <UserControl.Resources>
         <converters:TimecodeToTextConverter x:Key="Timecode"/>
     </UserControl.Resources>
@@ -44,11 +49,9 @@
             <!-- play pause etc controls -->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                 <Button Content="🔀" FontSize="16" Padding="4" Margin="4,0" Command="{Binding ToggleShuffleCommand}"/>
-                <Button Content="⏮️" FontSize="16" Padding="4" Margin="4,0" Command="{Binding PreviousTrackCommand}"/>
-                <Button Content="⏯️" x:Name="PlayPauseButton" Command="{Binding TogglePlayPauseCommand}" FontSize="28" Margin="8,0" Padding="4">
-                    
-                </Button>
-                <Button Content="⏭️" FontSize="16" Padding="4" Margin="4,0" Command="{Binding NextTrackCommand}" />
+                <Button Content="⏮️" HotKey="MediaPreviousTrack" FontSize="16" Padding="4" Margin="4,0" Command="{Binding PreviousTrackCommand}"/>
+                <Button Content="⏯️" HotKey="MediaPlayPause" x:Name="PlayPauseButton" Command="{Binding TogglePlayPauseCommand}" FontSize="28" Margin="8,0" Padding="4"/>
+                <Button Content="⏭️" HotKey="MediaNextTrack" FontSize="16" Padding="4" Margin="4,0" Command="{Binding NextTrackCommand}" />
                 <Button Content="🔁" FontSize="16" Padding="4" Margin="4,0" Command="{Binding ToggleRepeatCommand}" />
             </StackPanel>
             
