@@ -45,21 +45,21 @@ public static class DependencyRegistrationExtensions
         services.AddScoped<HomeViewModel>();
         services.AddScoped<TestViewModel>();
         services.AddScoped<PlayerWindowViewModel>();
-        
+
         // Browse
-        services.AddScoped<AlbumsViewModel>();
-        services.AddScoped<PlaylistsViewModel>();
-        services.AddScoped<ArtistsViewModel>();
-        
+        services.AddTransient<AlbumsViewModel>();
+        services.AddTransient<PlaylistsViewModel>();
+        services.AddTransient<ArtistsViewModel>();
+
         // Detail
-        services.AddScoped<SingleAlbumViewModel>();
-        services.AddScoped<SinglePlaylistViewModel>();
-        services.AddScoped<SingleArtistViewModel>();
-        
+        services.AddTransient<SingleAlbumViewModel>();
+        services.AddTransient<SinglePlaylistViewModel>();
+        services.AddTransient<SingleArtistViewModel>();
+
         // Components
-        services.AddScoped<PlaybackControlsViewModel>();
-        services.AddScoped<CoverArtViewModel>();
-        
+        services.AddTransient<PlaybackControlsViewModel>();
+        services.AddTransient<CoverArtViewModel>();
+
         return services;
     }
 
@@ -74,27 +74,29 @@ public static class DependencyRegistrationExtensions
         services.AddScoped<IAlbumService, CachedAlbumService>();
         services.AddScoped<IArtistService, CachedArtistService>();
         services.AddScoped<IPlaylistService, CachedPlaylistService>();
-        services.AddScoped<IArtworkService, CachedArtworkService>();
-        
+        services.AddTransient<IArtworkService, CachedArtworkService>();
+
         // Extra data services
         services.AddScoped<LiveArtworkService>();
-        
+
         //Playback services
         services.AddSingleton<PlayQueue>();
         services.AddSingleton<StorageManager>();
         services.AddSingleton<AutoPlaybackManager>();
         services.AddSingleton<ISoundFlowPlayer, SoundFlowMultiPlayer>();
-        
+
         //Api services
         services.AddSingleton<SubsonicApiWrapper>(provider =>
-        {
-            //Temporary until we have a proper login flow
-            var builder = new SubsonicConnectionBuilder().WithDefaultUserCredentials();
-            var client = builder.Build();
-            return client;
-        });
+            {
+                //Temporary until we have a proper login flow
+                var builder = new SubsonicConnectionBuilder().WithDefaultUserCredentials();
+                var client = builder.Build();
+                return client;
+            }
+        );
+
         services.AddSingleton<SongFetcher>();
-        
+
         //Sync services
         services.AddSingleton<SyncManager>();
 

@@ -32,6 +32,7 @@ public static class SongMapper
             Bitrate = source.BitRate,
             ChannelCount = source.ChannelCount,
             Filesize = source.Size,
+            Duration = source.Duration,
             RgAlbumGain = source.ReplayGain.AlbumGain,
             RgTrackGain = source.ReplayGain.TrackGain,
             RgAlbumPeak = source.ReplayGain.AlbumPeak,

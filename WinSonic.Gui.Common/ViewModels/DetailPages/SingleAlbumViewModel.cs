@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using WinSonic.Core.Models;
+using WinSonic.Gui.Common.ViewModels.Components;
 using WinSonic.Playback;
 using WinSonic.Service.Album;
 
@@ -11,19 +12,21 @@ public partial class SingleAlbumViewModel : PageModelBase
 {
     private readonly IAlbumService _albumService;
     private readonly AutoPlaybackManager _autoPlaybackManager;
-
+    [ObservableProperty] public partial CoverArtViewModel CoverArt { get; set; }
     [ObservableProperty] public partial AlbumInfo? AlbumInfo { get; set; }
     [ObservableProperty] public partial ObservableCollection<Song> Songs { get; set; } = new();
 
-    public SingleAlbumViewModel(IAlbumService albumService, AutoPlaybackManager autoPlaybackManager)
+    public SingleAlbumViewModel(IAlbumService albumService, AutoPlaybackManager autoPlaybackManager, CoverArtViewModel coverArtViewModel)
     {
         _albumService = albumService;
         _autoPlaybackManager = autoPlaybackManager;
+        CoverArt = coverArtViewModel;
     }
 
     public void SetAlbum(AlbumInfo albumInfo)
     {
         AlbumInfo = albumInfo;
+        CoverArt.CoverArtId = albumInfo.CoverArtId;
         Console.WriteLine($"Loading album: {albumInfo.Title}");
     }
 

@@ -30,6 +30,9 @@ public partial class CoverArtView : UserControl
 
     private void UpdateCoverArtImage()
     {
+        // Sometimes this fires too early? idk
+        if (Context is null) return;
+        
         Context.CoverArtSourceData = null;
         var newCoverArtId = Context.CoverArtId;
 
@@ -90,9 +93,10 @@ public partial class CoverArtView : UserControl
 
     private void Control_OnLoaded(object? sender, RoutedEventArgs e)
     {
+        UpdateCoverArtImage();
         Context.PropertyChanged += (sender, args) =>
         {
-            if (args.PropertyName == nameof(Context.CoverArtId))
+            if (args.PropertyName == nameof(Context.CoverArtId) || args.PropertyName == nameof(DataContext))
             {
                 Dispatcher.Post(UpdateCoverArtImage);
             }
@@ -100,61 +104,3 @@ public partial class CoverArtView : UserControl
     }
 }
 
-public class CoverArtImageConverter : Avalonia.Data.Converters.IValueConverter
-{
-    private readonly IArtworkService? _coverArtService;
-
-    public CoverArtImageConverter()
-    {
-        _coverArtService = DependencyService.Services.GetService<IArtworkService>();
-    }
-
-    public string LastArtworkId { get; set; }
-    public Bitmap LastArtwork { get; set; }
-
-    public object Convert(
-        object? value,
-        Type targetType,
-        object? parameter,
-        System.Globalization.CultureInfo culture
-    )
-    {
-        if (_coverArtService is null) return null;
-
-        if (value is null) return null;
-
-        var coverArtId = (string) value;
-
-        if (coverArtId == LastArtworkId && LastArtwork != null)
-        {
-            return LastArtwork;
-        }
-
-        Console.WriteLine($"Converting cover art ID: {coverArtId}");
-
-        try
-        {
-            var streamAsync = _coverArtService.GetArtworkAsync(coverArtId);
-            var stream = streamAsync.GetAwaiter().GetResult();
-            var bitmap = new Bitmap(stream);
-            LastArtworkId = coverArtId;
-            LastArtwork = bitmap;
-            return bitmap;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error converting cover art ID: {coverArtId}. Exception: {ex.Message}");
-            return null;
-        }
-    }
-
-    public object ConvertBack(
-        object? value,
-        Type targetType,
-        object? parameter,
-        System.Globalization.CultureInfo culture
-    )
-    {
-        throw new NotImplementedException();
-    }
-}

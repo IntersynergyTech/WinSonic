@@ -8,13 +8,34 @@
              x:DataType="vm:CoverArtViewModel"
              x:Class="WinSonic.Gui.Xplat.Views.Components.CoverArtView" Loaded="Control_OnLoaded">
     <UserControl.Resources>
-        <local:CoverArtImageConverter x:Key="CoverArtImageConverter" />
     </UserControl.Resources>
     <Grid>
         <Image Source="avares://WinSonic.Resources/Assets/cd.png"></Image>
         <Grid>
             <Image Source="{Binding CoverArtSourceData}"></Image>
-            <TextBlock Text="{Binding CoverArtId}" Background="#AAFFFFFF" Margin="2" TextWrapping="Wrap" FontSize="8" VerticalAlignment="Top" Foreground="#000" FontWeight="Bold"/>
+            <Border BorderThickness="1" Margin="2" Padding="2" VerticalAlignment="Top" HorizontalAlignment="Left" >
+                <Border.Styles>
+                    <Style Selector="TextBlock">
+                        <Setter Property="Foreground" Value="#33000000"/>
+                    </Style>
+                    <Style Selector="Border">
+                        <Setter Property="Background" Value="#33FFFFFF"/>
+                        <Setter Property="BorderBrush" Value="#33000000"/>
+                    </Style>
+                    <Style Selector="Border:pointerover > TextBlock">
+                        <Setter Property="Foreground" Value="#CC000000"/>
+                    </Style>
+                    <Style Selector="Border:pointerover">
+                        <Setter Property="Background" Value="#CCFFFFFF"/>
+                        <Setter Property="BorderBrush" Value="#CC000000"/>
+                    </Style>
+                    
+                </Border.Styles>
+                <TextBlock Text="{Binding CoverArtId}" TextWrapping="Wrap" FontSize="9"  FontWeight="Bold">
+                    
+                </TextBlock>
+            </Border>    
+            
         </Grid>
     </Grid>
     

@@ -12,18 +12,18 @@ namespace WinSonic.Service.Artwork;
 public class CachedArtworkService : IArtworkService
 {
     private readonly StorageManager _storageManager;
-    private readonly BaseDataContext _dataContext;
+    private readonly IDbContextFactory<BaseDataContext> _dataContextFactory;
     private readonly LiveArtworkService _liveArtworkService;
     private const int ArtworkCacheExpiryMins = 525600; // 1 year in minutes
 
     public CachedArtworkService(
         StorageManager storageManager,
-        BaseDataContext dataContext,
+        IDbContextFactory<BaseDataContext> dataContextFactory,
         LiveArtworkService liveArtworkService
     )
     {
         _storageManager = storageManager;
-        _dataContext = dataContext;
+        _dataContextFactory = dataContextFactory;
         _liveArtworkService = liveArtworkService;
     }
 
@@ -33,9 +33,12 @@ public class CachedArtworkService : IArtworkService
         CancellationToken cancellationToken = default
     )
     {
+        var dbContext = _dataContextFactory.CreateDbContext();
+        
         Console.WriteLine($"Getting artwork for {coverArtId} with acceptAnyCached={acceptAnyCached}");
-        var cachedResults = await GetArtCachesForIdAsync(coverArtId);
+        var cachedResults = await GetArtCachesForIdAsync(coverArtId, dbContext);
         var original = cachedResults.FirstOrDefault(c => c.Dimension == null);
+        
 
         if (original != null && TryFile(original, out var originalStream))
         {
@@ -63,7 +66,7 @@ public class CachedArtworkService : IArtworkService
         }
 
         //atp we've either ran out of cached entries and/or aren't accepting others, so fetch from the live service and cache it.
-        var result = await FetchAndCacheArtworkAsync(coverArtId, null, cancellationToken);
+        var result = await FetchAndCacheArtworkAsync(coverArtId, null, cancellationToken, dbContext);
         return result;
     }
 
@@ -77,9 +80,9 @@ public class CachedArtworkService : IArtworkService
         throw new NotImplementedException();
     }
 
-    private async Task<List<CachedCoverArt>> GetArtCachesForIdAsync(string artworkId)
+    private async Task<List<CachedCoverArt>> GetArtCachesForIdAsync(string artworkId, BaseDataContext dataContext)
     {
-        var cachedResults = await _dataContext.CachedCoverArt.Where(c => c.ParentItem.Id == artworkId).ToListAsync();
+        var cachedResults = await dataContext.CachedCoverArt.Where(c => c.ParentItem.Id == artworkId).ToListAsync();
         return cachedResults;
     }
 
@@ -106,8 +109,9 @@ public class CachedArtworkService : IArtworkService
 
         bool Fail(out Stream stream)
         {
-            _dataContext.CachedCoverArt.Remove(art);
-            _dataContext.SaveChanges();
+            using var dataContext = _dataContextFactory.CreateDbContext();
+            dataContext.CachedCoverArt.Remove(art);
+            dataContext.SaveChanges();
             stream = null;
             return false;
         }
@@ -116,7 +120,8 @@ public class CachedArtworkService : IArtworkService
     private async Task<Stream> FetchAndCacheArtworkAsync(
         string coverArtId,
         int? dimension,
-        CancellationToken cancellationToken
+        CancellationToken cancellationToken,
+        BaseDataContext dataContext
     )
     {
         Stream stream;
@@ -143,8 +148,13 @@ public class CachedArtworkService : IArtworkService
             var filename = GenerateFilename(id, dimension);
             _storageManager.SaveArtworkFile(filename, stream);
 
-            var coverArtParent = _dataContext.CoverArt.Local.FirstOrDefault(c => c.Id == coverArtId)
-                ?? new CoverArt(coverArtId);
+            var coverArtParent = dataContext.CoverArt.Local.FirstOrDefault(c => c.Id == coverArtId);
+
+            if (coverArtParent is null)
+            {
+                coverArtParent = new CoverArt(coverArtId);
+                dataContext.Attach(coverArtParent);
+            }
 
             var cachedCoverArt = new CachedCoverArt
             {
@@ -156,8 +166,8 @@ public class CachedArtworkService : IArtworkService
 
             cachedCoverArt.AddDefaultCacheables(ArtworkCacheExpiryMins);
 
-            _dataContext.CachedCoverArt.Add(cachedCoverArt);
-            await _dataContext.SaveChangesAsync(cancellationToken);
+            dataContext.CachedCoverArt.Add(cachedCoverArt);
+            await dataContext.SaveChangesAsync(cancellationToken);
         }
 
         if (stream.CanSeek)
