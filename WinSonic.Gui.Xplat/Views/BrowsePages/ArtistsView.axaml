@@ -24,6 +24,7 @@
                         </Border>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
+                
             </ListBox>
         </DockPanel>
     </Grid>

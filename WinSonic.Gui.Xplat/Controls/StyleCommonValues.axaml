@@ -1,0 +1,12 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=System.Runtime">
+    
+    
+    <!-- Font Sizes -->
+    <sys:Double x:Key="WsFontSizeXs">9</sys:Double>
+    <sys:Double x:Key="WsFontSizeSml">11</sys:Double>
+    <sys:Double x:Key="WsFontSizeMed">14</sys:Double>
+    <sys:Double x:Key="WsFontSizeLrg">18</sys:Double>
+    <sys:Double x:Key="WsFontSizeXl">24</sys:Double>
+</ResourceDictionary>

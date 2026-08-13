@@ -5,8 +5,8 @@
              xmlns:controls="clr-namespace:WinSonic.Gui.Xplat.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="controls:CoverArtControl"
-             x:Class="WinSonic.Gui.Xplat.Controls.CoverArtControl" Loaded="Control_OnLoaded">
+             x:Class="WinSonic.Gui.Xplat.Controls.CoverArtControl" Loaded="Control_OnLoaded" x:Name="CoverArtControlObj">
     <Grid>
-        <ContentControl Content="{Binding ViewModel}" />
+        <ContentControl Content="{Binding ViewModel, ElementName=CoverArtControlObj}" />
     </Grid>
 </UserControl>

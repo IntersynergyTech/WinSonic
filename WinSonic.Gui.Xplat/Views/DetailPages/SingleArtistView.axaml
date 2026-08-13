@@ -5,6 +5,7 @@
              xmlns:vm="clr-namespace:WinSonic.Gui.Common.ViewModels.DetailPages;assembly=WinSonic.Gui.Common"
              xmlns:localisation="clr-namespace:WinSonic.Resources.Localisation;assembly=WinSonic.Resources"
              xmlns:models="clr-namespace:WinSonic.Core.Models;assembly=WinSonic.Core"
+             xmlns:controls="clr-namespace:WinSonic.Gui.Xplat.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="vm:SingleArtistViewModel"
              x:Class="WinSonic.Gui.Xplat.Views.DetailPages.SingleArtistView" Loaded="Control_OnLoaded">
@@ -33,15 +34,18 @@
             <TextBlock Text="{x:Static localisation:Strings._Albums}" FontWeight="Bold" Margin="0,0,0,6" />
             <Button Command="{Binding NavigateToAlbumDetailCommand}" Content="Load"></Button>
             <ListBox ItemsSource="{Binding Albums}" SelectedItem="{Binding SelectedAlbum}" MaxHeight="220">
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
                 <ListBox.ItemTemplate>
                     <DataTemplate DataType="models:AlbumInfo">
-                        <StackPanel Orientation="Horizontal" Margin="5" Spacing="8">
-                            <TextBlock Text="{Binding Title}" Width="220" />
-                            <TextBlock Text="{Binding SongCount}" Width="50" />
-                            <TextBlock Text="{Binding Duration}" Width="120" />
-                        </StackPanel>
+                        <controls:AlbumCard Theme="{DynamicResource AlbumsViewCardTheme}" ArtworkDimensions="128" Artist="{Binding Artist}" Width="130" Title="{Binding Title}" CoverArtId="{Binding CoverArtId}" />
+                        
                     </DataTemplate>
                 </ListBox.ItemTemplate>
+                
             </ListBox>
         </StackPanel>
 

@@ -168,6 +168,15 @@ namespace WinSonic.Resources.Localisation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Now Playing.
+        /// </summary>
+        public static string _NowPlaying {
+            get {
+                return ResourceManager.GetString("_NowPlaying", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Playlists.
         /// </summary>
         public static string _Playlists {

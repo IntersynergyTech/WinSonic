@@ -6,7 +6,9 @@ using WinSonic.Core.Enums;
 using WinSonic.Data.DbModels;
 using WinSonic.Gui.Common.GuiServices;
 using WinSonic.Gui.Common.Utility;
+using WinSonic.Gui.Common.ViewModels.DetailPages;
 using WinSonic.Playback;
+using WinSonic.Service.Album;
 using Song = WinSonic.Core.Models.Song;
 using Timer = System.Timers.Timer;
 
@@ -15,6 +17,7 @@ namespace WinSonic.Gui.Common.ViewModels.Components;
 public partial class PlaybackControlsViewModel : ViewModelBase
 {
     private readonly AutoPlaybackManager _autoPlaybackManager;
+    private readonly IAlbumService _albumService;
     private bool _suppressUpdates;
 
     private readonly Timer _updateTimer = new Timer();
@@ -66,9 +69,10 @@ public partial class PlaybackControlsViewModel : ViewModelBase
         }
     }
 
-    public PlaybackControlsViewModel(AutoPlaybackManager autoPlaybackManager)
+    public PlaybackControlsViewModel(AutoPlaybackManager autoPlaybackManager, IAlbumService albumService)
     {
         _autoPlaybackManager = autoPlaybackManager;
+        _albumService = albumService;
     }
 
     public void Init()
@@ -121,10 +125,22 @@ public partial class PlaybackControlsViewModel : ViewModelBase
     {
     }
 
+    [RelayCommand]
+    public void GoToAlbum()
+    {
+        if (_autoPlaybackManager.NowPlaying?.AlbumId == null) return;
+        var albumVm = DependencyService.Services.GetService<SingleAlbumViewModel>();
+        var album = _albumService.GetAlbumByIdAsync(_autoPlaybackManager.NowPlaying?.AlbumId!).Result;
+        albumVm!.SetAlbum(album);
+        
+        NavigationService.NavigateTo(albumVm);
+    }
+    
     void UpdateTimerOnElapsed(object? sender, ElapsedEventArgs e)
     {
         UpdateViewProperties();
     }
+    
 
     private void UpdateViewProperties()
     {

@@ -16,12 +16,11 @@ namespace WinSonic.Gui.Common.ViewModels;
 public partial class PlayerWindowViewModel : PageModelBase
 {
     private readonly IPlaylistService? _playlistService;
-    
+
     NavigationMenuItemModel[] BaseNavigationMenuItems() =>
         new NavigationMenuItemModel[]
         {
-            new (GenericNavigateCommand, Strings._Home, NavigationMenuItemActionType.Home),
-            
+            new (GenericNavigateCommand, Strings._NowPlaying, NavigationMenuItemActionType.Home),
             new (
                 GenericNavigateCommand,
                 Strings._Albums,
@@ -42,25 +41,19 @@ public partial class PlayerWindowViewModel : PageModelBase
             ),
             new (command: null, string.Empty, isSeperator: true),
             new (command: null, Strings._Playlists, isHeader: true),
-            
         };
 
     NavigationMenuItemModel[] BaseNavigationMenuFooterItems() =>
     [
         new (GenericNavigateCommand, Strings._Settings, NavigationMenuItemActionType.Settings),
-        new (
-            GenericNavigateCommand,
-            Strings._TestPage,
-            NavigationMenuItemActionType.None,
-            typeof(TestViewModel)
-        ),
+        new (GenericNavigateCommand, Strings._TestPage, NavigationMenuItemActionType.None, typeof(TestViewModel)),
     ];
 
     [ObservableProperty] public partial ViewModelBase CurrentViewModel { get; set; }
 
     [ObservableProperty]
     public partial ObservableCollection<NavigationMenuItemModel> NavigationMenuItems { get; set; } = new ();
-    
+
     [ObservableProperty]
     public partial ObservableCollection<NavigationMenuItemModel> NavigationMenuFooterItems { get; set; } = new ();
 
@@ -120,7 +113,7 @@ public partial class PlayerWindowViewModel : PageModelBase
         if (viewModel != null)
         {
             viewModel.SetPlaylist(menuItem.CommandParameter as PlaylistInfo);
-            
+
             CurrentViewModel = viewModel;
         }
     }
@@ -140,9 +133,9 @@ public partial class PlayerWindowViewModel : PageModelBase
         NavigationMenuItems = new ObservableCollection<NavigationMenuItemModel>(BaseNavigationMenuItems());
         NavigationMenuFooterItems = new ObservableCollection<NavigationMenuItemModel>(BaseNavigationMenuFooterItems());
         PlaybackControls = DependencyService.Services.GetService<PlaybackControlsViewModel>();
-        
-        
+
         var playlists = await _playlistService?.GetPlaylistsAsync();
+
         if (playlists != null)
         {
             foreach (var playlist in playlists)
@@ -152,7 +145,7 @@ public partial class PlayerWindowViewModel : PageModelBase
                         NavigatePlaylistCommand,
                         playlist.Name,
                         NavigationMenuItemActionType.None,
-                        typeof(SinglePlaylistViewModel), 
+                        typeof(SinglePlaylistViewModel),
                         playlist
                     )
                 );

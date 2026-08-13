@@ -3,23 +3,56 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:WinSonic.Gui.Common.ViewModels;assembly=WinSonic.Gui.Common"
+             xmlns:localisation="clr-namespace:WinSonic.Resources.Localisation;assembly=WinSonic.Resources"
+             xmlns:controls="clr-namespace:WinSonic.Gui.Xplat.Controls"
+             xmlns:models="clr-namespace:WinSonic.Core.Models;assembly=WinSonic.Core"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              Header="Home"
              x:DataType="vm:HomeViewModel"
-             x:Class="WinSonic.Gui.Xplat.Views.HomeView">
+             x:Class="WinSonic.Gui.Xplat.Views.HomeView" Loaded="Control_OnLoaded" Unloaded="Control_OnUnloaded">
     <Design.DataContext>
-        <!-- This only sets the DataContext for the previewer in an IDE,
-             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
         <vm:HomeViewModel />
     </Design.DataContext>
-    <StackPanel HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                Spacing="10">
-        <TextBox Text="{Binding Greeting}" />
-        <Button Name="SettingButton"
-                HorizontalAlignment="Center"
-                Click="SettingButton_Click">Open Settings</Button>
-        <Button Command="{Binding SettingsViaNavMessengerCommand}" >Settings (via nav)</Button>
-        <Button Command="{Binding SettingsResolvedViaNavCommand}" >Settings (via DI resolved model via nav)</Button>
-    </StackPanel>
+    <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch" ColumnDefinitions="*,*">
+        <StackPanel Grid.Column="0" Margin="24,48" HorizontalAlignment="Right"
+                    VerticalAlignment="Center" Spacing="10" MaxWidth="600">
+            <Border Background="{DynamicResource CalendarViewOutOfScopeBackground}" Padding="18" CornerRadius="12">
+                <StackPanel Spacing="6">
+                    <Button Theme="{DynamicResource InvisibleButtonWrapper}" Command="{Binding GoToAlbumCommand}">
+                        <StackPanel Spacing="12">
+                            <ContentControl Content="{Binding CoverArtModel}"></ContentControl>
+                            <TextBlock Text="{Binding NowPlaying.Title}" FontSize="{DynamicResource WsFontSizeXl}" FontWeight="SemiLight"/>
+                        </StackPanel>
+                    </Button>
+                    <TextBlock Text="{Binding NowPlaying.Album}" FontSize="{DynamicResource WsFontSizeLrg}" />
+                    <TextBlock Text="{Binding NowPlaying.Artist}" FontSize="{DynamicResource WsFontSizeMed}"/>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+        <Grid Margin="24,24" Background="{DynamicResource ButtonBackground}" Grid.Column="1"  HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch" RowDefinitions="Auto, *" >
+            
+                <TextBlock Grid.Row="0" Text="{x:Static localisation:Strings._NowPlaying}" />
+            <ListBox Margin="0,12" Background="Transparent" Grid.Row="1" ItemsSource="{Binding PlayQueue}" MinHeight="100">
+                <ListBox.ItemTemplate>
+                    <DataTemplate DataType="models:Song">
+                        <Grid ColumnDefinitions="Auto, *" Margin="8,4">
+                            <controls:CoverArtControl Width="48" Height="48" CoverArtId="{Binding CoverArtId}" />
+                            <StackPanel Grid.Column="1" Margin="8,0" Spacing="2" VerticalAlignment="Center">
+                                <TextBlock Text="{Binding Title}" FontSize="{DynamicResource WsFontSizeMed}" />
+                                <TextBlock Text="{Binding Artist}" FontSize="{DynamicResource WsFontSizeSml}" />
+                            </StackPanel>
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+                <ListBox.Styles> 
+                    <Style Selector="ListBoxItem">
+                        <Setter Property="Padding" Value="0" /> 
+                        <Setter Property="Margin" Value="0,0" /> 
+                    </Style> 
+                </ListBox.Styles>
+            </ListBox>
+        </Grid>
+    </Grid>
+
 </ContentPage>

@@ -102,4 +102,7 @@
     <data name="_TestPage" xml:space="preserve">
         <value>Test Page</value>
     </data>
+    <data name="_NowPlaying" xml:space="preserve">
+        <value>Now Playing</value>
+    </data>
 </root>

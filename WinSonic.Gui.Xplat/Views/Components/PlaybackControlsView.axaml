@@ -29,11 +29,15 @@
             <!-- Now playing left section -->
             <Grid Grid.Column="0" Background="#44502f4d" Width="80" Height="80">
                 <!-- Album art -->
-                <ContentControl Content="{Binding CoverArt}" Width="80" Height="80"></ContentControl>
+                <Button Theme="{DynamicResource InvisibleButtonWrapper}" Command="{Binding GoToAlbumCommand}">
+                    <ContentControl Content="{Binding CoverArt}" Width="80" Height="80"></ContentControl>
+                </Button>
             </Grid>
-            <StackPanel Grid.Column="1" Margin="12,6, 0, 6" VerticalAlignment="Center">
-                <TextBlock FontSize="14" Text="{Binding Title}" TextTrimming="CharacterEllipsis"></TextBlock>
-                <TextBlock FontSize="12" Text="{Binding Artist}" TextTrimming="CharacterEllipsis"></TextBlock>
+            <StackPanel Grid.Column="1" Margin="12,6, 0, 6" Spacing="4" VerticalAlignment="Center">
+                <Button Theme="{DynamicResource InvisibleButtonWrapper}" Command="{Binding GoToAlbumCommand}">
+                    <TextBlock FontSize="{DynamicResource WsFontSizeMed}" Text="{Binding Title}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"></TextBlock>
+                </Button>
+                <TextBlock FontSize="{DynamicResource WsFontSizeSml}" Text="{Binding Artist}" Opacity="0.8" TextTrimming="CharacterEllipsis"></TextBlock>
             </StackPanel>
             
         </Grid>

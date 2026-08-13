@@ -25,11 +25,11 @@
             <Border BorderThickness="1" Margin="2" Padding="2" VerticalAlignment="Top" HorizontalAlignment="Left" >
                 <Border.Styles>
                     <Style Selector="TextBlock">
-                        <Setter Property="Foreground" Value="#33000000"/>
+                        <Setter Property="Foreground" Value="#00000000"/>
                     </Style>
                     <Style Selector="Border">
-                        <Setter Property="Background" Value="#33FFFFFF"/>
-                        <Setter Property="BorderBrush" Value="#33000000"/>
+                        <Setter Property="Background" Value="#00FFFFFF"/>
+                        <Setter Property="BorderBrush" Value="#00000000"/>
                     </Style>
                     <Style Selector="Border:pointerover > TextBlock">
                         <Setter Property="Foreground" Value="#CC000000"/>
