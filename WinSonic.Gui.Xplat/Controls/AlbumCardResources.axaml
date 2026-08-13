@@ -9,8 +9,12 @@
                         BorderThickness="{TemplateBinding BorderThickness}"
                         Width="{TemplateBinding Width}"
                         Height="{TemplateBinding Height}" Padding="{TemplateBinding Padding}">
-                    <Grid RowDefinitions="Auto,42">
-                        <controls:CoverArtControl Grid.Row="0" CoverArtId="{TemplateBinding CoverArtId}"></controls:CoverArtControl>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="{TemplateBinding ArtworkDimensions}" />
+                            <RowDefinition Height="56" />
+                        </Grid.RowDefinitions>
+                        <controls:CoverArtControl Grid.Row="0" Width="{TemplateBinding ArtworkDimensions}" Height="{TemplateBinding ArtworkDimensions}" CoverArtId="{TemplateBinding CoverArtId}"></controls:CoverArtControl>
                         <StackPanel Grid.Row="1" Margin="0,4,0,0" Spacing="4">
                             <TextBlock Text="{TemplateBinding Title}" FontWeight="SemiBold"  TextTrimming="CharacterEllipsis" TextWrapping="Wrap" MaxLines="2" />
                             <TextBlock Text="{TemplateBinding Artist}" FontSize="{DynamicResource FontSizeSmall}"
@@ -27,7 +31,7 @@
         <Setter Property="Template">
             <ControlTemplate>
                 <Grid ColumnDefinitions="64,*">
-                    <controls:CoverArtControl CoverArtId="{TemplateBinding CoverArtId}" Grid.Column="0" />
+                    <controls:CoverArtControl Width="{TemplateBinding ArtworkDimensions}" Height="{TemplateBinding ArtworkDimensions}" CoverArtId="{TemplateBinding CoverArtId}" Grid.Column="0" />
                     <StackPanel Grid.Column="1" Margin="0,8,0,0" Spacing="4">
                         <TextBlock Text="{TemplateBinding Title}" FontWeight="SemiBold"  TextTrimming="CharacterEllipsis" TextWrapping="Wrap" MaxLines="2" />
                         <TextBlock Text="{TemplateBinding Artist}" FontSize="{DynamicResource FontSizeSmall}"

@@ -30,6 +30,12 @@ public class AlbumCard : TemplatedControl
         set => SetValue(ArtistProperty, value);
     }
 
+    public int ArtworkDimensions
+    {
+        get => GetValue(ArtworkDimensionsProperty);
+        set => SetValue(ArtworkDimensionsProperty, value);
+    }
+
     public static readonly StyledProperty<string> TitleProperty =
         AvaloniaProperty.Register<AlbumCard, string>(nameof(Title));
 
@@ -38,6 +44,9 @@ public class AlbumCard : TemplatedControl
 
     public static readonly StyledProperty<string> ArtistProperty =
         AvaloniaProperty.Register<AlbumCard, string>(nameof(Artist));
+
+    public static readonly StyledProperty<int> ArtworkDimensionsProperty =
+        AvaloniaProperty.Register<AlbumCard, int>(nameof(ArtworkDimensions));
 
     public CoverArtViewModel CoverArtViewModel { get; set; }
     

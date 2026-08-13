@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
+using WinSonic.Core.Models;
 using WinSonic.Gui.Common.Components;
 using WinSonic.Gui.Common.GuiServices;
 using WinSonic.Gui.Common.ViewModels.BrowsePages;
@@ -14,16 +15,13 @@ namespace WinSonic.Gui.Common.ViewModels;
 
 public partial class PlayerWindowViewModel : PageModelBase
 {
+    private readonly IPlaylistService? _playlistService;
+    
     NavigationMenuItemModel[] BaseNavigationMenuItems() =>
         new NavigationMenuItemModel[]
         {
             new (GenericNavigateCommand, Strings._Home, NavigationMenuItemActionType.Home),
-            new (
-                GenericNavigateCommand,
-                Strings._TestPage,
-                NavigationMenuItemActionType.None,
-                typeof(TestViewModel)
-            ),
+            
             new (
                 GenericNavigateCommand,
                 Strings._Albums,
@@ -42,13 +40,29 @@ public partial class PlayerWindowViewModel : PageModelBase
                 NavigationMenuItemActionType.None,
                 typeof(ArtistsViewModel)
             ),
-            new (GenericNavigateCommand, Strings._Settings, NavigationMenuItemActionType.Settings)
+            new (command: null, string.Empty, isSeperator: true),
+            new (command: null, Strings._Playlists, isHeader: true),
+            
         };
+
+    NavigationMenuItemModel[] BaseNavigationMenuFooterItems() =>
+    [
+        new (GenericNavigateCommand, Strings._Settings, NavigationMenuItemActionType.Settings),
+        new (
+            GenericNavigateCommand,
+            Strings._TestPage,
+            NavigationMenuItemActionType.None,
+            typeof(TestViewModel)
+        ),
+    ];
 
     [ObservableProperty] public partial ViewModelBase CurrentViewModel { get; set; }
 
     [ObservableProperty]
     public partial ObservableCollection<NavigationMenuItemModel> NavigationMenuItems { get; set; } = new ();
+    
+    [ObservableProperty]
+    public partial ObservableCollection<NavigationMenuItemModel> NavigationMenuFooterItems { get; set; } = new ();
 
     [ObservableProperty] public partial PlaybackControlsViewModel PlaybackControls { get; set; }
 
@@ -59,6 +73,7 @@ public partial class PlayerWindowViewModel : PageModelBase
 
     public PlayerWindowViewModel(IPlaylistService playlistService)
     {
+        _playlistService = playlistService;
         Init();
     }
 
@@ -97,12 +112,15 @@ public partial class PlayerWindowViewModel : PageModelBase
         }
     }
 
+    [RelayCommand]
     public async Task NavigatePlaylist(NavigationMenuItemModel menuItem)
     {
         var viewModel = DependencyService.Services.GetService<SinglePlaylistViewModel>();
 
         if (viewModel != null)
         {
+            viewModel.SetPlaylist(menuItem.CommandParameter as PlaylistInfo);
+            
             CurrentViewModel = viewModel;
         }
     }
@@ -117,9 +135,28 @@ public partial class PlayerWindowViewModel : PageModelBase
         };
     }
 
-    public override void OnLoaded()
+    public override async void OnLoaded()
     {
         NavigationMenuItems = new ObservableCollection<NavigationMenuItemModel>(BaseNavigationMenuItems());
+        NavigationMenuFooterItems = new ObservableCollection<NavigationMenuItemModel>(BaseNavigationMenuFooterItems());
         PlaybackControls = DependencyService.Services.GetService<PlaybackControlsViewModel>();
+        
+        
+        var playlists = await _playlistService?.GetPlaylistsAsync();
+        if (playlists != null)
+        {
+            foreach (var playlist in playlists)
+            {
+                NavigationMenuItems.Add(
+                    new NavigationMenuItemModel(
+                        NavigatePlaylistCommand,
+                        playlist.Name,
+                        NavigationMenuItemActionType.None,
+                        typeof(SinglePlaylistViewModel), 
+                        playlist
+                    )
+                );
+            }
+        }
     }
 }

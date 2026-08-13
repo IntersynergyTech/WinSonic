@@ -26,7 +26,7 @@
                 </ListBox.ItemsPanel>
                 <ListBox.ItemTemplate>
                     <DataTemplate DataType="models:AlbumInfo">
-                        <controls:AlbumCard CornerRadius="6" Padding="4" Background="{DynamicResource CalendarDatePickerBackground}"  BorderThickness="1" Theme="{StaticResource AlbumsViewCardTheme}" Width="160" Artist="{Binding Artist}" Title="{Binding Title}" CoverArtId="{Binding CoverArtId}" />
+                        <controls:AlbumCard CornerRadius="6" Padding="4" Background="{DynamicResource CalendarDatePickerBackground}"  BorderThickness="1" Theme="{StaticResource AlbumsViewCardTheme}" ArtworkDimensions="152" Width="160" Artist="{Binding Artist}" Title="{Binding Title}" CoverArtId="{Binding CoverArtId}" />
                     </DataTemplate>
                 </ListBox.ItemTemplate>
                 <ListBox.Styles> 

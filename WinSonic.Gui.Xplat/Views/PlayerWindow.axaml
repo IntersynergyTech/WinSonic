@@ -4,6 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewModels="clr-namespace:WinSonic.Gui.Common.ViewModels;assembly=WinSonic.Gui.Common"
         xmlns:components="clr-namespace:WinSonic.Gui.Common.Components;assembly=WinSonic.Gui.Common"
+        xmlns:localisation="clr-namespace:WinSonic.Resources.Localisation;assembly=WinSonic.Resources"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="WinSonic.Gui.Xplat.Views.PlayerWindow"
         x:DataType="viewModels:PlayerWindowViewModel"
@@ -12,6 +13,24 @@
     <Design.DataContext>
         <viewModels:PlayerWindowViewModel />
     </Design.DataContext>
+    <Window.Resources>
+        <DataTemplate DataType="components:NavigationMenuItemModel" x:Key="NavigationMenuItemTemplate">
+            <StackPanel>
+                <Border Margin="6,4" BorderBrush="{DynamicResource ButtonBackground}" HorizontalAlignment="Stretch" Height="2" BorderThickness="1" IsVisible="{Binding IsSeperator}" />
+                <TextBlock Margin="8, 6" FontWeight="SemiBold" FontSize="{DynamicResource FontSizeSmall}" Foreground="{DynamicResource ButtonForeground}" Opacity="0.6" Text="{Binding Name}" IsVisible="{Binding IsHeader}" />
+                <Button Content="{Binding Name}"
+                        CornerRadius="0"
+                        Padding="32,8"
+                        Margin="0,2"
+                        Background="Transparent"
+                        Command="{Binding Command}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        CommandParameter="{Binding}" IsVisible="{Binding IsNormalButton}" />    
+            </StackPanel>
+            
+        </DataTemplate>
+    </Window.Resources>
     <Grid RowDefinitions="*, 96">
         <ContentControl Grid.Row="1" Content="{Binding PlaybackControls}"></ContentControl>
         <SplitView Grid.Row="0" IsPaneOpen="True"
@@ -19,16 +38,20 @@
                    DisplayMode="CompactInline"
                    CompactPaneLength="50">
         <SplitView.Pane>
-            <ItemsControl ItemsSource="{Binding NavigationMenuItems}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate DataType="components:NavigationMenuItemModel">
-                        <Button Content="{Binding Name}"
-                                Command="{Binding Command}"
-                                CommandParameter="{Binding}" />
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-                
-            </ItemsControl>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0" HorizontalAlignment="Stretch">
+                    <TextBlock Text="{x:Static localisation:Strings._WinSonicTitle}" FontSize="{DynamicResource FontSizeLarge }" Margin="16,8" FontWeight="SemiBold" />
+                </Grid>
+                <Button Grid.Row="0" Command="{Binding LoadedCommand}" HorizontalAlignment="Right" Padding="1" FontSize="9" VerticalAlignment="Top">Load</Button>
+                <ItemsControl Grid.Row="1" ItemsSource="{Binding NavigationMenuItems}" ItemTemplate="{StaticResource NavigationMenuItemTemplate}"/>
+                <ItemsControl Grid.Row="2" ItemsSource="{Binding NavigationMenuFooterItems}" ItemTemplate="{StaticResource NavigationMenuItemTemplate}"/>
+            </Grid>
+            
         </SplitView.Pane>
         <SplitView.Content>
             <Grid HorizontalAlignment="Stretch"
@@ -38,8 +61,7 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
                 <StackPanel Grid.Row="0" VerticalAlignment="Stretch">
-                    <TextBlock Text="Player Window" />
-                    <Button Command="{Binding LoadedCommand}">Load</Button>
+                    
                 </StackPanel>
                 <TransitioningContentControl VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Row="1" Content="{Binding CurrentViewModel}" />
             </Grid>
