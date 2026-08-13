@@ -1,0 +1,41 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:controls="clr-namespace:WinSonic.Gui.Xplat.Controls">
+    <ControlTheme x:Key="AlbumsViewCardTheme" TargetType="controls:AlbumCard">
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        Width="{TemplateBinding Width}"
+                        Height="{TemplateBinding Height}" Padding="{TemplateBinding Padding}">
+                    <Grid RowDefinitions="Auto,42">
+                        <controls:CoverArtControl Grid.Row="0" CoverArtId="{TemplateBinding CoverArtId}"></controls:CoverArtControl>
+                        <StackPanel Grid.Row="1" Margin="0,4,0,0" Spacing="4">
+                            <TextBlock Text="{TemplateBinding Title}" FontWeight="SemiBold"  TextTrimming="CharacterEllipsis" TextWrapping="Wrap" MaxLines="2" />
+                            <TextBlock Text="{TemplateBinding Artist}" FontSize="{DynamicResource FontSizeSmall}"
+                                       Foreground="{DynamicResource ButtonForegroundDisabled}" />
+                        </StackPanel>
+                    </Grid>
+
+                </Border>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+
+    <ControlTheme x:Key="AlbumsViewListTheme" TargetType="controls:AlbumCard">
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Grid ColumnDefinitions="64,*">
+                    <controls:CoverArtControl CoverArtId="{TemplateBinding CoverArtId}" Grid.Column="0" />
+                    <StackPanel Grid.Column="1" Margin="0,8,0,0" Spacing="4">
+                        <TextBlock Text="{TemplateBinding Title}" FontWeight="SemiBold"  TextTrimming="CharacterEllipsis" TextWrapping="Wrap" MaxLines="2" />
+                        <TextBlock Text="{TemplateBinding Artist}" FontSize="{DynamicResource FontSizeSmall}"
+                                   Foreground="{DynamicResource ButtonForegroundDisabled}" />
+                    </StackPanel>
+                </Grid>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+
+</ResourceDictionary>

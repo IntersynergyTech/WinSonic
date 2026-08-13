@@ -1,9 +1,5 @@
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
-using CommunityToolkit.Mvvm.ComponentModel;
-using WinSonic.Core.Models;
 using WinSonic.Gui.Common.ViewModels.BrowsePages;
 
 namespace WinSonic.Gui.Xplat.Views.BrowsePages;

@@ -5,9 +5,11 @@
              xmlns:vm="clr-namespace:WinSonic.Gui.Common.ViewModels.BrowsePages;assembly=WinSonic.Gui.Common"
              xmlns:localisation="clr-namespace:WinSonic.Resources.Localisation;assembly=WinSonic.Resources"
              xmlns:models="clr-namespace:WinSonic.Core.Models;assembly=WinSonic.Core"
+             xmlns:controls="clr-namespace:WinSonic.Gui.Xplat.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="vm:AlbumsViewModel"
              x:Class="WinSonic.Gui.Xplat.Views.BrowsePages.AlbumsView" Loaded="Control_OnLoaded">
+    
     <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -16,18 +18,23 @@
         <TextBlock Text="{x:Static localisation:Strings._Albums}"/>
         <DockPanel Grid.Row="1">
             <Button DockPanel.Dock="Top" Command="{Binding NavigateToAlbumDetailCommand}" Content="Load"></Button>
-            <ListBox DockPanel.Dock="Bottom" ItemsSource="{Binding Albums}" SelectedItem="{Binding SelectedAlbum}" SelectionMode="Single">
+            <ListBox DockPanel.Dock="Bottom" ItemsSource="{Binding Albums}" Padding="0" SelectedItem="{Binding SelectedAlbum}" SelectionMode="Single">
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
                 <ListBox.ItemTemplate>
                     <DataTemplate DataType="models:AlbumInfo">
-                        <Border>
-                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                <TextBlock Text="{Binding Title}" Width="220"/>
-                                <TextBlock Text="{Binding Artist}" Width="150"/>
-                                <TextBlock Text="{Binding SongCount}" Width="50"/>
-                            </StackPanel>
-                        </Border>
+                        <controls:AlbumCard CornerRadius="6" Padding="4" Background="{DynamicResource CalendarDatePickerBackground}"  BorderThickness="1" Theme="{StaticResource AlbumsViewCardTheme}" Width="160" Artist="{Binding Artist}" Title="{Binding Title}" CoverArtId="{Binding CoverArtId}" />
                     </DataTemplate>
                 </ListBox.ItemTemplate>
+                <ListBox.Styles> 
+                    <Style Selector="ListBoxItem">
+                         <Setter Property="Padding" Value="0" /> 
+                         <Setter Property="Margin" Value="4" /> 
+                    </Style> 
+                </ListBox.Styles>
             </ListBox>
         </DockPanel>
     </Grid>

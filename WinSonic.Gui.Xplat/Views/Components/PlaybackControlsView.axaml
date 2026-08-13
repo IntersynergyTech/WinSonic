@@ -7,7 +7,7 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="80"
              x:DataType="vm:PlaybackControlsViewModel"
              Loaded="Control_OnLoaded"
-             
+             Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
              x:Class="WinSonic.Gui.Xplat.Views.Components.PlaybackControlsView">
     <Design.DataContext>
         <vm:PlaybackControlsViewModel />
@@ -17,8 +17,8 @@
     </UserControl.Resources>
     <Grid >
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*"/>
-            <ColumnDefinition Width="3*" MaxWidth="1000" MinWidth="400"/>
+            <ColumnDefinition Width="1*" MinWidth="200"/>
+            <ColumnDefinition Width="2*" MaxWidth="800" MinWidth="300"/>
             <ColumnDefinition Width="1*"/>
         </Grid.ColumnDefinitions>
         <Grid Grid.Column="0" Margin="8,0">
@@ -32,8 +32,8 @@
                 <ContentControl Content="{Binding CoverArt}" Width="80" Height="80"></ContentControl>
             </Grid>
             <StackPanel Grid.Column="1" Margin="12,6, 0, 6" VerticalAlignment="Center">
-                <TextBlock FontSize="14" Text="{Binding Title}"></TextBlock>
-                <TextBlock FontSize="12" Text="{Binding Artist}"></TextBlock>
+                <TextBlock FontSize="14" Text="{Binding Title}" TextTrimming="CharacterEllipsis"></TextBlock>
+                <TextBlock FontSize="12" Text="{Binding Artist}" TextTrimming="CharacterEllipsis"></TextBlock>
             </StackPanel>
             
         </Grid>
@@ -43,7 +43,7 @@
                 <RowDefinition Height="1*"/>
             </Grid.RowDefinitions>
             <!-- play pause etc controls -->
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Center" VerticalAlignment="Center">
                 <Button Content="🔀" FontSize="16" Padding="4" Margin="4,0" Command="{Binding ToggleShuffleCommand}"/>
                 <Button Content="⏮️" HotKey="MediaPreviousTrack" FontSize="16" Padding="4" Margin="4,0" Command="{Binding PreviousTrackCommand}"/>
                 <Button Content="⏯️" HotKey="MediaPlayPause" x:Name="PlayPauseButton" Command="{Binding TogglePlayPauseCommand}" FontSize="28" Margin="8,0" Padding="4"/>
@@ -65,8 +65,47 @@
                 <TextBlock Text="{Binding Duration, Converter={StaticResource Timecode}}" Grid.Column="2" HorizontalAlignment="Left"></TextBlock>
             </Grid>
         </Grid>
-        <Grid Grid.Column="3" Background="#44111122">
-            <!-- right controls volume etc -->
+        <Grid Grid.Column="2">
+            <StackPanel Spacing="4" Orientation="Horizontal" Margin="24,0" HorizontalAlignment="Right" VerticalAlignment="Center">
+                <Button Classes.VolumeMuted="{Binding IsMuted}" Classes.VolumeNotMuted="{Binding !IsMuted}">
+                    <Button.Styles>
+                        <Style Selector="Button.VolumeMuted">
+                            <Setter Property="Content" Value="🔇"></Setter>
+                        </Style>
+                        <Style Selector="Button.VolumeNotMuted">
+                            <Setter Property="Content" Value="🔊"></Setter>
+                        </Style>
+                        <Style Selector="FlyoutPresenter.VolumeFlyout">
+                            <Setter Property="Padding" Value="1" />
+                            <Setter Property="MinWidth" Value="0" />
+                        </Style>
+                    </Button.Styles>
+                    <Button.Flyout>
+                        <Flyout Placement="Top" FlyoutPresenterClasses="VolumeFlyout"
+                                ShowMode="TransientWithDismissOnPointerMoveAway">
+                            <StackPanel Orientation="Vertical" Margin="0">
+                                <Slider Orientation="Vertical" Height="100" Minimum="0" Maximum="1" Margin="0,8"
+                                        Padding="0" Value="{Binding Volume}" />
+                                <ToggleButton Classes.VolumeMuted="{Binding IsMuted}"
+                                              Classes.VolumeNotMuted="{Binding !IsMuted}" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" IsChecked="{Binding IsMuted}">
+                                    <ToggleButton.Styles>
+                                        <Style Selector="ToggleButton.VolumeMuted">
+                                            <Setter Property="Content" Value="🔇"></Setter>
+                                        </Style>
+                                        <Style Selector="ToggleButton.VolumeNotMuted">
+                                            <Setter Property="Content" Value="🔊"></Setter>
+                                        </Style>
+                                    </ToggleButton.Styles>
+                                </ToggleButton>
+
+                            </StackPanel>
+
+                        </Flyout>
+                    </Button.Flyout>
+                </Button>
+                <Button Content="L"></Button>
+                <Button Content="Q"></Button>
+            </StackPanel>
         </Grid>
     
     </Grid>

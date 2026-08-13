@@ -12,7 +12,16 @@
     <Grid>
         <Image Source="avares://WinSonic.Resources/Assets/cd.png"></Image>
         <Grid>
-            <Image Source="{Binding CoverArtSourceData}"></Image>
+            <TransitioningContentControl Content="{Binding CoverArtSourceData}">
+                <TransitioningContentControl.PageTransition>
+                    <CrossFade Duration="0:00:00.050" />
+                </TransitioningContentControl.PageTransition>
+                <TransitioningContentControl.ContentTemplate>
+                    <DataTemplate DataType="Bitmap">
+                        <Image Source="{Binding}" />
+                    </DataTemplate>
+                </TransitioningContentControl.ContentTemplate>
+            </TransitioningContentControl>
             <Border BorderThickness="1" Margin="2" Padding="2" VerticalAlignment="Top" HorizontalAlignment="Left" >
                 <Border.Styles>
                     <Style Selector="TextBlock">

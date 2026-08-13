@@ -1,7 +1,5 @@
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
 using WinSonic.Gui.Common.ViewModels.Components;
 
 namespace WinSonic.Gui.Xplat.Views.Components;

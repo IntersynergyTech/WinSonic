@@ -16,7 +16,7 @@ public partial class PlaybackControlsViewModel : ViewModelBase
 {
     private readonly AutoPlaybackManager _autoPlaybackManager;
     private bool _suppressUpdates;
-    
+
     private readonly Timer _updateTimer = new Timer();
     private readonly CommandDebouncer _debouncer = new CommandDebouncer(1000);
     [ObservableProperty] public partial TimeSpan? Position { get; private set; }
@@ -26,20 +26,19 @@ public partial class PlaybackControlsViewModel : ViewModelBase
     [ObservableProperty] public partial string? Artist { get; private set; }
 
     [ObservableProperty] public partial CoverArtViewModel CoverArt { get; private set; }
-    
+
     [ObservableProperty] public partial PlaybackState? PlaybackState { get; private set; }
-    
-    
-    [ObservableProperty]
-    public partial double? SliderDuration { get; private set; }
+
+    [ObservableProperty] public partial double? SliderDuration { get; private set; }
     private double? _sliderCurrent;
-    
+
     public double? SliderCurrent
     {
         get => _sliderCurrent;
         set
         {
             SetProperty(ref _sliderCurrent, value);
+
             if (!_suppressUpdates)
             {
                 _autoPlaybackManager.Player.CurrentPosition = TimeSpan.FromSeconds(value.Value);
@@ -47,11 +46,31 @@ public partial class PlaybackControlsViewModel : ViewModelBase
         }
     }
 
+    public float Volume
+    {
+        get => _autoPlaybackManager.Player.Volume;
+        set
+        {
+            _autoPlaybackManager.Player.Volume = value;
+            OnPropertyChanged();
+        }
+    }
+    
+    public bool IsMuted
+    {
+        get => _autoPlaybackManager.Player.IsMuted;
+        set
+        {
+            _autoPlaybackManager.Player.IsMuted = value;
+            OnPropertyChanged();
+        }
+    }
+
     public PlaybackControlsViewModel(AutoPlaybackManager autoPlaybackManager)
     {
         _autoPlaybackManager = autoPlaybackManager;
     }
-    
+
     public void Init()
     {
         _updateTimer.Interval = 500;
@@ -59,7 +78,7 @@ public partial class PlaybackControlsViewModel : ViewModelBase
         _updateTimer.Enabled = true;
 
         _autoPlaybackManager.NowPlayingChanged += AutoPlaybackManagerOnNowPlayingChanged;
-        
+
         CoverArt = DependencyService.Services.GetService<CoverArtViewModel>();
     }
 
@@ -90,26 +109,23 @@ public partial class PlaybackControlsViewModel : ViewModelBase
     [RelayCommand]
     public void PreviousTrack()
     {
-        
     }
 
     [RelayCommand]
     public void ToggleShuffle()
     {
-        
     }
-    
+
     [RelayCommand]
     public void ToggleRepeat()
     {
-        
     }
-    
+
     void UpdateTimerOnElapsed(object? sender, ElapsedEventArgs e)
     {
         UpdateViewProperties();
     }
-    
+
     private void UpdateViewProperties()
     {
         _suppressUpdates = true;
@@ -125,14 +141,11 @@ public partial class PlaybackControlsViewModel : ViewModelBase
         Artist = apm.NowPlaying?.Artist;
 
         PlaybackState = apm.Player.PlaybackState;
-        
+
         CoverArt.CoverArtId = apm.NowPlaying?.CoverArtId;
 
         //PlayPauseCommand.Executable = (PlaybackState is Core.Enums.PlaybackState.Playing or Core.Enums.PlaybackState.Paused);
 
         _suppressUpdates = false;
-
     }
-    
-    
 }

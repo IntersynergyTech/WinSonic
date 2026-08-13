@@ -4,23 +4,28 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:WinSonic.Gui.Common.ViewModels.DetailPages;assembly=WinSonic.Gui.Common"
              xmlns:models="clr-namespace:WinSonic.Core.Models;assembly=WinSonic.Core"
+             xmlns:converters="clr-namespace:WinSonic.Gui.Xplat.Misc.Converters"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="vm:SinglePlaylistViewModel"
              x:Class="WinSonic.Gui.Xplat.Views.DetailPages.SinglePlaylistView" Loaded="Control_OnLoaded">
     <Design.DataContext>
         <vm:SinglePlaylistViewModel />
     </Design.DataContext>
+    <ContentPage.Resources>
+        <converters:TimecodeToTextConverter x:Key="Timecode"/>
+    </ContentPage.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0">
-            <StackPanel Margin="10">
+        <Grid Grid.Row="0" Grid.ColumnDefinitions="Auto, *">
+            <ContentControl Content="{Binding CoverArt}" Width="200" Height="200" Margin="10" />
+            <StackPanel Grid.Column="1" Margin="10">
                 <TextBlock Text="{Binding PlaylistInfo.Name}" FontSize="18" FontWeight="Bold" Margin="10" />
                 <TextBlock Text="{Binding PlaylistInfo.Owner}" Margin="10" />
                 <TextBlock Text="{Binding PlaylistInfo.SongCount}" Margin="10" />
-                <TextBlock Text="{Binding PlaylistInfo.Duration}" Margin="10" />
+                <TextBlock Text="{Binding PlaylistInfo.Duration, Converter={StaticResource Timecode}}" Margin="10" />
                 <StackPanel Orientation="Horizontal" Spacing="6">
                     <Button Content="▶️" Command="{Binding PlayPlaylistCommand}" CommandParameter="{x:False}"></Button>
                     <Button Content="🔀" Command="{Binding PlayPlaylistCommand}" CommandParameter="{x:True}"></Button>
@@ -38,7 +43,7 @@
                             <TextBlock Text="{Binding Title}" Width="200" />
                             <TextBlock Text="{Binding Artist}" Width="150" />
                             <TextBlock Text="{Binding Album}" Width="150" />
-                            <TextBlock Text="{Binding Duration}" Width="100" />
+                            <TextBlock Text="{Binding Duration, Converter={StaticResource Timecode}}" Width="100" />
                         </StackPanel>
                     </DataTemplate>
                 </ItemsRepeater.ItemTemplate>

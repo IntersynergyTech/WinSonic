@@ -22,6 +22,7 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
     private DeviceInfo _defaultOutputDevice;
     private readonly ReplayGainProcessor _replayGainProcessor = new (ReplayGainConfiguration.Default);
     private float VolumeLevel = 1f;
+    private bool Muted = false;
 
     private MiniAudioDeviceConfig? _playbackDeviceConfig;
 
@@ -156,7 +157,7 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
         Debug.WriteLine($"Creating sound player for stream {provider.FormatInfo.Tags.Title}");
         var player = new SoundPlayer(_engine, format, provider);
         player.Volume = replayGainedVolume;
-
+        player.Mute = Muted;
         player.PlaybackEnded += PlayerOnPlaybackEnded;
 
         _currentActivePlaybackDevice.MasterMixer.AddComponent(player);
@@ -244,6 +245,16 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
             VolumeLevel = value;
             var rgVolume = _replayGainProcessor.UpdateVolume(value);
             _currentActivePlayer!.Volume = rgVolume;
+        }
+    }
+
+    public bool IsMuted
+    {
+        get => Muted;
+        set
+        {
+            Muted = value;
+            _currentActivePlayer!.Mute = value;
         }
     }
 

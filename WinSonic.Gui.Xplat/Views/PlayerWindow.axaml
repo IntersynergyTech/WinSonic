@@ -34,7 +34,7 @@
             <Grid HorizontalAlignment="Stretch"
                   VerticalAlignment="Stretch">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="60" />
+                    <RowDefinition Height="10" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
                 <StackPanel Grid.Row="0" VerticalAlignment="Stretch">

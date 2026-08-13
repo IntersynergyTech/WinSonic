@@ -1,7 +1,5 @@
 using Avalonia;
 using Avalonia.Controls;
-using System;
-using Microsoft.Extensions.DependencyInjection;
 using WinSonic.Gui.Common.GuiServices;
 using WinSonic.Gui.Common.ViewModels;
 
