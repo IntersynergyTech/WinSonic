@@ -10,7 +10,7 @@ public class BigSync
     private readonly SqliteDataContextFactory _databaseFactory;
     private readonly SubsonicApiWrapper _api;
     private BaseDataContext _database;
-    private const int ITEMS_PER_REQUEST = 100;
+    private const int ITEMS_PER_REQUEST = 500;
 
     public BigSync(SqliteDataContextFactory databaseFactory, SubsonicApiWrapper api)
     {

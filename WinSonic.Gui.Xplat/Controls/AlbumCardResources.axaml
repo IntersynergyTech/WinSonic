@@ -14,7 +14,7 @@
                             <RowDefinition Height="{TemplateBinding ArtworkDimensions}" />
                             <RowDefinition Height="58" />
                         </Grid.RowDefinitions>
-                        <controls:CoverArtControl Grid.Row="0" Width="{TemplateBinding ArtworkDimensions}" Height="{TemplateBinding ArtworkDimensions}" CoverArtId="{TemplateBinding CoverArtId}"></controls:CoverArtControl>
+                        <controls:CoverArtControl Grid.Row="0" Width="{TemplateBinding ArtworkDimensions}" Dimensions="{TemplateBinding ArtworkImageDataDimensions}" Height="{TemplateBinding ArtworkDimensions}" CoverArtId="{TemplateBinding CoverArtId}"></controls:CoverArtControl>
                         <StackPanel Grid.Row="1" Margin="0,4,0,0" Spacing="4">
                             <TextBlock Text="{TemplateBinding Title}" FontWeight="SemiBold"  TextTrimming="CharacterEllipsis" TextWrapping="Wrap" MaxLines="2" />
                             <TextBlock Text="{TemplateBinding Artist}" FontSize="{DynamicResource FontSizeSmall}"
@@ -31,7 +31,7 @@
         <Setter Property="Template">
             <ControlTemplate>
                 <Grid ColumnDefinitions="64,*">
-                    <controls:CoverArtControl Width="{TemplateBinding ArtworkDimensions}" Height="{TemplateBinding ArtworkDimensions}" CoverArtId="{TemplateBinding CoverArtId}" Grid.Column="0" />
+                    <controls:CoverArtControl Width="{TemplateBinding ArtworkDimensions}" Dimensions="{TemplateBinding ArtworkImageDataDimensions}" Height="{TemplateBinding ArtworkDimensions}" CoverArtId="{TemplateBinding CoverArtId}" Grid.Column="0" />
                     <StackPanel Grid.Column="1" Margin="0,8,0,0" Spacing="4">
                         <TextBlock Text="{TemplateBinding Title}" FontWeight="SemiBold"  TextTrimming="CharacterEllipsis" TextWrapping="Wrap" MaxLines="2" />
                         <TextBlock Text="{TemplateBinding Artist}" FontSize="{DynamicResource FontSizeSmall}"

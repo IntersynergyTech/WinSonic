@@ -42,7 +42,7 @@
                         <StackPanel Orientation="Horizontal" Margin="5">
                             <TextBlock Text="{Binding Title}" Width="200" />
                             <TextBlock Text="{Binding Artist}" Width="150" />
-                            <TextBlock Text="{Binding Album}" Width="150" />
+                            <TextBlock Text="{Binding Album.Title}" Width="150" />
                             <TextBlock Text="{Binding Duration, Converter={StaticResource Timecode}}" Width="100" />
                         </StackPanel>
                     </DataTemplate>

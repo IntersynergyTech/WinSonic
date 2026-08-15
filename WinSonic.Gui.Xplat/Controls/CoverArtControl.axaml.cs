@@ -19,6 +19,7 @@ public partial class CoverArtControl : UserControl
     }
 
     public string CoverArt { get; set; }
+    public int? DimensionsValue { get; set; }
 
     public CoverArtControl()
     {
@@ -29,6 +30,19 @@ public partial class CoverArtControl : UserControl
     {
         get => CoverArt;
         set => CoverArt = value;
+    }
+    
+    public int? Dimensions
+    {
+        get => ViewModel?.Dimensions;
+        set
+        {
+            DimensionsValue = value;
+            if (ViewModel != null)
+            {
+                ViewModel.Dimensions = value;
+            }
+        }
     }
 
     #if DEBUG
@@ -70,12 +84,20 @@ public partial class CoverArtControl : UserControl
             o => o.ViewModel,
             (o, v) => o.ViewModel = v
         );
+    
+    public static readonly DirectProperty<CoverArtControl, int?> DimensionsProperty =
+        AvaloniaProperty.RegisterDirect<CoverArtControl, int?>(
+            nameof(Dimensions),
+            o => o.Dimensions,
+            (o, v) => o.Dimensions = v
+        );
 
     private void Control_OnLoaded(object? sender, RoutedEventArgs e)
     {
         //ViewModel.OnLoaded();
         var vm = DependencyService.Services.GetService<CoverArtViewModel>()!;
         vm.CoverArtId = CoverArtId;
+        vm.Dimensions = DimensionsValue;
         SetAndRaise(ViewModelProperty, ref _viewModel, vm);
     }
 

@@ -1,15 +1,14 @@
 using WinSonic.Data.DbModels;
 using WinSonic.Data.Utilities;
 using WinSonic.Subsonic.Client.Model;
-using Artist = WinSonic.Data.DbModels.Artist;
 
 namespace WinSonic.Data.Sync.Mappers;
 
 public static class ArtistMapper
 {
-    public static Artist CreateDbArtist(this ArtistID3 source)
+    public static DbArtist CreateDbArtist(this ArtistID3 source)
     {
-        var artist = new Artist
+        var artist = new DbArtist
         {
             Id = source.Id,
             Title = source.Name,
@@ -21,7 +20,7 @@ public static class ArtistMapper
 
         if (!string.IsNullOrEmpty(source.CoverArt))
         {
-            var coverArt = new CoverArt(source.CoverArt).AddDefaultCacheables(SyncManager.DefaultCacheExpiryMins);
+            var coverArt = new DbCoverArt(source.CoverArt).AddDefaultCacheables(SyncManager.DefaultCacheExpiryMins);
             artist.CoverArt = coverArt;
         }
 

@@ -1,6 +1,6 @@
 namespace WinSonic.Data.DbModels.LocalCacheEntries;
 
-public class CachedSong : ICacheableEntity, ILocalCacheItem<Song>, IMediaFormat
+public class DbCachedSong : ICacheableEntity, ILocalCacheItem<DbSong>, IMediaFormat
 {
     public bool IsOriginal { get; set; }
 
@@ -9,7 +9,7 @@ public class CachedSong : ICacheableEntity, ILocalCacheItem<Song>, IMediaFormat
     public Guid CacheId { get; set; }
     public Guid Id { get; set; }
     public string Filename { get; set; }
-    public virtual Song ParentItem { get; set; }
+    public virtual DbSong ParentItem { get; set; }
     public int SampleRate { get; set; }
     public int BitDepth { get; set; }
     public int Bitrate { get; set; }

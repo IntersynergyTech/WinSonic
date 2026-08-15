@@ -1,15 +1,14 @@
 using WinSonic.Data.DbModels;
 using WinSonic.Data.Utilities;
 using WinSonic.Subsonic.Client.Model;
-using Playlist = WinSonic.Data.DbModels.Playlist;
 
 namespace WinSonic.Data.Sync.Mappers;
 
 public static class PlaylistMapper
 {
-    public static Playlist CreateDbPlaylist(this PlaylistWithSongs source, Dictionary<string, Song> existingSongs)
+    public static DbPlaylist CreateDbPlaylist(this PlaylistWithSongs source, Dictionary<string, DbSong> existingSongs)
     {
-        var playlist = new Playlist
+        var playlist = new DbPlaylist
         {
             Id = source.Id,
             Title = source.Name,
@@ -29,7 +28,7 @@ public static class PlaylistMapper
 
         return playlist;
 
-        Song GetSongForId(string Id)
+        DbSong GetSongForId(string Id)
         {
             if (existingSongs.TryGetValue(Id, out var song))
             {
@@ -37,7 +36,7 @@ public static class PlaylistMapper
             }
             else
             {
-                var newSong =  new Song { Id = Id };
+                var newSong =  new DbSong { Id = Id };
                 existingSongs.Add(Id, newSong);
                 return newSong;
             }

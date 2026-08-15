@@ -2,7 +2,6 @@ using WinSonic.Data.DbModels;
 using WinSonic.Data.Sync.Mappers;
 using WinSonic.Subsonic.Client.Model;
 using WinSonic.Subsonic.Helpers;
-using Playlist = WinSonic.Data.DbModels.Playlist;
 
 namespace WinSonic.Data.Sync.SyncTasks;
 
@@ -58,8 +57,8 @@ public static class BigSyncPlaylists
     )
     {
         var addCounter = 0;
-        var addedPlaylists = new List<Playlist>();
-        var addedSongEntities = new Dictionary<string, Song>();
+        var addedPlaylists = new List<DbPlaylist>();
+        var addedSongEntities = new Dictionary<string, DbSong>();
 
         foreach (var downloadedPlaylist in downloadedPlaylists)
         {

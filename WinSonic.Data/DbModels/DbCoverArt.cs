@@ -3,10 +3,10 @@ using WinSonic.Data.DbModels.LocalCacheEntries;
 
 namespace WinSonic.Data.DbModels;
 
-public class CoverArt : ICacheableEntity
+public class DbCoverArt : ICacheableEntity
 {
     
-    public CoverArt(string id)
+    public DbCoverArt(string id)
     {
         Id = id;
     }
@@ -18,5 +18,5 @@ public class CoverArt : ICacheableEntity
     public DateTime? CacheExpires { get; set; }
     public Guid CacheId { get; set; }
 
-    public virtual ICollection<CachedCoverArt> LocalCacheEntries { get; set; }
+    public virtual ICollection<DbCachedCoverArt> LocalCacheEntries { get; set; }
 }

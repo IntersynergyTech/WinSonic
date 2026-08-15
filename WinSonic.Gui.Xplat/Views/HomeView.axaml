@@ -19,12 +19,12 @@
             <Border Background="{DynamicResource CalendarViewOutOfScopeBackground}" Padding="18" CornerRadius="12">
                 <StackPanel Spacing="6">
                     <Button Theme="{DynamicResource InvisibleButtonWrapper}" Command="{Binding GoToAlbumCommand}">
-                        <StackPanel Spacing="12">
+                        <StackPanel>
                             <ContentControl Content="{Binding CoverArtModel}"></ContentControl>
-                            <TextBlock Text="{Binding NowPlaying.Title}" FontSize="{DynamicResource WsFontSizeXl}" FontWeight="SemiLight"/>
+                            <TextBlock Text="{Binding NowPlaying.Title}" Margin="0,4" FontSize="{DynamicResource WsFontSizeXl}" FontWeight="SemiLight"/>
+                            <TextBlock Text="{Binding NowPlaying.Album.Title}" FontSize="{DynamicResource WsFontSizeLrg}" />
                         </StackPanel>
                     </Button>
-                    <TextBlock Text="{Binding NowPlaying.Album}" FontSize="{DynamicResource WsFontSizeLrg}" />
                     <TextBlock Text="{Binding NowPlaying.Artist}" FontSize="{DynamicResource WsFontSizeMed}"/>
                 </StackPanel>
             </Border>
@@ -37,7 +37,7 @@
                 <ListBox.ItemTemplate>
                     <DataTemplate DataType="models:Song">
                         <Grid ColumnDefinitions="Auto, *" Margin="8,4">
-                            <controls:CoverArtControl Width="48" Height="48" CoverArtId="{Binding CoverArtId}" />
+                            <controls:CoverArtControl Width="48" Height="48" Dimensions="96" CoverArtId="{Binding CoverArtId}" />
                             <StackPanel Grid.Column="1" Margin="8,0" Spacing="2" VerticalAlignment="Center">
                                 <TextBlock Text="{Binding Title}" FontSize="{DynamicResource WsFontSizeMed}" />
                                 <TextBlock Text="{Binding Artist}" FontSize="{DynamicResource WsFontSizeSml}" />

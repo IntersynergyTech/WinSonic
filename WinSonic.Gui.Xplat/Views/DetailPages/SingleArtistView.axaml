@@ -58,7 +58,7 @@
                     <DataTemplate DataType="models:Song">
                         <StackPanel Orientation="Horizontal" Margin="5">
                             <TextBlock Text="{Binding Title}" Width="220" />
-                            <TextBlock Text="{Binding Album}" Width="220" />
+                            <TextBlock Text="{Binding Album.Title}" Width="220" />
                             <TextBlock Text="{Binding Duration}" Width="120" />
                         </StackPanel>
                     </DataTemplate>

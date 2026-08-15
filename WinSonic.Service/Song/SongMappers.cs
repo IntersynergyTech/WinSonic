@@ -1,5 +1,6 @@
 using WinSonic.Core;
 using WinSonic.Core.Models;
+using WinSonic.Service.Album;
 using WinSonic.Service.Artist;
 using Api = WinSonic.Subsonic.Client.Model;
 
@@ -16,7 +17,7 @@ public static class SongMappers
 
         return new Core.Models.Song(
             song.Id,
-            song.Album,
+            null, //todo maybe in future or just nuke
             song.AlbumId,
             song.Artist,
             song.Artists.ConvertArray(ArtistMappers.ApiToArtist),
@@ -38,11 +39,11 @@ public static class SongMappers
         return new ReplayGain(replayGain.TrackGain, replayGain.TrackPeak, replayGain.AlbumGain, replayGain.AlbumPeak);
     }
     
-    public static Core.Models.Song DbToSong(Data.DbModels.Song dbSong)
+    public static Core.Models.Song DbToSong(Data.DbModels.DbSong dbSong)
     {
         return new Core.Models.Song(
             dbSong.Id,
-            dbSong.Album?.Title,
+            AlbumMappers.DbToAlbumInfo(dbSong.Album),
             dbSong.Album?.Id,
             dbSong.Artist?.Title,
             dbSong.Artists?.ConvertArray(ArtistMappers.DbToArtist) ?? Array.Empty<Core.Models.Artist>(),

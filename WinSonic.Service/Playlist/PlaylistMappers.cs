@@ -42,7 +42,7 @@ public static class PlaylistMappers
         );
     }
 
-    public static PlaylistInfo DbToPlaylistInfo(this Data.DbModels.Playlist playlist)
+    public static PlaylistInfo DbToPlaylistInfo(this Data.DbModels.DbPlaylist playlist)
     {
         return new PlaylistInfo(
             id: playlist.Id,
@@ -59,7 +59,7 @@ public static class PlaylistMappers
         );
     }
 
-    public static PlaylistFull DbToPlaylistFull(this Data.DbModels.Playlist playlist)
+    public static PlaylistFull DbToPlaylistFull(this Data.DbModels.DbPlaylist playlist)
     {
         
         var songs = playlist.Songs.ConvertList(SongMappers.DbToSong);

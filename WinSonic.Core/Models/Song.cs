@@ -3,8 +3,8 @@ namespace WinSonic.Core.Models;
 public class Song
 {
     public string Id { get; }
-    public string? Album { get; }
     public string? AlbumId { get; }
+    public AlbumInfo? Album { get; set; }
 
     public string? Artist { get; }
     public Artist[] Artists { get; }
@@ -20,7 +20,7 @@ public class Song
 
     public Song(
         string id,
-        string? album,
+        AlbumInfo? album,
         string? albumId,
         string? artist,
         Artist[] artists,

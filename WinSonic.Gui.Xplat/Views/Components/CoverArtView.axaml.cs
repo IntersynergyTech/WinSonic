@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Controls;
@@ -35,6 +36,7 @@ public partial class CoverArtView : UserControl
         
         Context.CoverArtSourceData = null;
         var newCoverArtId = Context.CoverArtId;
+        var newCoverArtDimensions = Context.Dimensions;
 
         if (_currentCoverArtId == newCoverArtId) return;
 
@@ -59,10 +61,23 @@ public partial class CoverArtView : UserControl
                 {
                     if (_artworkService is not null)
                     {
-                        var stream = await _artworkService.GetArtworkAsync(
-                            newCoverArtId,
-                            cancellationToken: cancellationToken
-                        );
+                        Stream stream = null;
+                        if (newCoverArtDimensions is not null)
+                        {stream = await _artworkService.GetArtworkWithDimensionAsync(
+                                newCoverArtId,
+                                newCoverArtDimensions!.Value,
+                                acceptAnyCached: false,
+                                cancellationToken: cancellationToken
+                            );
+                        }
+                        else
+                        {
+                            stream = await _artworkService.GetArtworkAsync(
+                                newCoverArtId,
+                                acceptAnyCached: false,
+                                cancellationToken: cancellationToken
+                            );
+                        }
 
                         try
                         {

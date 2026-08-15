@@ -79,8 +79,7 @@ public partial class HomeViewModel : PageModelBase
     public void GoToAlbum()
     {
         var albumsViewModel = DependencyService.Services.GetService<SingleAlbumViewModel>();
-        var album = _albumService.GetAlbumByIdAsync(NowPlaying.AlbumId).Result;
-        albumsViewModel!.SetAlbum(album);
+        albumsViewModel!.SetAlbum(NowPlaying.Album);
         NavigationService.NavigateTo(albumsViewModel);
     }
 

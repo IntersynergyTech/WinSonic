@@ -19,7 +19,7 @@ public class AlbumCard : TemplatedControl
         get => GetValue(CoverArtIdProperty);
         set
         {
-            SetValue(CoverArtIdProperty, value); 
+            SetValue(CoverArtIdProperty, value);
             CoverArtViewModel.CoverArtId = value;
         }
     }
@@ -36,6 +36,16 @@ public class AlbumCard : TemplatedControl
         set => SetValue(ArtworkDimensionsProperty, value);
     }
 
+    public int? ArtworkImageDataDimensions
+    {
+        get => CoverArtViewModel?.Dimensions;
+        set
+        {
+            SetValue(ArtworkImageDataDimensionsProperty, value);
+            CoverArtViewModel.Dimensions = value;
+        }
+    }
+
     public static readonly StyledProperty<string> TitleProperty =
         AvaloniaProperty.Register<AlbumCard, string>(nameof(Title));
 
@@ -48,8 +58,11 @@ public class AlbumCard : TemplatedControl
     public static readonly StyledProperty<int> ArtworkDimensionsProperty =
         AvaloniaProperty.Register<AlbumCard, int>(nameof(ArtworkDimensions));
 
+    public static readonly StyledProperty<int> ArtworkImageDataDimensionsProperty =
+        AvaloniaProperty.Register<AlbumCard, int>(nameof(ArtworkImageDataDimensions));
+
     public CoverArtViewModel CoverArtViewModel { get; set; }
-    
+
     public AlbumCard()
     {
         CoverArtViewModel = DependencyService.Services.GetService<CoverArtViewModel>();

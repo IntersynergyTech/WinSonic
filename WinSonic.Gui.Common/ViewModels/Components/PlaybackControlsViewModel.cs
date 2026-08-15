@@ -58,7 +58,7 @@ public partial class PlaybackControlsViewModel : ViewModelBase
             OnPropertyChanged();
         }
     }
-    
+
     public bool IsMuted
     {
         get => _autoPlaybackManager.Player.IsMuted;
@@ -84,6 +84,7 @@ public partial class PlaybackControlsViewModel : ViewModelBase
         _autoPlaybackManager.NowPlayingChanged += AutoPlaybackManagerOnNowPlayingChanged;
 
         CoverArt = DependencyService.Services.GetService<CoverArtViewModel>();
+        CoverArt.Dimensions = 160;
     }
 
     private void AutoPlaybackManagerOnNowPlayingChanged(object? sender, Song? e)
@@ -129,18 +130,17 @@ public partial class PlaybackControlsViewModel : ViewModelBase
     public void GoToAlbum()
     {
         if (_autoPlaybackManager.NowPlaying?.AlbumId == null) return;
+
         var albumVm = DependencyService.Services.GetService<SingleAlbumViewModel>();
-        var album = _albumService.GetAlbumByIdAsync(_autoPlaybackManager.NowPlaying?.AlbumId!).Result;
-        albumVm!.SetAlbum(album);
-        
+        albumVm!.SetAlbum(_autoPlaybackManager.NowPlaying.Album!);
+
         NavigationService.NavigateTo(albumVm);
     }
-    
+
     void UpdateTimerOnElapsed(object? sender, ElapsedEventArgs e)
     {
         UpdateViewProperties();
     }
-    
 
     private void UpdateViewProperties()
     {

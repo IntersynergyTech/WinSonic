@@ -1,7 +1,6 @@
 using WinSonic.Data.Sync.Mappers;
 using WinSonic.Subsonic.Client.Model;
 using WinSonic.Subsonic.Helpers;
-using Artist = WinSonic.Data.DbModels.Artist;
 
 namespace WinSonic.Data.Sync.SyncTasks;
 

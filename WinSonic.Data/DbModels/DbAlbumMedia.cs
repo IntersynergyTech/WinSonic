@@ -1,11 +1,11 @@
 namespace WinSonic.Data.DbModels;
 
-public class AlbumMedia : ICacheableEntity
+public class DbAlbumMedia : ICacheableEntity
 {
     public Guid Id { get; set; }
-    public virtual Album Album { get; set; }
+    public virtual DbAlbum Album { get; set; }
     public int DiscId { get; set; }
-    public virtual CoverArt? CoverArt { get; set; }
+    public virtual DbCoverArt? CoverArt { get; set; }
     public string Name { get; set; }
     public DateTime CacheLastUpdated { get; set; }
     public DateTime? CacheExpires { get; set; }

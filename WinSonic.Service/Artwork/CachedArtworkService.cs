@@ -4,6 +4,7 @@ using WinSonic.Data;
 using WinSonic.Data.DbModels;
 using WinSonic.Data.DbModels.LocalCacheEntries;
 using WinSonic.Data.Utilities;
+using WinSonic.Service.Misc;
 
 namespace WinSonic.Service.Artwork;
 
@@ -14,17 +15,20 @@ public class CachedArtworkService : IArtworkService
     private readonly StorageManager _storageManager;
     private readonly IDbContextFactory<BaseDataContext> _dataContextFactory;
     private readonly LiveArtworkService _liveArtworkService;
+    private readonly IImageResizer _imageResizer;
     private const int ArtworkCacheExpiryMins = 525600; // 1 year in minutes
 
     public CachedArtworkService(
         StorageManager storageManager,
         IDbContextFactory<BaseDataContext> dataContextFactory,
-        LiveArtworkService liveArtworkService
+        LiveArtworkService liveArtworkService,
+        IImageResizer imageResizer
     )
     {
         _storageManager = storageManager;
         _dataContextFactory = dataContextFactory;
         _liveArtworkService = liveArtworkService;
+        _imageResizer = imageResizer;
     }
 
     public async Task<Stream> GetArtworkAsync(
@@ -34,13 +38,112 @@ public class CachedArtworkService : IArtworkService
     )
     {
         var dbContext = _dataContextFactory.CreateDbContext();
-        
-        Console.WriteLine($"Getting artwork for {coverArtId} with acceptAnyCached={acceptAnyCached}");
-        var cachedResults = await GetArtCachesForIdAsync(coverArtId, dbContext);
-        var original = cachedResults.FirstOrDefault(c => c.Dimension == null);
-        
 
-        if (original != null && TryFile(original, out var originalStream))
+        var cachedResults = await GetArtCachesForIdAsync(coverArtId, dbContext);
+
+        return await GetFullArtworkInternalAsync(
+            coverArtId,
+            acceptAnyCached,
+            cachedResults,
+            dbContext,
+            cancellationToken
+        );
+    }
+
+    private async Task<Stream> GetFullArtworkInternalAsync(
+        string coverArtId,
+        bool acceptAnyCached,
+        List<DbCachedCoverArt> cachedResults,
+        BaseDataContext? dbContext = null,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var result = await GetArtworkInternalAsync(
+            coverArtId,
+            acceptAnyCached,
+            cancellationToken,
+            cachedResults,
+            null
+        );
+
+        if (result != null)
+        {
+            return result;
+        }
+
+        //atp we've either ran out of cached entries and/or aren't accepting others, so fetch from the live service and cache it.
+        var finalResult = await FetchAndCacheArtworkAsync(coverArtId, null, cancellationToken, dbContext);
+        return finalResult;
+    }
+
+    public async Task<Stream> GetArtworkWithDimensionAsync(
+        string coverArtId,
+        int dimension,
+        bool acceptAnyCached,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var dbContext = _dataContextFactory.CreateDbContext();
+
+        var cachedResults = await GetArtCachesForIdAsync(coverArtId, dbContext);
+
+        var result = await GetArtworkInternalAsync(
+            coverArtId,
+            acceptAnyCached,
+            cancellationToken,
+            cachedResults,
+            dimension
+        );
+
+        if (result != null)
+        {
+            return result;
+        }
+
+        // At this point it's just that we don't have a cached entry for the requested dimension, but we might have an original and we can resize ourselves, rather than asking the server for a resize. And that'll just ask the server for the original and we cache it if it's not there.
+        var original = await GetFullArtworkInternalAsync(
+            coverArtId,
+            acceptAnyCached: false,
+            cachedResults,
+            dbContext,
+            cancellationToken
+        );
+
+        if (original != null)
+        {
+            var resizedStream = _imageResizer.ResizeImage(original, dimension, dimension, maintainAspectRatio: true);
+
+            var cachedResizedResult = await CacheArtworkAsync(
+                coverArtId,
+                dimension,
+                resizedStream,
+                cancellationToken,
+                dbContext
+            );
+
+            return cachedResizedResult;
+        }
+
+        // In theory this should never happen because the above resize should always pull something.
+        var fetchedResult = await FetchAndCacheArtworkAsync(coverArtId, dimension, cancellationToken, dbContext);
+        return fetchedResult;
+    }
+
+    private async Task<Stream?> GetArtworkInternalAsync(
+        string coverArtId,
+        bool acceptAnyCached,
+        CancellationToken cancellationToken,
+        List<DbCachedCoverArt> cachedResults,
+        int? dimension
+    )
+    {
+        Console.WriteLine(
+            $"Getting artwork for {coverArtId} with acceptAnyCached={acceptAnyCached} with dimension={dimension}. Cached results: {cachedResults.Count}"
+        );
+
+        var exact = cachedResults.FirstOrDefault(c => c.Dimension == dimension);
+
+        if (exact != null && TryFile(exact, out var originalStream))
         {
             return originalStream;
         }
@@ -48,6 +151,7 @@ public class CachedArtworkService : IArtworkService
         if (acceptAnyCached && cachedResults.Any())
         {
             var orderedCached = cachedResults.Where(c => c.Dimension.HasValue)
+                .Where(c => dimension == null || c.Dimension >= dimension)
                 .OrderByDescending(c => c.Dimension ?? 0)
                 .ToList();
 
@@ -65,28 +169,16 @@ public class CachedArtworkService : IArtworkService
             }
         }
 
-        //atp we've either ran out of cached entries and/or aren't accepting others, so fetch from the live service and cache it.
-        var result = await FetchAndCacheArtworkAsync(coverArtId, null, cancellationToken, dbContext);
-        return result;
+        return null;
     }
 
-    public Task<Stream> GetArtworkWithDimensionAsync(
-        string coverArtId,
-        int dimension,
-        bool acceptAnyCached,
-        CancellationToken cancellationToken = default
-    )
-    {
-        throw new NotImplementedException();
-    }
-
-    private async Task<List<CachedCoverArt>> GetArtCachesForIdAsync(string artworkId, BaseDataContext dataContext)
+    private async Task<List<DbCachedCoverArt>> GetArtCachesForIdAsync(string artworkId, BaseDataContext dataContext)
     {
         var cachedResults = await dataContext.CachedCoverArt.Where(c => c.ParentItem.Id == artworkId).ToListAsync();
         return cachedResults;
     }
 
-    private bool TryFile(CachedCoverArt art, out Stream stream)
+    private bool TryFile(DbCachedCoverArt art, out Stream stream)
     {
         Console.WriteLine($"Trying file for {art.Filename} {art.Id} dim {art.Dimension} parent {art.ParentItem.Id}");
 
@@ -141,6 +233,25 @@ public class CachedArtworkService : IArtworkService
             stream = await _liveArtworkService.GetArtworkAsync(coverArtId, false, cancellationToken: cancellationToken);
         }
 
+        await CacheArtworkAsync(
+            coverArtId,
+            dimension,
+            stream,
+            cancellationToken,
+            dataContext
+        );
+
+        return stream;
+    }
+
+    private async Task<Stream> CacheArtworkAsync(
+        string coverArtId,
+        int? dimension,
+        Stream stream,
+        CancellationToken cancellationToken,
+        BaseDataContext dataContext
+    )
+    {
         if (stream != null)
         {
             var id = Guid.NewGuid();
@@ -152,11 +263,11 @@ public class CachedArtworkService : IArtworkService
 
             if (coverArtParent is null)
             {
-                coverArtParent = new CoverArt(coverArtId);
+                coverArtParent = new DbCoverArt(coverArtId);
                 dataContext.Attach(coverArtParent);
             }
 
-            var cachedCoverArt = new CachedCoverArt
+            var cachedCoverArt = new DbCachedCoverArt
             {
                 ParentItem = coverArtParent,
                 Dimension = dimension,
@@ -168,12 +279,12 @@ public class CachedArtworkService : IArtworkService
 
             dataContext.CachedCoverArt.Add(cachedCoverArt);
             await dataContext.SaveChangesAsync(cancellationToken);
-        }
 
-        if (stream.CanSeek)
-        {
-            //Reset stream back to the beginning if we just downloaded otherwise skia dies
-            stream.Seek(0, SeekOrigin.Begin);
+            if (stream.CanSeek)
+            {
+                //Reset stream back to the beginning if we just downloaded otherwise skia dies
+                stream.Seek(0, SeekOrigin.Begin);
+            }
         }
 
         return stream;

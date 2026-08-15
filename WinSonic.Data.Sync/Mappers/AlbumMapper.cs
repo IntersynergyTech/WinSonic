@@ -1,19 +1,19 @@
 using WinSonic.Data.DbModels;
 using WinSonic.Data.Utilities;
 using WinSonic.Subsonic.Client.Model;
-using Artist = WinSonic.Data.DbModels.Artist;
+using WinSonic.Subsonic.Helpers;
 
 namespace WinSonic.Data.Sync.Mappers;
 
 public static class AlbumMapper
 {
-    public static Album CreateDbAlbum(
+    public static DbAlbum CreateDbAlbum(
         this AlbumID3 source,
-        Artist existingArtist,
-        Dictionary<string, Artist> existingArtists
+        DbArtist existingArtist,
+        Dictionary<string, DbArtist> existingArtists
     )
     {
-        var album = new Album
+        var album = new DbAlbum
         {
             Id = source.Id,
             Title = source.Name,
@@ -28,6 +28,7 @@ public static class AlbumMapper
             DisplayArtist = source.DisplayArtist,
             IsCompilation = source.IsCompilation,
             IsExplicit = source.ExplicitStatus == ExplicitStatus.Explicit,
+            ReleaseDate = source.ReleaseDate.ToDateTime(),
             Rating = source.UserRating
         };
 
@@ -35,21 +36,21 @@ public static class AlbumMapper
 
         if (!string.IsNullOrEmpty(source.CoverArt))
         {
-            var coverArt = new CoverArt(source.CoverArt).AddDefaultCacheables(SyncManager.DefaultCacheExpiryMins);
+            var coverArt = new DbCoverArt(source.CoverArt).AddDefaultCacheables(SyncManager.DefaultCacheExpiryMins);
             album.CoverArt = coverArt;
         }
 
         var media = source.DiscTitles
-            .Select(x => new AlbumMedia
+            .Select(x => new DbAlbumMedia
                 {
                     Name = x.Title,
-                    CoverArt = new CoverArt(x.CoverArt).AddDefaultCacheables(SyncManager.DefaultCacheExpiryMins)
+                    CoverArt = new DbCoverArt(x.CoverArt).AddDefaultCacheables(SyncManager.DefaultCacheExpiryMins)
                 }
             )
             .ToList();
 
         album.Media = media;
-        album.Artists = new List<Artist>();
+        album.Artists = new List<DbArtist>();
 
         foreach (var sourceArtist in source.Artists)
         {

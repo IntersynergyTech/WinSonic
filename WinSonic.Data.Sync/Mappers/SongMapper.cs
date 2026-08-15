@@ -7,14 +7,14 @@ namespace WinSonic.Data.Sync.Mappers;
 
 public static class SongMapper
 {
-    public static Song CreateDbSong(
+    public static DbSong CreateDbSong(
         this Child source,
-        Album? existingAlbum,
-        Artist? existingArtist,
-        Dictionary<string,Artist> existingArtists
+        DbAlbum? existingAlbum,
+        DbArtist? existingArtist,
+        Dictionary<string,DbArtist> existingArtists
     )
     {
-        var song = new DbModels.Song
+        var song = new DbModels.DbSong
         {
             Id = source.Id,
             Title = source.Title,
@@ -33,6 +33,7 @@ public static class SongMapper
             ChannelCount = source.ChannelCount,
             Filesize = source.Size,
             Duration = source.Duration,
+            DiscNumber = source.DiscNumber,
             RgAlbumGain = source.ReplayGain.AlbumGain,
             RgTrackGain = source.ReplayGain.TrackGain,
             RgAlbumPeak = source.ReplayGain.AlbumPeak,
@@ -49,8 +50,8 @@ public static class SongMapper
 
         song.Artist = existingArtist;
 
-        song.Artists = new List<Artist>();
-        song.AlbumArtists = new List<Artist>();
+        song.Artists = new List<DbArtist>();
+        song.AlbumArtists = new List<DbArtist>();
 
         foreach (var sourceArtist in source.Artists)
         {
@@ -66,7 +67,7 @@ public static class SongMapper
 
         if (!string.IsNullOrEmpty(source.CoverArt))
         {
-            var coverArt = new CoverArt(source.CoverArt).AddDefaultCacheables(SyncManager.DefaultCacheExpiryMins);
+            var coverArt = new DbCoverArt(source.CoverArt).AddDefaultCacheables(SyncManager.DefaultCacheExpiryMins);
             song.CoverArt = coverArt;
         }
 

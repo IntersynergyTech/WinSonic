@@ -9,6 +9,7 @@ public class AlbumInfo
     public string? CoverArtId { get; }
     public int SongCount { get; }
     public TimeSpan Duration { get; }
+    public int? Year { get; set; }
     public bool IsExplicit { get; }
 
     public AlbumInfo(
@@ -19,6 +20,7 @@ public class AlbumInfo
         string? coverArtId,
         int songCount,
         TimeSpan duration,
+        int? year,
         bool isExplicit
     )
     {
@@ -29,6 +31,7 @@ public class AlbumInfo
         CoverArtId = coverArtId;
         SongCount = songCount;
         Duration = duration;
+        Year = year;
         IsExplicit = isExplicit;
     }
 }
@@ -45,9 +48,10 @@ public class AlbumFull : AlbumInfo
         string? coverArtId,
         int songCount,
         TimeSpan duration,
+        int? year,
         bool isExplicit,
         List<Song> songs
-    ) : base(id, title, sortTitle, artist, coverArtId, songCount, duration, isExplicit)
+    ) : base(id, title, sortTitle, artist, coverArtId, songCount, duration, year, isExplicit)
     {
         Songs = songs;
     }

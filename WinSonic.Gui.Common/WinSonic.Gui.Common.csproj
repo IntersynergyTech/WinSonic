@@ -14,6 +14,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\WinSonic.Data.Sync\WinSonic.Data.Sync.csproj" />
+      <ProjectReference Include="..\WinSonic.Gui.Misc.ImageTools\WinSonic.Gui.Misc.ImageTools.csproj" />
       <ProjectReference Include="..\WinSonic.Playback\WinSonic.Playback.csproj" />
       <ProjectReference Include="..\WinSonic.Player\WinSonic.Player.csproj" />
       <ProjectReference Include="..\WinSonic.Resources\WinSonic.Resources.csproj" />

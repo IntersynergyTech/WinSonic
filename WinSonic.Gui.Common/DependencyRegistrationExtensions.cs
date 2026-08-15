@@ -8,11 +8,13 @@ using WinSonic.Gui.Common.ViewModels;
 using WinSonic.Gui.Common.ViewModels.BrowsePages;
 using WinSonic.Gui.Common.ViewModels.Components;
 using WinSonic.Gui.Common.ViewModels.DetailPages;
+using WinSonic.Misc.ImageTools;
 using WinSonic.Playback;
 using WinSonic.Player;
 using WinSonic.Service.Album;
 using WinSonic.Service.Artist;
 using WinSonic.Service.Artwork;
+using WinSonic.Service.Misc;
 using WinSonic.Service.Playlist;
 using WinSonic.Subsonic.Helpers;
 
@@ -35,6 +37,9 @@ public static class DependencyRegistrationExtensions
         services.AddSingleton<AutoPlaybackManager>();
         services.AddSingleton<SongFetcher>();
 
+        // Misc other bits
+        services.AddScoped<IImageResizer, ImageSharpResizer>();
+        
         return services;
     }
 

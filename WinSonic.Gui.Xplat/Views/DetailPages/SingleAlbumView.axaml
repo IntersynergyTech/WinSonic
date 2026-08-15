@@ -5,30 +5,44 @@
              xmlns:vm="clr-namespace:WinSonic.Gui.Common.ViewModels.DetailPages;assembly=WinSonic.Gui.Common"
              xmlns:models="clr-namespace:WinSonic.Core.Models;assembly=WinSonic.Core"
              xmlns:converters="clr-namespace:WinSonic.Gui.Xplat.Misc.Converters"
+             xmlns:localisation="clr-namespace:WinSonic.Resources.Localisation;assembly=WinSonic.Resources"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="vm:SingleAlbumViewModel"
              x:Class="WinSonic.Gui.Xplat.Views.DetailPages.SingleAlbumView" Loaded="Control_OnLoaded">
     <ContentPage.Resources>
         <converters:TimecodeToTextConverter x:Key="Timecode"/>
+        <converters:TimecodeToApproximateTextConverter x:Key="ApproximateTimecode"/>
     </ContentPage.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0" Grid.ColumnDefinitions="Auto, *">
-            <ContentControl Content="{Binding CoverArt}" Width="200" Height="200" Margin="10" />
-            <StackPanel Grid.Column="1" Margin="10">
-                <TextBlock Text="{Binding AlbumInfo.Title}" FontSize="18" FontWeight="Bold" Margin="10" />
-                <TextBlock Text="{Binding AlbumInfo.Artist}" Margin="10" />
-                <TextBlock Text="{Binding AlbumInfo.SongCount}" Margin="10" />
-                <TextBlock Text="{Binding AlbumInfo.Duration, Converter={StaticResource Timecode}}" Margin="10" />
+        <Border Grid.Row="0" Background="{DynamicResource SystemControlBackgroundBaseLowBrush}" Margin="24" CornerRadius="18" Padding="12" Height="220">
+        <Grid Grid.ColumnDefinitions="Auto, *">
+            
+            <ContentControl Content="{Binding CoverArt}" Width="200" Height="200" />
+            <StackPanel Grid.Column="1" Margin="16,0" VerticalAlignment="Bottom">
+                <TextBlock Text="{x:Static localisation:Strings._Album}" FontSize="{DynamicResource WsFontSizeSml}" FontWeight="SemiBold"></TextBlock>
+                <TextBlock Text="{Binding AlbumInfo.Title}" FontSize="{DynamicResource WsFontSizeHero}" FontWeight="Light" />
+                <StackPanel Orientation="Horizontal" Spacing="6" Margin="0,12,0,0">
+                    <TextBlock Text="{Binding AlbumInfo.Artist}" />
+                    <TextBlock Text="•" />
+                    <TextBlock Text="{Binding AlbumInfo.Year}" />
+                    <TextBlock Text="•" />
+                    <TextBlock Text="{Binding AlbumInfo.SongCount}" />
+                    <TextBlock Text="•" />
+                    
+                    <TextBlock Text="{Binding AlbumInfo.Duration, Converter={StaticResource ApproximateTimecode}}"/>
+                </StackPanel>
                 <StackPanel Orientation="Horizontal" Spacing="6">
                     <Button Content="▶️" Command="{Binding PlayAlbumCommand}" CommandParameter="{x:False}"></Button>
                     <Button Content="🔀" Command="{Binding PlayAlbumCommand}" CommandParameter="{x:True}"></Button>
                 </StackPanel>
             </StackPanel>
         </Grid>
+            
+            </Border>
         <ScrollViewer Grid.Row="1" Margin="10">
             <ItemsRepeater ItemsSource="{Binding Songs}" VerticalAlignment="Stretch">
                 <ItemsRepeater.Layout>

@@ -105,4 +105,19 @@
     <data name="_NowPlaying" xml:space="preserve">
         <value>Now Playing</value>
     </data>
+    <data name="_HoursMinsWordyText" xml:space="preserve">
+        <value>{{hours}} {{mins}}</value>
+    </data>
+    <data name="_HoursWordy" xml:space="preserve">
+        <value>{{hours}} hours</value>
+    </data>
+    <data name="_HourWordy" xml:space="preserve">
+        <value>{{hours}} hour</value>
+    </data>
+    <data name="_MinsWordy" xml:space="preserve">
+        <value>{{mins}} mins</value>
+    </data>
+    <data name="_MinWordy" xml:space="preserve">
+        <value>{{mins}} min</value>
+    </data>
 </root>

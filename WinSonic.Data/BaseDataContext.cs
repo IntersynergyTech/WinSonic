@@ -7,15 +7,17 @@ namespace WinSonic.Data;
 
 public class BaseDataContext : DbContext
 {
-    public DbSet<Album> Albums { get; set; }
-    public DbSet<AlbumMedia> AlbumMedia { get; set; }
-    public DbSet<Artist> Artists { get; set; }
-    public DbSet<CoverArt> CoverArt { get; set; }
-    public DbSet<Playlist> Playlists { get; set; }
-    public DbSet<Song> Songs { get; set; }
+    public DbSet<DbAlbum> Albums { get; set; }
+    public DbSet<DbAlbumMedia> AlbumMedia { get; set; }
+    public DbSet<DbArtist> Artists { get; set; }
+    public DbSet<DbCoverArt> CoverArt { get; set; }
+    public DbSet<DbPlaylist> Playlists { get; set; }
+    public DbSet<DbSong> Songs { get; set; }
+    public DbSet<DbPlayHistoryEntry> PlayHistory { get; set; }
+    public DbSet<DbPlayQueueEntry> PlayQueue { get; set; }
 
-    public DbSet<CachedCoverArt> CachedCoverArt { get; set; }
-    public DbSet<CachedSong> CachedSongs { get; set; }
+    public DbSet<DbCachedCoverArt> CachedCoverArt { get; set; }
+    public DbSet<DbCachedSong> CachedSongs { get; set; }
 
     public void UpdateMigrationState()
     {
@@ -33,18 +35,19 @@ public class BaseDataContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        ConfigureAlbum(modelBuilder.Entity<Album>());
-        ConfigureArtist(modelBuilder.Entity<Artist>());
-        ConfigureAlbumMedia(modelBuilder.Entity<AlbumMedia>());
-        ConfigurePlaylist(modelBuilder.Entity<Playlist>());
-        ConfigureSong(modelBuilder.Entity<Song>());
-        ConfigureCoverArt(modelBuilder.Entity<CoverArt>());
-        ConfigureCachedCoverArt(modelBuilder.Entity<CachedCoverArt>());
-        ConfigureCachedSong(modelBuilder.Entity<CachedSong>());
-        
+        ConfigureAlbum(modelBuilder.Entity<DbAlbum>());
+        ConfigureArtist(modelBuilder.Entity<DbArtist>());
+        ConfigureAlbumMedia(modelBuilder.Entity<DbAlbumMedia>());
+        ConfigurePlaylist(modelBuilder.Entity<DbPlaylist>());
+        ConfigureSong(modelBuilder.Entity<DbSong>());
+        ConfigureCoverArt(modelBuilder.Entity<DbCoverArt>());
+        ConfigureCachedCoverArt(modelBuilder.Entity<DbCachedCoverArt>());
+        ConfigureCachedSong(modelBuilder.Entity<DbCachedSong>());
+        ConfigurePlayHistory(modelBuilder.Entity<DbPlayHistoryEntry>());
+        ConfigurePlayQueue(modelBuilder.Entity<DbPlayQueueEntry>());
     }
 
-    void ConfigureAlbum(EntityTypeBuilder<Album> builder)
+    void ConfigureAlbum(EntityTypeBuilder<DbAlbum> builder)
     {
         builder.HasKey(a => a.Id);
 
@@ -61,7 +64,7 @@ public class BaseDataContext : DbContext
         builder.HasMany(a => a.Artists).WithMany(a => a.Albums);
     }
 
-    void ConfigureArtist(EntityTypeBuilder<Artist> builder)
+    void ConfigureArtist(EntityTypeBuilder<DbArtist> builder)
     {
         builder.HasKey(a => a.Id);
 
@@ -76,7 +79,7 @@ public class BaseDataContext : DbContext
         builder.HasMany(a => a.SongsAsAlbumArtist).WithMany(a => a.AlbumArtists);
     }
 
-    void ConfigurePlaylist(EntityTypeBuilder<Playlist> builder)
+    void ConfigurePlaylist(EntityTypeBuilder<DbPlaylist> builder)
     {
         builder.HasKey(a => a.Id);
 
@@ -95,7 +98,7 @@ public class BaseDataContext : DbContext
         builder.HasMany(a => a.Songs).WithMany(a => a.AppearsInPlaylists);
     }
 
-    void ConfigureSong(EntityTypeBuilder<Song> builder)
+    void ConfigureSong(EntityTypeBuilder<DbSong> builder)
     {
         builder.HasKey(a => a.Id);
 
@@ -112,29 +115,43 @@ public class BaseDataContext : DbContext
 
         builder.HasMany(a => a.LocalCacheEntries).WithOne(a => a.ParentItem);
     }
+    
+    void ConfigurePlayHistory(EntityTypeBuilder<DbPlayHistoryEntry> builder)
+    {
+        builder.HasKey(a => a.Id);
 
-    void ConfigureAlbumMedia(EntityTypeBuilder<AlbumMedia> builder)
+        builder.HasOne(a => a.Song);
+    }
+    
+    void ConfigurePlayQueue(EntityTypeBuilder<DbPlayQueueEntry> builder)
+    {
+        builder.HasKey(a => a.Id);
+
+        builder.HasOne(a => a.Song);
+    }
+
+    void ConfigureAlbumMedia(EntityTypeBuilder<DbAlbumMedia> builder)
     {
         builder.HasKey(a => a.Id);
 
         builder.HasOne(a => a.Album).WithMany(a => a.Media);
     }
 
-    void ConfigureCoverArt(EntityTypeBuilder<CoverArt> builder)
+    void ConfigureCoverArt(EntityTypeBuilder<DbCoverArt> builder)
     {
         builder.HasKey(a => a.Id);
 
         builder.HasMany(a => a.LocalCacheEntries).WithOne(a => a.ParentItem);
     }
 
-    void ConfigureCachedCoverArt(EntityTypeBuilder<CachedCoverArt> builder)
+    void ConfigureCachedCoverArt(EntityTypeBuilder<DbCachedCoverArt> builder)
     {
         builder.HasKey(a => a.Id);
 
         builder.HasOne(a => a.ParentItem).WithMany(a => a.LocalCacheEntries);
     }
 
-    void ConfigureCachedSong(EntityTypeBuilder<CachedSong> builder)
+    void ConfigureCachedSong(EntityTypeBuilder<DbCachedSong> builder)
     {
         builder.HasKey(a => a.Id);
 

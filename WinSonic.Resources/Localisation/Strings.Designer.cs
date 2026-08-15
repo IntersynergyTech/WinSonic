@@ -132,6 +132,33 @@ namespace WinSonic.Resources.Localisation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {{hours}} {{mins}}.
+        /// </summary>
+        public static string _HoursMinsWordyText {
+            get {
+                return ResourceManager.GetString("_HoursMinsWordyText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {{hours}} hours.
+        /// </summary>
+        public static string _HoursWordy {
+            get {
+                return ResourceManager.GetString("_HoursWordy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {{hours}} hour.
+        /// </summary>
+        public static string _HourWordy {
+            get {
+                return ResourceManager.GetString("_HourWordy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Let&apos;s get started!.
         /// </summary>
         public static string _LandingGetStarted {
@@ -155,6 +182,24 @@ namespace WinSonic.Resources.Localisation {
         public static string _LetsGo {
             get {
                 return ResourceManager.GetString("_LetsGo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {{mins}} mins.
+        /// </summary>
+        public static string _MinsWordy {
+            get {
+                return ResourceManager.GetString("_MinsWordy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {{mins}} min.
+        /// </summary>
+        public static string _MinWordy {
+            get {
+                return ResourceManager.GetString("_MinWordy", resourceCulture);
             }
         }
         

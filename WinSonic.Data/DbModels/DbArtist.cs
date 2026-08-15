@@ -3,7 +3,7 @@ using WinSonic.Data.Enums;
 
 namespace WinSonic.Data.DbModels;
 
-public class Artist: ICacheableEntity, IStarrable, IRateable, ISortable
+public class DbArtist: ICacheableEntity, IStarrable, IRateable, ISortable
 {
     [Key]
     public string Id { get; set; }
@@ -11,7 +11,7 @@ public class Artist: ICacheableEntity, IStarrable, IRateable, ISortable
     public string Title { get; set; }
     
     public string? SortTitle { get; set; }
-    public virtual CoverArt? CoverArt { get; set; }
+    public virtual DbCoverArt? CoverArt { get; set; }
     public int? AlbumCount { get; set; }
     public ArtistType? Type { get; set; }
     public DateTime? StarredAt { get; set; }
@@ -21,8 +21,8 @@ public class Artist: ICacheableEntity, IStarrable, IRateable, ISortable
     public Guid CacheId { get; set; }
     public int? Rating { get; set; }
 
-    public virtual ICollection<Album> Albums { get; set; }
-    public virtual ICollection<Song> Songs { get; set; }
-    public virtual ICollection<Song> SongsAsAlbumArtist { get; set; }
+    public virtual ICollection<DbAlbum> Albums { get; set; }
+    public virtual ICollection<DbSong> Songs { get; set; }
+    public virtual ICollection<DbSong> SongsAsAlbumArtist { get; set; }
     public virtual ICollection<string> Types { get; set; }  
 }
