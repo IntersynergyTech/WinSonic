@@ -10,7 +10,7 @@
     <UserControl.Resources>
     </UserControl.Resources>
     <Grid>
-        <Image Source="avares://WinSonic.Resources/Assets/cd.png"></Image>
+        <Image Source="avares://WinSonic.Gui.Xplat/Assets/cd.png"></Image>
         <Grid>
             <TransitioningContentControl Content="{Binding CoverArtSourceData}">
                 <TransitioningContentControl.PageTransition>
