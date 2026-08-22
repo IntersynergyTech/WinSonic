@@ -40,7 +40,7 @@ public static class DependencyRegistrationExtensions
 
         // Misc other bits
         services.AddScoped<IImageResizer, ImageSharpResizer>();
-        
+
         return services;
     }
 
@@ -81,10 +81,11 @@ public static class DependencyRegistrationExtensions
         services.AddScoped<IArtistService, CachedArtistService>();
         services.AddScoped<IPlaylistService, CachedPlaylistService>();
         services.AddTransient<IArtworkService, CachedArtworkService>();
-        services.AddScoped<IPlaybackHistoryService, ServerPlaybackHistoryService>();
-        
+        services.AddScoped<IPlaybackHistoryService, StoredPlaybackHistoryService>();
+
         // Extra data services
         services.AddScoped<LiveArtworkService>();
+        services.AddScoped<ServerPlaybackHistoryService>();
 
         //Playback services
         services.AddSingleton<PlayQueue>();

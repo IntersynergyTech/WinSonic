@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using WinSonic.Core.Models;
 using WinSonic.Gui.Common.GuiServices;
 using WinSonic.Playback;
@@ -13,23 +14,24 @@ public partial class SingleArtistViewModel : PageModelBase
 {
     private readonly IArtistService _artistService;
     private readonly AutoPlaybackManager _autoPlaybackManager;
-
+    private readonly ILogger<SingleArtistViewModel> _logger;
     [ObservableProperty] public partial Artist? ArtistInfo { get; set; }
     [ObservableProperty] public partial ObservableCollection<AlbumInfo> Albums { get; set; } = new();
     [ObservableProperty] public partial ObservableCollection<Song> Songs { get; set; } = new();
     [ObservableProperty, NotifyCanExecuteChangedFor(nameof(NavigateToAlbumDetailCommand))]
     public partial AlbumInfo? SelectedAlbum { get; set; }
 
-    public SingleArtistViewModel(IArtistService artistService, AutoPlaybackManager autoPlaybackManager)
+    public SingleArtistViewModel(IArtistService artistService, AutoPlaybackManager autoPlaybackManager, ILogger<SingleArtistViewModel> logger)
     {
         _artistService = artistService;
         _autoPlaybackManager = autoPlaybackManager;
+        _logger = logger;
     }
 
     public void SetArtist(Artist artistInfo)
     {
         ArtistInfo = artistInfo;
-        Console.WriteLine($"Loading artist: {artistInfo.Name}");
+        _logger.LogDebug($"Loading artist: {artistInfo.Name}");
     }
 
     public override void OnLoaded()

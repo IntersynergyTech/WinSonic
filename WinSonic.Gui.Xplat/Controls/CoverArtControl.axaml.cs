@@ -3,6 +3,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using WinSonic.Gui.Common.GuiServices;
 using WinSonic.Gui.Common.ViewModels.Components;
 
@@ -11,6 +12,7 @@ namespace WinSonic.Gui.Xplat.Controls;
 public partial class CoverArtControl : UserControl
 {
     public CoverArtViewModel _viewModel;
+    private readonly ILogger<CoverArtControl> _logger;
 
     public CoverArtViewModel ViewModel
     {
@@ -23,6 +25,7 @@ public partial class CoverArtControl : UserControl
 
     public CoverArtControl()
     {
+        DependencyService.Services.GetService<ILogger<CoverArtControl>>();
         InitializeComponent();
     }
 
@@ -53,7 +56,6 @@ public partial class CoverArtControl : UserControl
         get => _objectBinder;
         set
         {
-            Console.WriteLine($"ObjectBinder set to: {value} of type {value?.GetType().Name}");
             SetAndRaise<object>(ObjectBinderProperty, ref _objectBinder, value);
         }
     }
@@ -64,7 +66,6 @@ public partial class CoverArtControl : UserControl
             o => o._objectBinder,
             (o, v) =>
             {
-                Console.WriteLine($"ObjectBinderProperty set to: {v} of type {v?.GetType().Name}");
                 o._objectBinder = v;
             }
         );
@@ -103,6 +104,6 @@ public partial class CoverArtControl : UserControl
 
     private void Button_OnClick(object? sender, RoutedEventArgs e)
     {
-        Console.WriteLine($"Button clicked for CoverArtId: {CoverArtId}");
+        _logger.LogInformation($"Button clicked for CoverArtId: {CoverArtId}");
     }
 }

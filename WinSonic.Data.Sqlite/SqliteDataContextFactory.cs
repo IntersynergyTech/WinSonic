@@ -1,22 +1,25 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using WinSonic.Core;
 
 namespace WinSonic.Data.Sqlite;
 
 public class SqliteDataContextFactory : IDbContextFactory<BaseDataContext>
 {
+    private readonly ILogger<SqliteDataContextFactory> _logger;
     private readonly StorageManager _storageManager;
     private readonly string _dbFileName;
     private bool hasUpdated = false;
 
-    public SqliteDataContextFactory(StorageManager storageManager)
+    public SqliteDataContextFactory(StorageManager storageManager, ILogger<SqliteDataContextFactory> logger)
     {
         _storageManager = storageManager;
         _dbFileName = _storageManager.GetDatabaseFile();
+        _logger = logger;
         
-        Console.WriteLine("Initialising DB...");
+        _logger.LogInformation("Initialising DB...");
         var context = Create();
-        Console.WriteLine($"Database active: {context.Database.CanConnect()}");
+        _logger.LogInformation($"Database active: {context.Database.CanConnect()}");
     }
 
     public SqliteDataContext Create()
@@ -26,7 +29,7 @@ public class SqliteDataContextFactory : IDbContextFactory<BaseDataContext>
         if (!hasUpdated)
         {
             hasUpdated = true;
-            context.UpdateMigrationState();
+            context.UpdateMigrationState(_logger);
         }
 
         return context;

@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using WinSonic.Data.Sqlite;
 using WinSonic.Data.Sync.SyncTasks;
 using WinSonic.Subsonic.Client.Model;
@@ -9,13 +10,15 @@ public class BigSync
 {
     private readonly SqliteDataContextFactory _databaseFactory;
     private readonly SubsonicApiWrapper _api;
+    private readonly ILogger<BigSync> _logger;
     private BaseDataContext _database;
     private const int ITEMS_PER_REQUEST = 500;
 
-    public BigSync(SqliteDataContextFactory databaseFactory, SubsonicApiWrapper api)
+    public BigSync(SqliteDataContextFactory databaseFactory, SubsonicApiWrapper api, ILogger<BigSync> logger)
     {
         _databaseFactory = databaseFactory;
         _api = api;
+        _logger = logger;
     }
 
     public void RunBigSync(CancellationToken cancellationToken)
@@ -32,22 +35,22 @@ public class BigSync
 
     private void Log(string message)
     {
-        Console.WriteLine($"[BIGSYNC]: {message}");
+        _logger.LogInformation(message);
     }
 
     private void RunBigSyncInternal(CancellationToken cancellationToken)
     {
         Log($"Getting Artists");
-        BigSyncArtists.SyncArtists(cancellationToken, ITEMS_PER_REQUEST, _api, _database);
+        BigSyncArtists.SyncArtists(cancellationToken, ITEMS_PER_REQUEST, _api, _database, _logger); 
 
         Log($"Getting Albums");
-        BigSyncAlbums.SyncAlbums(cancellationToken, ITEMS_PER_REQUEST, _api, _database);
+        BigSyncAlbums.SyncAlbums(cancellationToken, ITEMS_PER_REQUEST, _api, _database, _logger);
 
         Log($"Getting songs...");
-        BigSyncSongs.SyncSongs(cancellationToken, ITEMS_PER_REQUEST, _api, _database);
+        BigSyncSongs.SyncSongs(cancellationToken, ITEMS_PER_REQUEST, _api, _database, _logger);
         
         Log($"Getting playlists...");
-        BigSyncPlaylists.SyncPlaylists(cancellationToken, ITEMS_PER_REQUEST, _api, _database);
+        BigSyncPlaylists.SyncPlaylists(cancellationToken, ITEMS_PER_REQUEST, _api, _database, _logger);
         
         Log("Finishing up.");
     }

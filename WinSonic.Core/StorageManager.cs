@@ -5,6 +5,7 @@ public class StorageManager
     private const string APPLICATION_BASE_FOLDER = "WinSonic";
     private const string SONGS_FOLDER = "SongsCache";
     private const string ARTWORK_FOLDER = "ArtworkCache";
+    private const string LOGS_FOLDER = "Logs";
     private const string DATABASE_NAME = "WinSonicDb.db";
 
     private string GetBaseFolder() =>
@@ -18,6 +19,8 @@ public class StorageManager
     private string GetArtworkFolder() => Path.Combine(GetBaseFolder(), ARTWORK_FOLDER);
     
     public string GetDatabaseFile() => EnsureDbFileExists(Path.Combine(GetBaseFolder(), DATABASE_NAME));
+    
+    public string GetLogsDirectory() => Path.Combine(GetBaseFolder(), LOGS_FOLDER);
 
     private string EnsureDbFileExists(string fileName)
     {

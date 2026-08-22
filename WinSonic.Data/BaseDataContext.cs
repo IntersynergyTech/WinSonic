@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.Extensions.Logging;
 using WinSonic.Data.DbModels;
 using WinSonic.Data.DbModels.LocalCacheEntries;
 
@@ -7,6 +8,7 @@ namespace WinSonic.Data;
 
 public class BaseDataContext : DbContext
 {
+    
     public DbSet<DbAlbum> Albums { get; set; }
     public DbSet<DbAlbumMedia> AlbumMedia { get; set; }
     public DbSet<DbArtist> Artists { get; set; }
@@ -19,10 +21,16 @@ public class BaseDataContext : DbContext
     public DbSet<DbCachedCoverArt> CachedCoverArt { get; set; }
     public DbSet<DbCachedSong> CachedSongs { get; set; }
 
-    public void UpdateMigrationState()
+    public void UpdateMigrationState(ILogger logger)
     {
         if (Database.GetPendingMigrations().Any())
         {
+            if (Database.GetPendingMigrations().Any())
+            {
+                logger.LogWarning("Database model is out of date. Applying migrations now...");
+                Database.Migrate();
+                logger.LogWarning("Migrations applied.");
+            }
             Database.Migrate();
         }
     }

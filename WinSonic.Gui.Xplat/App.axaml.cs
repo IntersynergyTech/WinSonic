@@ -5,12 +5,15 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
 using Microsoft.Extensions.DependencyInjection;
-using SoundFlow.Utils;
+using Serilog;
+using Serilog.Events;
+using WinSonic.Core;
 using WinSonic.Gui.Common;
 using WinSonic.Gui.Common.GuiServices;
 using WinSonic.Gui.Common.ViewModels;
 using WinSonic.Gui.Xplat.Misc;
 using WinSonic.Gui.Xplat.Views;
+using Path = System.IO.Path;
 
 namespace WinSonic.Gui.Xplat;
 
@@ -18,6 +21,21 @@ public partial class App : Application
 {
     public override void Initialize()
     {
+        Log.Logger = new LoggerConfiguration()
+            .Enrich.FromLogContext()
+            .Enrich.WithThreadId()
+            .WriteTo.Console(restrictedToMinimumLevel: LogEventLevel.Information)
+            .WriteTo.Debug(restrictedToMinimumLevel: LogEventLevel.Verbose)
+            .WriteTo.File(
+                Path.Combine(new StorageManager().GetLogsDirectory(), "log.txt"),
+                rollingInterval: RollingInterval.Day,
+                retainedFileCountLimit: 7,
+                restrictedToMinimumLevel: LogEventLevel.Warning
+            )
+            .CreateLogger();
+
+        Log.Information("Starting WinSonic");
+
         AvaloniaXamlLoader.Load(this);
 #if DEBUG
         this.AttachDeveloperTools();
@@ -35,6 +53,8 @@ public partial class App : Application
         var collection = new ServiceCollection();
         collection.AddCommonGuiServices();
         collection.AddXplatServices();
+
+        collection.AddSerilog();
 
         // Creates a ServiceProvider containing services from the provided IServiceCollection
         var services = collection.BuildServiceProvider();
@@ -60,7 +80,7 @@ public partial class App : Application
     private void CurrentDomainOnUnhandledException(object sender, UnhandledExceptionEventArgs e)
     {
         var exception = e.ExceptionObject as Exception;
-        Log.Critical(exception.ToString(), $"Unhandled domain exception (terminating: {e.IsTerminating})");
+        Log.Fatal(exception.ToString(), $"Unhandled domain exception (terminating: {e.IsTerminating})");
     }
 
     private void TaskSchedulerOnUnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e)

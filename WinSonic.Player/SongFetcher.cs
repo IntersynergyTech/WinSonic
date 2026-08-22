@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Microsoft.Extensions.Logging;
 using WinSonic.Core;
 using WinSonic.Core.Models;
 using WinSonic.Subsonic.Helpers;
@@ -11,46 +12,48 @@ public class SongFetcher
 
     public SubsonicApiWrapper _api { get; }
     public StorageManager _storage { get; }
+    private readonly ILogger<SongFetcher> _logger;
 
-    public SongFetcher(SubsonicApiWrapper api, StorageManager storage)
+    public SongFetcher(SubsonicApiWrapper api, StorageManager storage, ILogger<SongFetcher> logger)
     {
         _api = api;
         _storage = storage;
+        _logger = logger;
     }
 
     public Stream FetchSong(Song song)
     {
         var songId = song.Id;
-        Debug.WriteLine("Fetching song: " + songId);
+        _logger.LogDebug("Fetching song: " + songId);
         // Check if it exists
         var songFile = _storage.GetSongFileInfo(songId);
 
         // If we don't have it already we will have to stream on demand.
         if (!songFile.Exists)
         {
-            Debug.WriteLine("Song not found in storage, streaming: " + songId);
+            _logger.LogDebug("Song not found in storage, streaming: " + songId);
             return StreamSong(song);
         }
 
-        Debug.WriteLine($"[{songId}] Loading from local file");
+        _logger.LogDebug($"[{songId}] Loading from local file");
         return _storage.OpenSongFile(songId);
     }
 
     public void PrefetchSong(Song song)
     {
         var songId = song.Id;
-        Debug.WriteLine($"[{songId}] Prefetching");
+        _logger.LogDebug($"[{songId}] Prefetching");
         var songFile = _storage.GetSongFileInfo(songId);
 
         if (!songFile.Exists)
         {
-            Debug.WriteLine($"[{songId}] Not available in storage. Downloading for next play.");
+            _logger.LogDebug($"[{songId}] Not available in storage. Downloading for next play.");
             DownloadSong(song);
-            Debug.WriteLine($"[{songId}] Song downloaded.");
+            _logger.LogDebug($"[{songId}] Song downloaded.");
         }
         else
         {
-            Debug.WriteLine($"[{songId}] Song already available locally.");
+            _logger.LogDebug($"[{songId}] Song already available locally.");
         }
     }
 
@@ -68,7 +71,7 @@ public class SongFetcher
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"[{song.Id}] Error streaming song: {ex.Message}");
+            _logger.LogDebug($"[{song.Id}] Error streaming song: {ex.Message}");
             throw;
         }
     }

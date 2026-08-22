@@ -1,9 +1,11 @@
 using System.Diagnostics;
+using Microsoft.Extensions.Logging;
 
 namespace WinSonic.Player.ReplayGain;
 
 public class ReplayGainProcessor
 {
+    private readonly ILogger<ReplayGainProcessor> _logger;
     private ReplayGainConfiguration _config;
     private float _currentVolume = 1.0f;
     private float? _currentTrackGain = null;
@@ -14,9 +16,10 @@ public class ReplayGainProcessor
 
     private const float DEFAULT_GAIN = 0f;
 
-    public ReplayGainProcessor(ReplayGainConfiguration config)
+    public ReplayGainProcessor(ReplayGainConfiguration config, ILogger<ReplayGainProcessor> logger)
     {
         _config = config;
+        _logger = logger;
     }
 
     public void UpdateConfiguration(ReplayGainConfiguration updatedConfiguration)
@@ -25,7 +28,7 @@ public class ReplayGainProcessor
 
         CalculateCurrentGain();
     }
-    
+
     public ReplayGainConfiguration GetConfiguration() => _config;
 
     public float UpdateVolume(float volume)
@@ -55,12 +58,12 @@ public class ReplayGainProcessor
 
         if (preferredGain.HasValue)
         {
-            Debug.WriteLine($"ReplayGainProcessor: Applying gain {preferredGain.Value:F4} dB from {_config.Mode} mode.");
+            _logger.LogDebug($"ReplayGainProcessor: Applying gain {preferredGain.Value:F4} dB from {_config.Mode} mode.");
             _currentGain = preferredGain.Value;
         }
         else if (_config.Mode == ReplayGainMode.Track && _currentAlbumGain.HasValue)
         {
-            Debug.WriteLine(
+            _logger.LogDebug(
                 $"ReplayGainProcessor: Track gain not available, falling back to album gain {_currentAlbumGain.Value:F4} dB."
             );
 
@@ -69,7 +72,7 @@ public class ReplayGainProcessor
         else if (_config.Mode == ReplayGainMode.Album && _currentTrackGain.HasValue)
 
         {
-            Debug.WriteLine(
+            _logger.LogDebug(
                 $"ReplayGainProcessor: Album gain not available, falling back to track gain {_currentTrackGain.Value:F4} dB."
             );
 
@@ -77,7 +80,7 @@ public class ReplayGainProcessor
         }
         else
         {
-            Debug.WriteLine($"ReplayGainProcessor: No suitable gain available.");
+            _logger.LogDebug($"ReplayGainProcessor: No suitable gain available.");
             _currentGain = DEFAULT_GAIN;
         }
     }

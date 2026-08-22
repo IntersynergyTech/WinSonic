@@ -11,23 +11,23 @@ public interface ISoundFlowPlayer
     /// </summary>
     /// <param name="deviceId"></param>
     public void SetOutputDevice(IntPtr? deviceId);
-    
+
     public void LoadStream(Stream stream, Song song);
-    
+
     public void Play();
     public void Pause();
     public void Stop();
 
     public PlaybackState PlaybackState { get; }
-    
+
     public event EventHandler<PlaybackState> PlaybackStateChanged;
     public float Volume { get; set; }
     public bool IsMuted { get; set; }
 
-    public TimeSpan NowPlayingDuration { get; } 
+    public TimeSpan NowPlayingDuration { get; }
     public TimeSpan CurrentPosition { get; set; }
     public Song? NowPlaying { get; }
-    
+
     public ReplayGainConfiguration ReplayGainConfiguration { get; set; }
-    
+
 }

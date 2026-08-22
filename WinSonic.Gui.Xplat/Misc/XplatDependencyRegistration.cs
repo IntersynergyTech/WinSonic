@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using WinSonic.Service.SecureData;
 
 namespace WinSonic.Gui.Xplat.Misc;

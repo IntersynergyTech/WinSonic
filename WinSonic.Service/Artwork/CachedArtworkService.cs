@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using WinSonic.Core;
 using WinSonic.Data;
 using WinSonic.Data.DbModels;
@@ -16,6 +17,7 @@ public class CachedArtworkService : IArtworkService
     private readonly IDbContextFactory<BaseDataContext> _dataContextFactory;
     private readonly LiveArtworkService _liveArtworkService;
     private readonly IImageResizer _imageResizer;
+    private readonly ILogger<CachedArtworkService> _logger;
     private const int ArtworkCacheExpiryMins = 525600; // 1 year in minutes
 
     private const int MaxConcurrentFullArtworkRequests = 8;
@@ -28,13 +30,15 @@ public class CachedArtworkService : IArtworkService
         StorageManager storageManager,
         IDbContextFactory<BaseDataContext> dataContextFactory,
         LiveArtworkService liveArtworkService,
-        IImageResizer imageResizer
+        IImageResizer imageResizer,
+        ILogger<CachedArtworkService> logger
     )
     {
         _storageManager = storageManager;
         _dataContextFactory = dataContextFactory;
         _liveArtworkService = liveArtworkService;
         _imageResizer = imageResizer;
+        _logger = logger;
     }
 
     public async Task<Stream> GetArtworkAsync(
@@ -152,9 +156,7 @@ public class CachedArtworkService : IArtworkService
         int? dimension
     )
     {
-        Console.WriteLine(
-            $"Getting artwork for {coverArtId} with acceptAnyCached={acceptAnyCached} with dimension={dimension}. Cached results: {cachedResults.Count}"
-        );
+        _logger.LogDebug($"Getting artwork for {coverArtId} with acceptAnyCached={acceptAnyCached} with dimension={dimension}. Cached results: {cachedResults.Count}");
 
         var exact = cachedResults.FirstOrDefault(c => c.Dimension == dimension);
 
@@ -195,7 +197,7 @@ public class CachedArtworkService : IArtworkService
 
     private bool TryFile(DbCachedCoverArt art, out Stream stream)
     {
-        Console.WriteLine($"Trying file for {art.Filename} {art.Id} dim {art.Dimension} parent {art.ParentItem.Id}");
+        _logger.LogDebug($"Trying file for {art.Filename} {art.Id} dim {art.Dimension} parent {art.ParentItem.Id}");
 
         try
         {

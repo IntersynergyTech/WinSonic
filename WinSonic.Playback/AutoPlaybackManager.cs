@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Microsoft.Extensions.Logging;
 using WinSonic.Core;
 using WinSonic.Core.Enums;
 using WinSonic.Core.Models;
@@ -9,10 +10,12 @@ namespace WinSonic.Playback;
 
 public class AutoPlaybackManager
 {
+    private readonly IPlaybackHistoryService _playbackHistoryService;
+    private readonly ILogger<AutoPlaybackManager> _logger;
+    
     public PlayQueue Queue { get; }
     public SongFetcher Fetcher { get; }
     public ISoundFlowPlayer Player { get; }
-    private readonly IPlaybackHistoryService _playbackHistoryService;
     
     public Song? NowPlaying { get; private set; }
     
@@ -27,11 +30,11 @@ public class AutoPlaybackManager
                 try
                 {
                     await _playbackHistoryService.ScrobbleNowPlaying(song);
-                    Debug.WriteLine($"Scrobbled now playing track: {song.Title}");
+                    _logger.LogDebug($"Scrobbled now playing track: {song.Title}");
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"Error scrobbling now playing track: {ex.Message}");
+                    _logger.LogDebug($"Error scrobbling now playing track: {ex.Message}");
                 }
             });
         }
@@ -45,13 +48,15 @@ public class AutoPlaybackManager
         PlayQueue queue,
         SongFetcher fetcher,
         ISoundFlowPlayer player,
-        IPlaybackHistoryService playbackHistoryService
+        IPlaybackHistoryService playbackHistoryService,
+        ILogger<AutoPlaybackManager> logger
     )
     {
         Queue = queue;
         Fetcher = fetcher;
         Player = player;
         _playbackHistoryService = playbackHistoryService;
+        _logger = logger;
 
         Player.PlaybackStateChanged += OnPlaybackStateChanged;
     }
@@ -63,7 +68,7 @@ public class AutoPlaybackManager
     
     private void OnPlaybackStateChanged(object? sender, PlaybackState e)
     {
-        Debug.WriteLine($"Playback state change reported: {e}");
+        _logger.LogDebug($"Playback state change reported: {e}");
         if (e == PlaybackState.Ended)
         {
             ScrobbleTrack(NowPlaying);
@@ -89,11 +94,11 @@ public class AutoPlaybackManager
             try
             {
                 await _playbackHistoryService.ScrobbleCompleted(song);
-                Debug.WriteLine($"Scrobbled completed track: {song.Title}");
+                _logger.LogDebug($"Scrobbled completed track: {song.Title}");
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error scrobbling completed track: {ex.Message}");
+                _logger.LogDebug($"Error scrobbling completed track: {ex.Message}");
             }
         });
     }
@@ -103,7 +108,7 @@ public class AutoPlaybackManager
         var queuedSong = Queue.Dequeue();
         if (queuedSong != null)
         {
-            Debug.WriteLine($"Playing next song: {queuedSong.Title}");
+            _logger.LogDebug($"Playing next song: {queuedSong.Title}");
             var stream = Fetcher.FetchSong(queuedSong);
             Player.LoadStream(stream, queuedSong);
             Player.Play();
@@ -116,12 +121,12 @@ public class AutoPlaybackManager
 
                     if (nextUp != null)
                     {
-                        Debug.WriteLine($"Async prefretch next song {nextUp.Title}:");
+                        _logger.LogDebug($"Async prefretch next song {nextUp.Title}:");
                         Fetcher.PrefetchSong(nextUp);
                     }
                     else
                     {
-                        Debug.WriteLine("No next song to prefetch.");
+                        _logger.LogDebug("No next song to prefetch.");
                     }
                 })
             );

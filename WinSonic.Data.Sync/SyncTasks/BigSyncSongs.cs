@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using WinSonic.Data.Sync.Mappers;
 using WinSonic.Subsonic.Client.Model;
 using WinSonic.Subsonic.Helpers;
@@ -10,18 +11,23 @@ public static class BigSyncSongs
         CancellationToken cancellationToken,
         int itemsPerRequest,
         SubsonicApiWrapper api,
-        BaseDataContext database
+        BaseDataContext database,
+        ILogger<BigSync> logger
     )
     {
+        _logger = logger;
         var downloadedSongs = DownloadAllSongs(cancellationToken, itemsPerRequest, api);
         Log($"Processing {downloadedSongs.Count} songs to cache DB...");
         ProcessDownloadedSongs(cancellationToken, database, downloadedSongs);
     }
 
+    private static ILogger<BigSync> _logger;
+
     private static void Log(string message)
     {
-        Console.WriteLine($"[BIGSYNC]: {message}");
+        _logger.LogInformation(message);
     }
+
 
     private static void ProcessDownloadedSongs(
         CancellationToken cancellationToken,

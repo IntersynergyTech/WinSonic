@@ -6,6 +6,7 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Media.Imaging;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using WinSonic.Gui.Common.GuiServices;
 using WinSonic.Gui.Common.ViewModels.Components;
 using WinSonic.Service.Artwork;
@@ -18,12 +19,14 @@ public partial class CoverArtView : UserControl
 {
     public CoverArtViewModel Context => (CoverArtViewModel) DataContext!;
     private readonly IArtworkService _artworkService;
+    private readonly ILogger<CoverArtView> _logger;
 
     private CancellationTokenSource _imageLoadCancellationSource = new ();
 
     public CoverArtView()
     {
         _artworkService = DependencyService.Services.GetService<IArtworkService>();
+        _logger = DependencyService.Services.GetService<ILogger<CoverArtView>>();
         InitializeComponent();
     }
 
@@ -42,11 +45,11 @@ public partial class CoverArtView : UserControl
 
         _currentCoverArtId = newCoverArtId;
 
-        Console.WriteLine($"Updating cover art image for ID: {newCoverArtId}");
+        _logger.LogDebug($"Updating cover art image for ID: {newCoverArtId}");
 
         if (_artworkService is null || String.IsNullOrEmpty(newCoverArtId))
         {
-            Console.WriteLine("Artwork service or CoverArtId is null, skipping image update.");
+            _logger.LogTrace("Artwork service or CoverArtId is null, skipping image update.");
             return;
         }
 
@@ -98,7 +101,7 @@ public partial class CoverArtView : UserControl
                         }
                         catch (Exception e)
                         {
-                            Console.WriteLine(e);
+                            _logger.LogError(e, "Error updating cover art image.");
                         }
                     }
                 }

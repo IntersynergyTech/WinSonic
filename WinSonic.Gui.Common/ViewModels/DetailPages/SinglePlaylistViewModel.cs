@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.Logging;
 using WinSonic.Core.Models;
 using WinSonic.Gui.Common.ViewModels.Components;
 using WinSonic.Playback;
@@ -12,6 +13,8 @@ public partial class SinglePlaylistViewModel : PageModelBase
 {
     private readonly IPlaylistService _playlistService;
     private readonly AutoPlaybackManager _autoPlaybackManager;
+    private readonly ILogger<SinglePlaylistViewModel> _logger;
+    
     [ObservableProperty] public partial PlaylistInfo PlaylistInfo { get; set; }
     [ObservableProperty] public partial ObservableCollection<Song> Songs { get; set; } = new ();
     [ObservableProperty] public partial CoverArtViewModel CoverArt { get; set; }
@@ -21,19 +24,20 @@ public partial class SinglePlaylistViewModel : PageModelBase
     {
         PlaylistInfo = playlistInfo;
         CoverArt.CoverArtId = playlistInfo.CoverArtId;
-        Console.WriteLine($"Loading playlist: {playlistInfo.Name}");
+        _logger.LogDebug($"Loading playlist: {playlistInfo.Name}");
     }
 
-    public SinglePlaylistViewModel(IPlaylistService playlistService, AutoPlaybackManager autoPlaybackManager, CoverArtViewModel coverArtViewModel)
+    public SinglePlaylistViewModel(IPlaylistService playlistService, AutoPlaybackManager autoPlaybackManager, CoverArtViewModel coverArtViewModel, ILogger<SinglePlaylistViewModel> logger)
     {
         _playlistService = playlistService;
         _autoPlaybackManager = autoPlaybackManager;
         CoverArt = coverArtViewModel;
+        _logger = logger;
     }
 
     public override void OnLoaded()
     {
-        Console.WriteLine("SinglePlaylistViewModel OnLoadCommand called");
+        _logger.LogTrace("SinglePlaylistViewModel OnLoadCommand called");
         Task.Run(async () =>
         {
             if (PlaylistInfo != null)
@@ -50,7 +54,7 @@ public partial class SinglePlaylistViewModel : PageModelBase
     {
         if (PlaylistInfo == null) return;
 
-        Console.WriteLine($"Playing playlist: {PlaylistInfo.Name}, Shuffle: {shuffle}");
+        _logger.LogDebug($"Playing playlist: {PlaylistInfo.Name}, Shuffle: {shuffle}");
         
         _autoPlaybackManager.Queue.ResetAndEnqueueFromSource(Songs, shuffle);
         _autoPlaybackManager.StartPlayback();

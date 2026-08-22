@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using WinSonic.Core.Models;
 using WinSonic.Gui.Common.Components;
 using WinSonic.Gui.Common.GuiServices;
@@ -16,6 +17,7 @@ namespace WinSonic.Gui.Common.ViewModels;
 public partial class PlayerWindowViewModel : PageModelBase
 {
     private readonly IPlaylistService? _playlistService;
+    private readonly ILogger<PlayerWindowViewModel> _logger;
 
     NavigationMenuItemModel[] BaseNavigationMenuItems() =>
         new NavigationMenuItemModel[]
@@ -99,7 +101,7 @@ public partial class PlayerWindowViewModel : PageModelBase
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                _logger.LogError(ex, "Failed to navigate to view model of type {ModelType}: {Message}", menuItem.ModelType, ex.Message);
                 throw;
             }
         }
