@@ -22,10 +22,11 @@ public partial class App : Application
     public override void Initialize()
     {
         Log.Logger = new LoggerConfiguration()
+            .MinimumLevel.Verbose()
             .Enrich.FromLogContext()
             .Enrich.WithThreadId()
-            .WriteTo.Console(restrictedToMinimumLevel: LogEventLevel.Information)
-            .WriteTo.Debug(restrictedToMinimumLevel: LogEventLevel.Verbose)
+            .Enrich.WithComputed("SourceContextName", "Substring(SourceContext, LastIndexOf(SourceContext, '.') + 1)")
+            .WriteTo.Console(restrictedToMinimumLevel: LogEventLevel.Verbose, outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3} T{ThreadId} {SourceContextName}] {Message:lj}{NewLine}{Exception}")
             .WriteTo.File(
                 Path.Combine(new StorageManager().GetLogsDirectory(), "log.txt"),
                 rollingInterval: RollingInterval.Day,

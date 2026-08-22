@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using WinSonic.Core;
 using WinSonic.Data;
 using WinSonic.Data.DbModels;
@@ -7,16 +8,16 @@ namespace WinSonic.Service.Artwork;
 
 public class LiveArtworkService : IArtworkService
 {
-    private readonly BaseDataContext _dataContext;
     private readonly SubsonicApiWrapper _api;
+    private readonly ILogger<LiveArtworkService> _logger;
 
     public LiveArtworkService(
-        BaseDataContext dataContext,
-        SubsonicApiWrapper api
+        SubsonicApiWrapper api,
+        ILogger<LiveArtworkService> logger
     )
     {
-        _dataContext = dataContext;
         _api = api;
+        _logger = logger;
     }
 
     public async Task<Stream> GetArtworkAsync(
@@ -25,8 +26,10 @@ public class LiveArtworkService : IArtworkService
         CancellationToken cancellationToken = default
     )
     {
+        _logger.LogDebug($"Fetching Live artwork for CoverArtId: {coverArtId}");
         var api = _api.MediaRetrieval;
         var result = api.GetCoverArtWithHttpInfo(coverArtId);
+        _logger.LogDebug($"Artwork secured for CoverArtId: {coverArtId} - StatusCode: {result.StatusCode}");
         return result.Data;
     }
 
@@ -37,7 +40,10 @@ public class LiveArtworkService : IArtworkService
         CancellationToken cancellationToken = default
     )
     {
+        _logger.LogDebug($"Fetching Live artwork for CoverArtId: {coverArtId} with Dimension: {dimension}");
         var api = _api.MediaRetrieval;
-        return await api.GetCoverArtAsync(coverArtId, dimension, cancellationToken: cancellationToken);
+        var artwork = await api.GetCoverArtAsync(coverArtId, dimension, cancellationToken: cancellationToken);
+        _logger.LogDebug($"Artwork secured for CoverArtId: {coverArtId} with Dimension: {dimension}");
+        return artwork;
     }
 }
