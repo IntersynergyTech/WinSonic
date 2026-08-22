@@ -18,6 +18,12 @@ public class CachedArtworkService : IArtworkService
     private readonly IImageResizer _imageResizer;
     private const int ArtworkCacheExpiryMins = 525600; // 1 year in minutes
 
+    private const int MaxConcurrentFullArtworkRequests = 8;
+    private const int MaxConcurrentLiveArtworkRequests = 4;
+
+    private static readonly SemaphoreSlim LiveArtworkThrottle = new(MaxConcurrentLiveArtworkRequests, MaxConcurrentLiveArtworkRequests);
+    private static readonly SemaphoreSlim FullArtworkThrottle = new(MaxConcurrentFullArtworkRequests, MaxConcurrentFullArtworkRequests);
+
     public CachedArtworkService(
         StorageManager storageManager,
         IDbContextFactory<BaseDataContext> dataContextFactory,
@@ -58,22 +64,31 @@ public class CachedArtworkService : IArtworkService
         CancellationToken cancellationToken = default
     )
     {
-        var result = await GetArtworkInternalAsync(
-            coverArtId,
-            acceptAnyCached,
-            cancellationToken,
-            cachedResults,
-            null
-        );
-
-        if (result != null)
+        // Spamming the filesystem for full artworks was a bit nasty too
+        await FullArtworkThrottle.WaitAsync(cancellationToken);
+        try
         {
-            return result;
-        }
+            var result = await GetArtworkInternalAsync(
+                coverArtId,
+                acceptAnyCached,
+                cancellationToken,
+                cachedResults,
+                null
+            );
 
-        //atp we've either ran out of cached entries and/or aren't accepting others, so fetch from the live service and cache it.
-        var finalResult = await FetchAndCacheArtworkAsync(coverArtId, null, cancellationToken, dbContext);
-        return finalResult;
+            if (result != null)
+            {
+                return result;
+            }
+
+            //atp we've either ran out of cached entries and/or aren't accepting others, so fetch from the live service and cache it.
+            var finalResult = await FetchAndCacheArtworkAsync(coverArtId, null, cancellationToken, dbContext);
+            return finalResult;
+        }
+        finally
+        {
+            FullArtworkThrottle.Release();
+        }
     }
 
     public async Task<Stream> GetArtworkWithDimensionAsync(
@@ -218,19 +233,28 @@ public class CachedArtworkService : IArtworkService
     {
         Stream stream;
 
-        //LAS doesn't actually care what we send for AcceptAnyCached because it never uses the cache anyway, so it doesn't really matter what we say.
-        if (dimension.HasValue)
+        // We were getting stuck for ages because spamming the server for a zillion artworks when the user is scrolling through the play queue was pain
+        await LiveArtworkThrottle.WaitAsync(cancellationToken);
+        try
         {
-            stream = await _liveArtworkService.GetArtworkWithDimensionAsync(
-                coverArtId,
-                dimension.Value,
-                false,
-                cancellationToken: cancellationToken
-            );
+            //LAS doesn't actually care what we send for AcceptAnyCached because it never uses the cache anyway, so it doesn't really matter what we say.
+            if (dimension.HasValue)
+            {
+                stream = await _liveArtworkService.GetArtworkWithDimensionAsync(
+                    coverArtId,
+                    dimension.Value,
+                    false,
+                    cancellationToken: cancellationToken
+                );
+            }
+            else
+            {
+                stream = await _liveArtworkService.GetArtworkAsync(coverArtId, false, cancellationToken: cancellationToken);
+            }
         }
-        else
+        finally
         {
-            stream = await _liveArtworkService.GetArtworkAsync(coverArtId, false, cancellationToken: cancellationToken);
+            LiveArtworkThrottle.Release();
         }
 
         await CacheArtworkAsync(

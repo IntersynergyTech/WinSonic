@@ -33,7 +33,7 @@ public partial class CoverArtView : UserControl
     {
         // Sometimes this fires too early? idk
         if (Context is null) return;
-        
+
         Context.CoverArtSourceData = null;
         var newCoverArtId = Context.CoverArtId;
         var newCoverArtDimensions = Context.Dimensions;
@@ -63,7 +63,8 @@ public partial class CoverArtView : UserControl
                     {
                         Stream stream = null;
                         if (newCoverArtDimensions is not null)
-                        {stream = await _artworkService.GetArtworkWithDimensionAsync(
+                        {
+                            stream = await _artworkService.GetArtworkWithDimensionAsync(
                                 newCoverArtId,
                                 newCoverArtDimensions!.Value,
                                 acceptAnyCached: false,
@@ -109,6 +110,7 @@ public partial class CoverArtView : UserControl
     private void Control_OnLoaded(object? sender, RoutedEventArgs e)
     {
         UpdateCoverArtImage();
+
         Context.PropertyChanged += (sender, args) =>
         {
             if (args.PropertyName == nameof(Context.CoverArtId) || args.PropertyName == nameof(DataContext))
@@ -118,4 +120,3 @@ public partial class CoverArtView : UserControl
         };
     }
 }
-
