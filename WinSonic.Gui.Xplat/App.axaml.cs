@@ -9,6 +9,7 @@ using SoundFlow.Utils;
 using WinSonic.Gui.Common;
 using WinSonic.Gui.Common.GuiServices;
 using WinSonic.Gui.Common.ViewModels;
+using WinSonic.Gui.Xplat.Misc;
 using WinSonic.Gui.Xplat.Views;
 
 namespace WinSonic.Gui.Xplat;
@@ -29,11 +30,11 @@ public partial class App : Application
         Dispatcher.UnhandledException += OnUnhandledException;
         TaskScheduler.UnobservedTaskException += TaskSchedulerOnUnobservedTaskException;
         AppDomain.CurrentDomain.UnhandledException += CurrentDomainOnUnhandledException;
-        
-        
+
         // Register all the services needed for the application to run
         var collection = new ServiceCollection();
         collection.AddCommonGuiServices();
+        collection.AddXplatServices();
 
         // Creates a ServiceProvider containing services from the provided IServiceCollection
         var services = collection.BuildServiceProvider();

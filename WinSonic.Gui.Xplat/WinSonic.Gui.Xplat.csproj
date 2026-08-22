@@ -21,11 +21,13 @@
         </PackageReference>
         <PackageReference Include="CommunityToolkit.Mvvm"/>
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+        <PackageReference Include="GnomeStack.Secrets.OperatingSystem" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\WinSonic.Gui.Common\WinSonic.Gui.Common.csproj" />
       <ProjectReference Include="..\WinSonic.Resources\WinSonic.Resources.csproj" />
+      <ProjectReference Include="..\WinSonic.Service\WinSonic.Service.csproj" />
     </ItemGroup>
 
     <ItemGroup>
