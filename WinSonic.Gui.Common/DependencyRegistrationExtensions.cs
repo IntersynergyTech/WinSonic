@@ -14,6 +14,7 @@ using WinSonic.Player;
 using WinSonic.Service.Album;
 using WinSonic.Service.Artist;
 using WinSonic.Service.Artwork;
+using WinSonic.Service.History;
 using WinSonic.Service.Misc;
 using WinSonic.Service.Playlist;
 using WinSonic.Subsonic.Helpers;
@@ -80,7 +81,8 @@ public static class DependencyRegistrationExtensions
         services.AddScoped<IArtistService, CachedArtistService>();
         services.AddScoped<IPlaylistService, CachedPlaylistService>();
         services.AddTransient<IArtworkService, CachedArtworkService>();
-
+        services.AddScoped<IPlaybackHistoryService, ServerPlaybackHistoryService>();
+        
         // Extra data services
         services.AddScoped<LiveArtworkService>();
 

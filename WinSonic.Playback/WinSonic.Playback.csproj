@@ -4,12 +4,13 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <LangVersion>14</LangVersion>
-        <TargetFrameworks>net10.0;net9.0</TargetFrameworks>
+        <TargetFrameworks>net10.0</TargetFrameworks>
     </PropertyGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\WinSonic.Core\WinSonic.Core.csproj" />
       <ProjectReference Include="..\WinSonic.Player\WinSonic.Player.csproj" />
+      <ProjectReference Include="..\WinSonic.Service\WinSonic.Service.csproj" />
     </ItemGroup>
 
     <ItemGroup>
