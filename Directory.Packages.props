@@ -41,7 +41,6 @@
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.10" />
     <PackageVersion Include="Microsoft.Extensions.Logging" Version="10.0.10" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Debug" Version="10.0.10" />
-    <PackageVersion Include="Microsoft.Windows.SDK.Contracts" Version="10.0.26100.8249" />
     <PackageVersion Include="PropertyChanged.Fody" Version="4.1.0" />
     <PackageVersion Include="WPF-UI" Version="4.3.0" />
     <PackageVersion Include="WPF-UI.Abstractions" Version="4.3.0" />

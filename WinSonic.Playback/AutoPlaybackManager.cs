@@ -21,6 +21,31 @@ public class AutoPlaybackManager
     
     public Song? NowPlaying { get; private set; }
     
+    
+    public AutoPlaybackManager(
+        PlayQueue queue,
+        SongFetcher fetcher,
+        ISoundFlowPlayer player,
+        IPlaybackHistoryService playbackHistoryService,
+        ISystemMediaBroadcastService systemMediaBroadcastService,
+        ILogger<AutoPlaybackManager> logger
+    )
+    {
+        Queue = queue;
+        Fetcher = fetcher;
+        Player = player;
+        _playbackHistoryService = playbackHistoryService;
+        _systemMediaBroadcastService = systemMediaBroadcastService;
+        _logger = logger;
+
+        Player.PlaybackStateChanged += OnPlaybackStateChanged;
+        
+        _systemMediaBroadcastService.PauseRequested += (sender, args) => Player.Pause();
+        _systemMediaBroadcastService.PlayRequested += (sender, args) => Player.Play();
+        _systemMediaBroadcastService.NextRequested += (sender, args) => NextSong();
+        _systemMediaBroadcastService.SetVolumeRequested += (sender, volume) => SetVolume((float)volume);
+    }
+    
     private void UpdateNowPlaying(Song? song)
     {
         NowPlaying = song;
@@ -46,25 +71,6 @@ public class AutoPlaybackManager
     }
     
     public event EventHandler<Song?> NowPlayingChanged;
-
-    public AutoPlaybackManager(
-        PlayQueue queue,
-        SongFetcher fetcher,
-        ISoundFlowPlayer player,
-        IPlaybackHistoryService playbackHistoryService,
-        ISystemMediaBroadcastService systemMediaBroadcastService,
-        ILogger<AutoPlaybackManager> logger
-    )
-    {
-        Queue = queue;
-        Fetcher = fetcher;
-        Player = player;
-        _playbackHistoryService = playbackHistoryService;
-        _systemMediaBroadcastService = systemMediaBroadcastService;
-        _logger = logger;
-
-        Player.PlaybackStateChanged += OnPlaybackStateChanged;
-    }
 
     public void StartPlayback()
     {
@@ -126,11 +132,13 @@ public class AutoPlaybackManager
 
                     if (nextUp != null)
                     {
+                        _systemMediaBroadcastService.SetCanGoNext(true);
                         _logger.LogDebug($"Async prefretch next song {nextUp.Title}:");
                         Fetcher.PrefetchSong(nextUp);
                     }
                     else
                     {
+                        _systemMediaBroadcastService.SetCanGoNext(false);
                         _logger.LogDebug("No next song to prefetch.");
                     }
                 })

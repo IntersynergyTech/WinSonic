@@ -17,7 +17,6 @@
         <PackageReference Include="Avalonia.Desktop"/>
         <PackageReference Include="Avalonia.Markup.Xaml.Loader" />
         <PackageReference Include="HotAvalonia" />
-        <PackageReference Include="Microsoft.Windows.SDK.Contracts" />
     </ItemGroup>
 
     <ItemGroup>
