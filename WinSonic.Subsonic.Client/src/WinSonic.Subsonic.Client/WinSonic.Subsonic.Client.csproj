@@ -17,7 +17,7 @@
     <RepositoryType>git</RepositoryType>
     <PackageReleaseNotes>Minor update</PackageReleaseNotes>
     <Nullable>annotations</Nullable>
-    <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <LangVersion>14</LangVersion>
     <TargetFrameworks>net10.0;net9.0</TargetFrameworks>
   </PropertyGroup>
