@@ -8,14 +8,16 @@ using WinSonic.Playback.Platform;
 
 namespace WinSonic.Gui.Xplat.Linux.Platform;
 
+// This file is largely AI Slopcode because idk how MPRIS works.
+
 public class LinuxMediaBroadcastService : ISystemMediaBroadcastService
 {
     private const string ServiceName = "org.mpris.MediaPlayer2.winsonic";
-    private static readonly ObjectPath MprisObjectPath = new("/org/mpris/MediaPlayer2");
+    private static readonly ObjectPath MprisObjectPath = new ("/org/mpris/MediaPlayer2");
     private readonly ILogger<LinuxMediaBroadcastService> _logger;
     private Connection? _connection;
     private MprisObject? _mprisObject;
-    private readonly SemaphoreSlim _initGate = new(1, 1);
+    private readonly SemaphoreSlim _initGate = new (1, 1);
 
     public event EventHandler? PlayRequested;
     public event EventHandler? PauseRequested;
@@ -53,7 +55,12 @@ public class LinuxMediaBroadcastService : ISystemMediaBroadcastService
         _ = SetCanGoPreviousInternalAsync(canGoPrevious);
     }
 
-    private async Task BroadcastMediaInfoInternalAsync(string mediaTitle, string mediaArtist, string mediaAlbum, string? coverArtUrl)
+    private async Task BroadcastMediaInfoInternalAsync(
+        string mediaTitle,
+        string mediaArtist,
+        string mediaAlbum,
+        string? coverArtUrl
+    )
     {
         if (!await EnsureInitializedAsync().ConfigureAwait(false))
         {
@@ -145,31 +152,37 @@ public class LinuxMediaBroadcastService : ISystemMediaBroadcastService
             await _connection.ConnectAsync();
 
             _mprisObject = new MprisObject(MprisObjectPath);
+
             _mprisObject.PlayRequested += (_, _) =>
             {
                 _logger.LogDebug("MPRIS requested Play.");
                 PlayRequested?.Invoke(this, EventArgs.Empty);
             };
+
             _mprisObject.PauseRequested += (_, _) =>
             {
                 _logger.LogDebug("MPRIS requested Pause.");
                 PauseRequested?.Invoke(this, EventArgs.Empty);
             };
+
             _mprisObject.NextRequested += (_, _) =>
             {
                 _logger.LogDebug("MPRIS requested Next.");
                 NextRequested?.Invoke(this, EventArgs.Empty);
             };
+
             _mprisObject.PreviousRequested += (_, _) =>
             {
                 _logger.LogDebug("MPRIS requested Previous.");
                 PreviousRequested?.Invoke(this, EventArgs.Empty);
             };
+
             _mprisObject.SetVolumeRequested += (_, volume) =>
             {
                 _logger.LogDebug("MPRIS requested volume change to {Volume}.", volume);
                 SetVolumeRequested?.Invoke(this, volume);
             };
+
             await _connection.RegisterObjectAsync(_mprisObject);
             await _connection.RegisterServiceAsync(ServiceName);
             return true;
@@ -188,7 +201,13 @@ public class LinuxMediaBroadcastService : ISystemMediaBroadcastService
     }
 }
 
-[DBusInterface("org.mpris.MediaPlayer2", GetPropertyMethod = nameof(GetRootPropertyAsync), SetPropertyMethod = nameof(SetRootPropertyAsync), GetAllPropertiesMethod = nameof(GetAllRootPropertiesAsync), WatchPropertiesMethod = nameof(WatchRootPropertiesAsync))]
+[DBusInterface(
+    "org.mpris.MediaPlayer2",
+    GetPropertyMethod = nameof(GetRootPropertyAsync),
+    SetPropertyMethod = nameof(SetRootPropertyAsync),
+    GetAllPropertiesMethod = nameof(GetAllRootPropertiesAsync),
+    WatchPropertiesMethod = nameof(WatchRootPropertiesAsync)
+)]
 public interface IMprisRoot : IDBusObject
 {
     Task RaiseAsync();
@@ -199,7 +218,13 @@ public interface IMprisRoot : IDBusObject
     Task<IDisposable> WatchRootPropertiesAsync(Action<PropertyChanges> handler);
 }
 
-[DBusInterface("org.mpris.MediaPlayer2.Player", GetPropertyMethod = nameof(GetPlayerPropertyAsync), SetPropertyMethod = nameof(SetPlayerPropertyAsync), GetAllPropertiesMethod = nameof(GetAllPlayerPropertiesAsync), WatchPropertiesMethod = nameof(WatchPlayerPropertiesAsync))]
+[DBusInterface(
+    "org.mpris.MediaPlayer2.Player",
+    GetPropertyMethod = nameof(GetPlayerPropertyAsync),
+    SetPropertyMethod = nameof(SetPlayerPropertyAsync),
+    GetAllPropertiesMethod = nameof(GetAllPlayerPropertiesAsync),
+    WatchPropertiesMethod = nameof(WatchPlayerPropertiesAsync)
+)]
 public interface IMprisPlayer : IDBusObject
 {
     Task NextAsync();
@@ -221,7 +246,7 @@ public interface IMprisPlayer : IDBusObject
 public sealed class MprisObject : IMprisRoot, IMprisPlayer
 {
     private readonly ObjectPath _objectPath;
-    private readonly object _gate = new();
+    private readonly object _gate = new ();
     private IDictionary<string, object> _metadata = EmptyMetadata();
     private long _position;
     private double _volume = 1.0;
@@ -245,7 +270,12 @@ public sealed class MprisObject : IMprisRoot, IMprisPlayer
     public event Action<PropertyChanges>? RootPropertiesChanged;
     public event Action<PropertyChanges>? PlayerPropertiesChanged;
 
-    public void UpdateMetadata(string title, string artist, string album, string? coverArtUrl)
+    public void UpdateMetadata(
+        string title,
+        string artist,
+        string album,
+        string? coverArtUrl
+    )
     {
         var trackMetadata = new Dictionary<string, object>
         {
@@ -266,13 +296,16 @@ public sealed class MprisObject : IMprisRoot, IMprisPlayer
             _playbackStatus = string.IsNullOrWhiteSpace(title) ? "Stopped" : "Playing";
         }
 
-        PlayerPropertiesChanged?.Invoke(new PropertyChanges(
-            new[]
-            {
-                new KeyValuePair<string, object>("Metadata", trackMetadata),
-                new KeyValuePair<string, object>("PlaybackStatus", _playbackStatus)
-            },
-            Array.Empty<string>()));
+        PlayerPropertiesChanged?.Invoke(
+            new PropertyChanges(
+                new[]
+                {
+                    new KeyValuePair<string, object>("Metadata", trackMetadata),
+                    new KeyValuePair<string, object>("PlaybackStatus", _playbackStatus)
+                },
+                Array.Empty<string>()
+            )
+        );
     }
 
     public void UpdateVolume(float volume)
@@ -313,6 +346,7 @@ public sealed class MprisObject : IMprisRoot, IMprisPlayer
             ["SupportedUriSchemes"] = new[] { "file", "http", "https" },
             ["SupportedMimeTypes"] = new[] { "audio/mpeg", "audio/flac", "audio/ogg", "audio/wav" }
         };
+
         return Task.FromResult(props);
     }
 
@@ -355,7 +389,9 @@ public sealed class MprisObject : IMprisRoot, IMprisPlayer
         PlayerPropertiesChanged?.Invoke(PropertyChanges.ForProperty("PlaybackStatus", _playbackStatus));
         return Task.CompletedTask;
     }
+
     public Task StopAsync() => Task.CompletedTask;
+
     public Task PlayAsync()
     {
         _playbackStatus = "Playing";
@@ -363,12 +399,14 @@ public sealed class MprisObject : IMprisRoot, IMprisPlayer
         PlayerPropertiesChanged?.Invoke(PropertyChanges.ForProperty("PlaybackStatus", _playbackStatus));
         return Task.CompletedTask;
     }
+
     public Task SeekAsync(long offset)
     {
         lock (_gate)
         {
             _position = Math.Max(0, _position + offset);
         }
+
         PlayerPropertiesChanged?.Invoke(PropertyChanges.ForProperty("Position", _position));
         return Task.CompletedTask;
     }
@@ -379,6 +417,7 @@ public sealed class MprisObject : IMprisRoot, IMprisPlayer
         {
             _position = Math.Max(0, position);
         }
+
         PlayerPropertiesChanged?.Invoke(PropertyChanges.ForProperty("Position", _position));
         return Task.CompletedTask;
     }
@@ -419,6 +458,7 @@ public sealed class MprisObject : IMprisRoot, IMprisPlayer
             ["CanSeek"] = false,
             ["CanControl"] = true
         };
+
         return Task.FromResult(props);
     }
 
