@@ -1,0 +1,198 @@
+name: Release Build
+
+# Triggered whenever a GitHub Release is published. The release's tag name
+# (e.g. "v1.2.3" or "1.2.3") is used as the app version for all 3 builds.
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  version:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.ver.outputs.version }}
+    steps:
+      - id: ver
+        shell: bash
+        run: |
+          TAG="${{ github.event.release.tag_name }}"
+          echo "version=${TAG#v}" >> "$GITHUB_OUTPUT"
+
+  windows:
+    needs: version
+    runs-on: windows-latest
+    env:
+      VERSION: ${{ needs.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Publish
+        run: >
+          dotnet publish WinSonic.Gui.Xplat.Windows/WinSonic.Gui.Xplat.Windows.csproj
+          -c Release -r win-x64 --self-contained true
+          -p:Version=${{ env.VERSION }} -p:InformationalVersion=${{ env.VERSION }}
+          -o out/win-x64
+
+      - name: Zip portable build
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path artifacts | Out-Null
+          Compress-Archive -Path out/win-x64/* -DestinationPath "artifacts/WinSonic-$env:VERSION-win-x64.zip"
+
+      - name: Install Inno Setup
+        run: choco install innosetup --no-progress -y
+
+      - name: Build installer
+        shell: pwsh
+        run: |
+          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" packaging\windows\setup.iss `
+            /DMyAppVersion=$env:VERSION `
+            /DSourceDir="$PWD\out\win-x64" `
+            /DOutputDir="$PWD\artifacts"
+
+      - name: Upload release assets
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event.release.tag_name }}
+          files: |
+            artifacts/*.zip
+            artifacts/*.exe
+
+  linux:
+    needs: version
+    runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ needs.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Publish
+        run: >
+          dotnet publish WinSonic.Gui.Xplat.Linux/WinSonic.Gui.Xplat.Linux.csproj
+          -c Release -r linux-x64 --self-contained true
+          -p:Version=$VERSION -p:InformationalVersion=$VERSION
+          -o out/linux-x64
+
+      - name: Zip portable build
+        run: |
+          mkdir -p artifacts
+          chmod +x out/linux-x64/WinSonic.Gui.Xplat.Linux
+          (cd out/linux-x64 && zip -qr "$OLDPWD/artifacts/WinSonic-$VERSION-linux-x64.zip" .)
+
+      - name: Build .deb package
+        run: |
+          PKGROOT=pkgroot
+          rm -rf "$PKGROOT"
+          mkdir -p "$PKGROOT/DEBIAN" \
+                   "$PKGROOT/opt/winsonic" \
+                   "$PKGROOT/usr/bin" \
+                   "$PKGROOT/usr/share/applications" \
+                   "$PKGROOT/usr/share/icons/hicolor/256x256/apps"
+
+          cp -r out/linux-x64/. "$PKGROOT/opt/winsonic/"
+          chmod +x "$PKGROOT/opt/winsonic/WinSonic.Gui.Xplat.Linux"
+          ln -s /opt/winsonic/WinSonic.Gui.Xplat.Linux "$PKGROOT/usr/bin/winsonic"
+          cp packaging/linux/winsonic.desktop "$PKGROOT/usr/share/applications/winsonic.desktop"
+          cp WinSonic.Gui.Xplat/Assets/Icon.png "$PKGROOT/usr/share/icons/hicolor/256x256/apps/winsonic.png"
+
+          cat > "$PKGROOT/DEBIAN/control" <<EOF
+          Package: winsonic
+          Version: $VERSION
+          Section: sound
+          Priority: optional
+          Architecture: amd64
+          Maintainer: WinSonic
+          Description: WinSonic music client
+          EOF
+
+          mkdir -p artifacts
+          dpkg-deb --build --root-owner-group "$PKGROOT" "artifacts/winsonic_${VERSION}_amd64.deb"
+
+      - name: Upload release assets
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event.release.tag_name }}
+          files: |
+            artifacts/*.zip
+            artifacts/*.deb
+
+  macos:
+    needs: version
+    runs-on: macos-14
+    env:
+      VERSION: ${{ needs.version.outputs.version }}
+      RID: osx-arm64
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Install macOS workload
+        run: dotnet workload install macos
+
+      - name: Publish
+        run: >
+          dotnet publish WinSonic.Gui.Xplat.Mac/WinSonic.Gui.Xplat.Mac.csproj
+          -c Release -r $RID --self-contained true
+          -p:Version=$VERSION -p:InformationalVersion=$VERSION
+          -o out/$RID
+
+      - name: Build .app bundle
+        run: |
+          APP="artifacts/WinSonic.app"
+          mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
+          cp -r out/$RID/. "$APP/Contents/MacOS/"
+          chmod +x "$APP/Contents/MacOS/WinSonic.Gui.Xplat.Mac"
+          sed "s/__VERSION__/$VERSION/g" packaging/macos/Info.plist.template > "$APP/Contents/Info.plist"
+
+          ICONSET=/tmp/AppIcon.iconset
+          mkdir -p "$ICONSET"
+          SRC=WinSonic.Gui.Xplat/Assets/Icon.png
+          sips -z 16 16     "$SRC" --out "$ICONSET/icon_16x16.png" > /dev/null
+          sips -z 32 32     "$SRC" --out "$ICONSET/icon_16x16@2x.png" > /dev/null
+          sips -z 32 32     "$SRC" --out "$ICONSET/icon_32x32.png" > /dev/null
+          sips -z 64 64     "$SRC" --out "$ICONSET/icon_32x32@2x.png" > /dev/null
+          sips -z 128 128   "$SRC" --out "$ICONSET/icon_128x128.png" > /dev/null
+          sips -z 256 256   "$SRC" --out "$ICONSET/icon_128x128@2x.png" > /dev/null
+          sips -z 256 256   "$SRC" --out "$ICONSET/icon_256x256.png" > /dev/null
+          sips -z 512 512   "$SRC" --out "$ICONSET/icon_256x256@2x.png" > /dev/null
+          sips -z 512 512   "$SRC" --out "$ICONSET/icon_512x512.png" > /dev/null
+          sips -z 1024 1024 "$SRC" --out "$ICONSET/icon_512x512@2x.png" > /dev/null
+          iconutil -c icns "$ICONSET" -o "$APP/Contents/Resources/AppIcon.icns"
+
+      - name: Zip app bundle
+        run: ditto -c -k --sequesterRsrc --keepParent artifacts/WinSonic.app "artifacts/WinSonic-$VERSION-$RID.zip"
+
+      - name: Build .pkg installer
+        run: |
+          PKGROOT=pkgroot
+          rm -rf "$PKGROOT"
+          mkdir -p "$PKGROOT/Applications"
+          cp -r artifacts/WinSonic.app "$PKGROOT/Applications/"
+          pkgbuild --root "$PKGROOT" --identifier com.winsonic.app --version "$VERSION" \
+            --install-location / "artifacts/WinSonic-$VERSION-$RID.pkg"
+          rm -rf "$PKGROOT" artifacts/WinSonic.app
+
+      - name: Upload release assets
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event.release.tag_name }}
+          files: |
+            artifacts/*.zip
+            artifacts/*.pkg

@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=WinSonic
+Comment=WinSonic music client
+Exec=/opt/winsonic/WinSonic.Gui.Xplat.Linux
+Icon=winsonic
+Terminal=false
+Categories=AudioVideo;Audio;Player;
