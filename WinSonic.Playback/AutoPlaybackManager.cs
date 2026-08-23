@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using WinSonic.Core;
 using WinSonic.Core.Enums;
 using WinSonic.Core.Models;
+using WinSonic.Playback.Platform;
 using WinSonic.Player;
 using WinSonic.Service.History;
 
@@ -12,6 +13,7 @@ public class AutoPlaybackManager
 {
     private readonly IPlaybackHistoryService _playbackHistoryService;
     private readonly ILogger<AutoPlaybackManager> _logger;
+    private readonly ISystemMediaBroadcastService _systemMediaBroadcastService;
     
     public PlayQueue Queue { get; }
     public SongFetcher Fetcher { get; }
@@ -25,6 +27,7 @@ public class AutoPlaybackManager
         
         if (song != null)
         {
+            _systemMediaBroadcastService.BroadcastMediaInfo(song.Title, song.Artist, song.Album.Title);
             Task.Run(async () =>
             {
                 try
@@ -49,6 +52,7 @@ public class AutoPlaybackManager
         SongFetcher fetcher,
         ISoundFlowPlayer player,
         IPlaybackHistoryService playbackHistoryService,
+        ISystemMediaBroadcastService systemMediaBroadcastService,
         ILogger<AutoPlaybackManager> logger
     )
     {
@@ -56,6 +60,7 @@ public class AutoPlaybackManager
         Fetcher = fetcher;
         Player = player;
         _playbackHistoryService = playbackHistoryService;
+        _systemMediaBroadcastService = systemMediaBroadcastService;
         _logger = logger;
 
         Player.PlaybackStateChanged += OnPlaybackStateChanged;
@@ -138,5 +143,11 @@ public class AutoPlaybackManager
     {
         Player.Stop();
         PlayNextSongIfAvailable();
+    }
+
+    public void SetVolume(float volume)
+    {
+        Player.Volume = volume;
+        _systemMediaBroadcastService.BroadcastVolume(volume);
     }
 }

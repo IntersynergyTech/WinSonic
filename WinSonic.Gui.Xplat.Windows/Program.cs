@@ -1,6 +1,8 @@
 ﻿using System;
 using Avalonia;
 using Microsoft.Extensions.DependencyInjection;
+using WinSonic.Gui.Xplat.Windows.Platform;
+using WinSonic.Playback.Platform;
 
 namespace WinSonic.Gui.Xplat.Windows;
 
@@ -18,6 +20,7 @@ sealed class Program
 
     private static void ConfigureWindowsPlatformServices(IServiceCollection services)
     {
+        services.AddSingleton<ISystemMediaBroadcastService, WindowsMediaBroadcastService>();
     }
 
     // Avalonia configuration, don't remove; also used by visual designer.

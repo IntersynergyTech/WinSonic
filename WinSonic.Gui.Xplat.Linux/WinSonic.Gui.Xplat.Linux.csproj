@@ -13,10 +13,15 @@
         <PackageReference Include="Avalonia.Desktop"/>
         <PackageReference Include="Avalonia.Markup.Xaml.Loader" />
         <PackageReference Include="HotAvalonia" />
+        <PackageReference Include="Tmds.DBus" />
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\WinSonic.Gui.Xplat\WinSonic.Gui.Xplat.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="dbuis-mpris\" />
     </ItemGroup>
 
 </Project>

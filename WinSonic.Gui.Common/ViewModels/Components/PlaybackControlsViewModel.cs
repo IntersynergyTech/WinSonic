@@ -54,7 +54,7 @@ public partial class PlaybackControlsViewModel : ViewModelBase
         get => _autoPlaybackManager.Player.Volume;
         set
         {
-            _autoPlaybackManager.Player.Volume = value;
+            _autoPlaybackManager.SetVolume(value);
             OnPropertyChanged();
         }
     }

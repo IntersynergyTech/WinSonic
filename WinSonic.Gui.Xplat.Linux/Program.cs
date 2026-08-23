@@ -1,6 +1,9 @@
 ﻿using System;
 using Avalonia;
 using Microsoft.Extensions.DependencyInjection;
+using WinSonic.Gui.Common.GuiServices;
+using WinSonic.Gui.Xplat.Linux.Platform;
+using WinSonic.Playback.Platform;
 
 namespace WinSonic.Gui.Xplat.Linux;
 
@@ -23,6 +26,7 @@ sealed class Program
 
     private static void ConfigureLinuxPlatformServices(IServiceCollection services)
     {
+        services.AddSingleton<ISystemMediaBroadcastService, LinuxMediaBroadcastService>();
     }
 
     // Avalonia configuration, don't remove; also used by visual designer.
