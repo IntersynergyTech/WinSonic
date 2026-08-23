@@ -1,11 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
         <!--If you are willing to use platform-specific APIs, use conditional compilation.
         See https://docs.avaloniaui.net/docs/guides/platforms/platform-specific-code/dotnet for more details.-->
-        <TargetFramework>net10.0</TargetFramework>
+        <TargetFramework>net10.0-windows</TargetFramework>
         <Nullable>enable</Nullable>
-        <RootNamespace>WinSonic.Gui.Xplat.Desktop</RootNamespace>
+        <RootNamespace>WinSonic.Gui.Xplat.Windows</RootNamespace>
     </PropertyGroup>
 
     <PropertyGroup>
@@ -21,4 +22,5 @@
     <ItemGroup>
         <ProjectReference Include="..\WinSonic.Gui.Xplat\WinSonic.Gui.Xplat.csproj"/>
     </ItemGroup>
+
 </Project>
