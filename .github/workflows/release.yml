@@ -34,7 +34,7 @@ jobs:
 
       - uses: actions/setup-dotnet@v4
         with:
-          global-json-file: global.json
+          dotnet-version: "10.x"
 
       - name: Publish
         run: >
@@ -78,7 +78,7 @@ jobs:
 
       - uses: actions/setup-dotnet@v4
         with:
-          global-json-file: global.json
+          dotnet-version: "10.x"
 
       - name: Publish
         run: >
@@ -141,7 +141,7 @@ jobs:
 
       - uses: actions/setup-dotnet@v4
         with:
-          global-json-file: global.json
+          dotnet-version: "10.x"
 
       - name: Install macOS workload
         run: dotnet workload install macos
