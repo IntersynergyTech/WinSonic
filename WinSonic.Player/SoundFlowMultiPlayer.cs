@@ -188,7 +188,7 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
             16 => SampleFormat.S16,
             24 => SampleFormat.S24,
             32 => SampleFormat.S32,
-            _ => throw new NotSupportedException($"Unsupported bits per sample: {info.BitsPerSample}")
+            _ => SampleFormat.S16 // Default to 16-bit if unknown
         };
 
         var channelLayout = info.ChannelCount switch

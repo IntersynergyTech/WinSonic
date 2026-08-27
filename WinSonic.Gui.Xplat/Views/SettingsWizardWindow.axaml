@@ -1,0 +1,72 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:WinSonic.Gui.Common.ViewModels;assembly=WinSonic.Gui.Common"
+        xmlns:localisation="clr-namespace:WinSonic.Resources.Localisation;assembly=WinSonic.Resources"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="560"
+        x:Class="WinSonic.Gui.Xplat.Views.SettingsWizardWindow"
+        x:DataType="vm:SettingsWizardViewModel"
+        Width="920" Height="680" WindowStartupLocation="CenterScreen"
+        Title="{x:Static localisation:Strings._WinSonicTitle}">
+    <Design.DataContext>
+        <vm:SettingsWizardViewModel />
+    </Design.DataContext>
+
+    <Grid RowDefinitions="Auto, *, Auto" Margin="24">
+        <TextBlock Grid.Row="0" Text="{x:Static localisation:Strings._WinSonicTitle}" FontSize="28" FontWeight="SemiBold" Margin="0,0,0,16"/>
+
+        <TabControl Grid.Row="1" SelectedIndex="{Binding CurrentStep, Mode=TwoWay}" TabStripPlacement="Top">
+            <TabItem Header="{x:Static localisation:Strings._WizardStepOne}">
+                <StackPanel Spacing="16" VerticalAlignment="Center" Margin="0,24,0,0">
+                    <TextBlock Text="{x:Static localisation:Strings._LandingTitle}" FontSize="22" FontWeight="SemiBold"/>
+                    <TextBlock Text="{x:Static localisation:Strings._WizardWelcomeBody}" TextWrapping="Wrap"/>
+                    <TextBlock Text="{x:Static localisation:Strings._WizardSecondaryBody}" TextWrapping="Wrap"/>
+                </StackPanel>
+            </TabItem>
+
+            <TabItem Header="{x:Static localisation:Strings._WizardStepTwo}">
+                <StackPanel Margin="0,24,0,0" Spacing="12">
+                    <TextBlock Text="{x:Static localisation:Strings._SettingsGeneral}" FontSize="18" FontWeight="SemiBold"/>
+                    <Grid ColumnDefinitions="180,*" RowDefinitions="Auto,Auto" RowSpacing="12" ColumnSpacing="16">
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="{x:Static localisation:Strings._Language}" VerticalAlignment="Center"/>
+                        <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding LanguageOptions}" SelectedItem="{Binding SelectedLanguageOption}" DisplayMemberBinding="{Binding DisplayName}" />
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="{x:Static localisation:Strings._Theme}" VerticalAlignment="Center"/>
+                        <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding ThemeOptions}" SelectedItem="{Binding SelectedThemeOption}" DisplayMemberBinding="{Binding DisplayName}" />
+                    </Grid>
+                </StackPanel>
+            </TabItem>
+
+            <TabItem Header="{x:Static localisation:Strings._WizardStepThree}">
+                <StackPanel Margin="0,24,0,0" Spacing="12">
+                    <TextBlock Text="{x:Static localisation:Strings._SettingsServer}" FontSize="18" FontWeight="SemiBold"/>
+                    <Grid ColumnDefinitions="180,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="12" ColumnSpacing="16">
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="{x:Static localisation:Strings._ServerAddress}" VerticalAlignment="Center"/>
+                        <TextBox x:Name="ServerAddressTextBox" Grid.Row="0" Grid.Column="1" Text="{Binding ServerAddress}" PlaceholderText="https://your-subsonic-server" LostFocus="ServerAddressTextBox_LostFocus" />
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="{x:Static localisation:Strings._Username}" VerticalAlignment="Center"/>
+                        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Username}" />
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="{x:Static localisation:Strings._PasswordOneWay}" VerticalAlignment="Center"/>
+                        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding ServerPassword}" PasswordChar="●" />
+                        <CheckBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Content="{x:Static localisation:Strings._IgnoreSslErrors}" IsChecked="{Binding IgnoreSslErrors}" />
+                        <Button Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Content="{x:Static localisation:Strings._TestConnection}" Command="{Binding TestServerConnectionCommand}" HorizontalAlignment="Left" />
+                        <TextBlock Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding ConnectionStatusMessage}" Foreground="{Binding ConnectionStatusColor}" TextWrapping="Wrap" />
+                    </Grid>
+                </StackPanel>
+            </TabItem>
+
+            <TabItem Header="{x:Static localisation:Strings._WizardStepFour}">
+                <StackPanel Margin="0,24,0,0" Spacing="14">
+                    <TextBlock Text="{x:Static localisation:Strings._SetupCompleteTitle}" FontSize="22" FontWeight="SemiBold"/>
+                    <TextBlock Text="{x:Static localisation:Strings._SetupCompleteBody}" TextWrapping="Wrap" />
+                    <CheckBox Content="{x:Static localisation:Strings._CheckForUpdates}" IsChecked="{Binding CheckForUpdates}" />
+                    <TextBlock Text="{x:Static localisation:Strings._WizardCompleteMessage}" TextWrapping="Wrap"/>
+                </StackPanel>
+            </TabItem>
+        </TabControl>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="12" Margin="0,20,0,0">
+            <Button Content="{x:Static localisation:Strings._Back}" Command="{Binding PreviousStepCommand}" IsVisible="{Binding CanGoBack}" />
+            <Button Content="{Binding PrimaryActionText}" Command="{Binding NextStepCommand}" IsEnabled="{Binding CanGoNext}" />
+        </StackPanel>
+    </Grid>
+</Window>

@@ -2,7 +2,7 @@ namespace WinSonic.Service.SecureData;
 
 public interface ISecureDataService
 {
-    string GetValueByKey(string key);
-    void SetValueByKey(string key, string value);
+    string? GetValueByKey(string key);
+    void SetValueByKey(string key, string? value);
     
 }

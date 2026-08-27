@@ -45,7 +45,8 @@ public partial class HomeViewModel : PageModelBase
     [RelayCommand]
     private void SettingsViaNavMessenger()
     {
-        NavigationService.NavigateTo(new SettingsViewModel());
+        var settingsModel = DependencyService.Services.GetService<SettingsViewModel>();
+        NavigationService.NavigateTo(settingsModel);
     }
 
     [RelayCommand]

@@ -26,7 +26,7 @@ namespace WinSonic.Subsonic.Client.Model
         {
             // OpenAPI generated types generally hide default constructors.
             ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
-            MissingMemberHandling = MissingMemberHandling.Error,
+            MissingMemberHandling = MissingMemberHandling.Ignore,
             ContractResolver = new DefaultContractResolver
             {
                 NamingStrategy = new CamelCaseNamingStrategy

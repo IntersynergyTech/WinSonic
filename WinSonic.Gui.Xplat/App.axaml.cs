@@ -4,10 +4,13 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using Serilog.Events;
 using WinSonic.Core;
+using WinSonic.Data;
+using WinSonic.Data.Sync;
 using WinSonic.Gui.Common;
 using WinSonic.Gui.Common.GuiServices;
 using WinSonic.Gui.Common.ViewModels;
@@ -25,6 +28,9 @@ public partial class App : Application
     {
         Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Verbose()
+#if DEBUG
+            .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Information)
+#endif
             .Enrich.FromLogContext()
             .Enrich.WithThreadId()
             .Enrich.WithComputed("SourceContextName", "Substring(SourceContext, LastIndexOf(SourceContext, '.') + 1)")
@@ -68,15 +74,49 @@ public partial class App : Application
 
         DependencyService.Services = services;
 
-        var vm = services.GetRequiredService<PlayerWindowViewModel>();
+        var playerWindowViewModel = services.GetRequiredService<PlayerWindowViewModel>();
+        var hasSettings = services.GetRequiredService<BaseDataContext>().Settings.AnyAsync().GetAwaiter().GetResult();
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            desktop.MainWindow = new PlayerWindow { DataContext = vm };
+            if (hasSettings)
+            {
+                desktop.MainWindow = new PlayerWindow { DataContext = playerWindowViewModel };
+                return;
+            }
+
+            var wizardViewModel = services.GetRequiredService<SettingsWizardViewModel>();
+            var wizardWindow = new SettingsWizardWindow { DataContext = wizardViewModel };
+
+            wizardViewModel.RequestCloseAsync += async () =>
+            {
+                var syncManager = services.GetRequiredService<SyncManager>();
+                var progressWindow = new SyncProgressWindow();
+                progressWindow.Show();
+
+                try
+                {
+                    await syncManager.StartBigSyncAsync();
+                }
+                finally
+                {
+                    progressWindow.Close();
+                }
+
+                var nextWindow = new PlayerWindow { DataContext = services.GetRequiredService<PlayerWindowViewModel>() };
+                if (desktop.MainWindow == wizardWindow)
+                {
+                    desktop.MainWindow = nextWindow;
+                }
+
+                wizardWindow.Close();
+            };
+
+            desktop.MainWindow = wizardWindow;
         }
         else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
         {
-            singleViewPlatform.MainView = new PlayerWindow { DataContext = vm };
+            singleViewPlatform.MainView = new PlayerWindow { DataContext = playerWindowViewModel };
         }
 
         base.OnFrameworkInitializationCompleted();

@@ -3,16 +3,84 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:WinSonic.Gui.Common.ViewModels;assembly=WinSonic.Gui.Common"
+             xmlns:localisation="clr-namespace:WinSonic.Resources.Localisation;assembly=WinSonic.Resources"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             Header="Settings"
+             Header="{x:Static localisation:Strings._Settings}"
              x:DataType="vm:SettingsViewModel"
-             x:Class="WinSonic.Gui.Xplat.Views.SettingsView">
+             x:Class="WinSonic.Gui.Xplat.Views.SettingsView"
+             Loaded="Control_OnLoaded">
     <Design.DataContext>
-        <!-- This only sets the DataContext for the previewer in an IDE,
-             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
         <vm:SettingsViewModel />
     </Design.DataContext>
-    <TextBox Text="{Binding Greeting}"
-             HorizontalAlignment="Center"
-             VerticalAlignment="Center" />
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="24" Spacing="18">
+            <TextBlock Text="{x:Static localisation:Strings._Settings}" FontSize="{DynamicResource WsFontSizeXl}" FontWeight="SemiBold"/>
+            <TextBlock Text="{Binding ErrorMessage}" Foreground="#ff5f5f" FontWeight="SemiBold"/>
+            <TextBlock Text="{Binding InfoMessage}" Foreground="#7fd17f" FontWeight="SemiBold"/>
+
+            <Border Padding="16" CornerRadius="8" Background="{DynamicResource CalendarViewOutOfScopeBackground}">
+                <StackPanel Spacing="10">
+                    <TextBlock Text="{x:Static localisation:Strings._SettingsGeneral}" FontWeight="SemiBold" />
+                    <Grid ColumnDefinitions="220,*" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="12" ColumnSpacing="16">
+                        <CheckBox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Content="{x:Static localisation:Strings._CheckForUpdates}" IsChecked="{Binding CheckForUpdates}" />
+                        <CheckBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Content="{x:Static localisation:Strings._SyncLyrics}" IsChecked="{Binding SyncLyrics}" />
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="{x:Static localisation:Strings._Language}" VerticalAlignment="Center"/>
+                        <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding LanguageOptions}"
+                                  SelectedItem="{Binding SelectedLanguageOption}"
+                                  DisplayMemberBinding="{Binding DisplayName}" />
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="{x:Static localisation:Strings._Theme}" VerticalAlignment="Center"/>
+                        <ComboBox Grid.Row="3" Grid.Column="1" ItemsSource="{Binding ThemeOptions}"
+                                  SelectedItem="{Binding SelectedThemeOption}"
+                                  DisplayMemberBinding="{Binding DisplayName}" />
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <Border Padding="16" CornerRadius="8" Background="{DynamicResource CalendarViewOutOfScopeBackground}">
+                <StackPanel Spacing="10">
+                    <TextBlock Text="{x:Static localisation:Strings._SettingsPlayback}" FontWeight="SemiBold" />
+                    <Grid ColumnDefinitions="220,*" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="12" ColumnSpacing="16">
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="{x:Static localisation:Strings._OutputDevice}" VerticalAlignment="Center"/>
+                        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding OutputDevice}" />
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="{x:Static localisation:Strings._ReplayGainMode}" VerticalAlignment="Center"/>
+                        <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding ReplayGainModeOptions}"
+                                  SelectedItem="{Binding SelectedReplayGainModeOption}"
+                                  DisplayMemberBinding="{Binding DisplayName}" />
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="{x:Static localisation:Strings._ClippingPrevention}" VerticalAlignment="Center"/>
+                        <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding ClippingPreventionOptions}"
+                                  SelectedItem="{Binding SelectedClippingPreventionOption}"
+                                  DisplayMemberBinding="{Binding DisplayName}" />
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="{x:Static localisation:Strings._Preamp}" VerticalAlignment="Center"/>
+                        <NumericUpDown Grid.Row="3" Grid.Column="1" Value="{Binding Preamp}" Minimum="-50" Maximum="50" Increment="0.5" FormatString="0.##" />
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <Border Padding="16" CornerRadius="8" Background="{DynamicResource CalendarViewOutOfScopeBackground}">
+                <StackPanel Spacing="10">
+                    <TextBlock Text="{x:Static localisation:Strings._SettingsServer}" FontWeight="SemiBold" />
+                    <Grid ColumnDefinitions="220,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="12" ColumnSpacing="16">
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="{x:Static localisation:Strings._ServerAddress}" VerticalAlignment="Center"/>
+                        <TextBox x:Name="ServerAddressTextBox" Grid.Row="0" Grid.Column="1" Text="{Binding ServerAddress}" PlaceholderText="https://your-subsonic-server" LostFocus="ServerAddressTextBox_LostFocus" />
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="{x:Static localisation:Strings._Username}" VerticalAlignment="Center"/>
+                        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Username}" />
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="{x:Static localisation:Strings._PasswordOneWay}" VerticalAlignment="Center"/>
+                        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding ServerPasswordInput}" PasswordChar="●" />
+                        <CheckBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Content="{x:Static localisation:Strings._IgnoreSslErrors}" IsChecked="{Binding IgnoreSslErrors}" />
+                        <CheckBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Content="{x:Static localisation:Strings._ScrobbleToServer}" IsChecked="{Binding ScrobbleToServer}" />
+                        <TextBlock Grid.Row="5" Grid.Column="0" Text="{x:Static localisation:Strings._ScrobbleMinimumPercentage}" VerticalAlignment="Center"/>
+                        <NumericUpDown Grid.Row="5" Grid.Column="1" Value="{Binding ScrobbleMinimumPercentage}" Minimum="0" Maximum="100" Increment="0.05" FormatString="0.##" />
+                        <TextBlock Grid.Row="6" Grid.Column="0" Text="{x:Static localisation:Strings._ScrobbleMinimumSeconds}" VerticalAlignment="Center"/>
+                        <NumericUpDown Grid.Row="6" Grid.Column="1" Value="{Binding ScrobbleMinimumSeconds}" Minimum="0" Maximum="86400" Increment="1" FormatString="0.##" />
+                        <CheckBox Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" Content="{x:Static localisation:Strings._SyncPlayQueue}" IsChecked="{Binding SyncPlayQueue}" />
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <StackPanel Orientation="Horizontal" Spacing="12">
+                <Button Content="{x:Static localisation:Strings._SaveSettings}" Command="{Binding SaveSettingsCommand}" Padding="16,8" />
+                <Button Content="{x:Static localisation:Strings._SyncLibrary}" Click="OnSyncLibraryClicked" Padding="16,8" />
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
 </ContentPage>

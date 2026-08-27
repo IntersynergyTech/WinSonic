@@ -63,19 +63,21 @@ public static class BigSyncSongs
     {
         var existingArtists = database.Artists.ToDictionary(x => x.Id);
         var existingAlbums = database.Albums.ToDictionary(x => x.Id);
-
+        var existingCoverArt = database.CoverArt.ToDictionary(x => x.Id);
         
         var addCounter = 0;
 
         foreach (var downloadedSong in downloadedSongs)
         {
             if (cancellationToken.IsCancellationRequested) break;
-            var songExistingAlbum = existingAlbums.GetValueOrDefault(downloadedSong.AlbumId);
-            var songExistingArtist = existingArtists.GetValueOrDefault(downloadedSong.ArtistId);
+            var songExistingAlbum = existingAlbums.GetValueOrDefault(downloadedSong.AlbumId) ?? database.Albums.Local.FirstOrDefault(x => x.Id == downloadedSong.AlbumId);
+            var songExistingArtist = existingArtists.GetValueOrDefault(downloadedSong.ArtistId) ?? database.Artists.Local.FirstOrDefault(x => x.Id == downloadedSong.ArtistId);
+            var songExistingCoverArt = existingCoverArt.GetValueOrDefault(downloadedSong.CoverArt) ?? database.CoverArt.Local.FirstOrDefault(x => x.Id == downloadedSong.CoverArt);
 
             var song = downloadedSong.CreateDbSong(
                 songExistingAlbum,
                 songExistingArtist,
+                songExistingCoverArt,
                 existingArtists
             );
 

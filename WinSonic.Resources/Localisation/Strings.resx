@@ -84,6 +84,51 @@
     <data name="_SetupCompleteBody" xml:space="preserve">
         <value>We've synced everything with the server and ready to play</value>
     </data>
+    <data name="_WizardWelcomeBody" xml:space="preserve">
+        <value>Welcome to WinSonic. Let's configure your language, theme and server before you get started.</value>
+    </data>
+    <data name="_WizardSecondaryBody" xml:space="preserve">
+        <value>WinSonic can be configured later from the Settings page whenever you want to change anything.</value>
+    </data>
+    <data name="_WizardConnectionRequired" xml:space="preserve">
+        <value>Please test the server connection before continuing.</value>
+    </data>
+    <data name="_WizardConnectionMissingValues" xml:space="preserve">
+        <value>Server address, username and password are required to test the connection.</value>
+    </data>
+    <data name="_WizardConnectionSuccess" xml:space="preserve">
+        <value>Connection successful.</value>
+    </data>
+    <data name="_WizardConnectionTesting" xml:space="preserve">
+        <value>Testing the server connection...</value>
+    </data>
+    <data name="_WizardConnectionFailed" xml:space="preserve">
+        <value>Connection failed. Please check the server address, username, password and SSL settings.</value>
+    </data>
+    <data name="_WizardStepOne" xml:space="preserve">
+        <value>Step 1</value>
+    </data>
+    <data name="_WizardStepTwo" xml:space="preserve">
+        <value>Step 2</value>
+    </data>
+    <data name="_WizardStepThree" xml:space="preserve">
+        <value>Step 3</value>
+    </data>
+    <data name="_WizardStepFour" xml:space="preserve">
+        <value>Step 4</value>
+    </data>
+    <data name="_WizardCompleteMessage" xml:space="preserve">
+        <value>Your server and preferences are now ready. You can change these at any time in the Settings page.</value>
+    </data>
+    <data name="_SyncLibrary" xml:space="preserve">
+        <value>Sync library</value>
+    </data>
+    <data name="_SyncingLibrary" xml:space="preserve">
+        <value>Syncing library</value>
+    </data>
+    <data name="_SyncingLibraryDescription" xml:space="preserve">
+        <value>We are syncing your server library. This may take a few moments.</value>
+    </data>
     <data name="_LandingGetStarted" xml:space="preserve">
         <value>Let's get started!</value>
     </data>
@@ -102,6 +147,9 @@
     <data name="_TestPage" xml:space="preserve">
         <value>Test Page</value>
     </data>
+    <data name="_TestConnection" xml:space="preserve">
+        <value>Test connection</value>
+    </data>
     <data name="_NowPlaying" xml:space="preserve">
         <value>Now Playing</value>
     </data>
@@ -119,5 +167,110 @@
     </data>
     <data name="_MinWordy" xml:space="preserve">
         <value>{{mins}} min</value>
+    </data>
+    <data name="_SettingsGeneral" xml:space="preserve">
+        <value>General</value>
+    </data>
+    <data name="_SettingsPlayback" xml:space="preserve">
+        <value>Playback</value>
+    </data>
+    <data name="_SettingsServer" xml:space="preserve">
+        <value>Server</value>
+    </data>
+    <data name="_SaveSettings" xml:space="preserve">
+        <value>Save settings</value>
+    </data>
+    <data name="_SettingsSaved" xml:space="preserve">
+        <value>Settings saved</value>
+    </data>
+    <data name="_Language" xml:space="preserve">
+        <value>Language</value>
+    </data>
+    <data name="_Theme" xml:space="preserve">
+        <value>Theme</value>
+    </data>
+    <data name="_OutputDevice" xml:space="preserve">
+        <value>Output device</value>
+    </data>
+    <data name="_CheckForUpdates" xml:space="preserve">
+        <value>Check for updates</value>
+    </data>
+    <data name="_SyncLyrics" xml:space="preserve">
+        <value>Sync lyrics</value>
+    </data>
+    <data name="_ReplayGainMode" xml:space="preserve">
+        <value>ReplayGain mode</value>
+    </data>
+    <data name="_ClippingPrevention" xml:space="preserve">
+        <value>Clipping prevention</value>
+    </data>
+    <data name="_Preamp" xml:space="preserve">
+        <value>Preamp (dB)</value>
+    </data>
+    <data name="_ServerAddress" xml:space="preserve">
+        <value>Server address</value>
+    </data>
+    <data name="_Username" xml:space="preserve">
+        <value>Username</value>
+    </data>
+    <data name="_PasswordOneWay" xml:space="preserve">
+        <value>Password (leave blank to keep existing)</value>
+    </data>
+    <data name="_IgnoreSslErrors" xml:space="preserve">
+        <value>Ignore SSL errors</value>
+    </data>
+    <data name="_ScrobbleToServer" xml:space="preserve">
+        <value>Scrobble to server</value>
+    </data>
+    <data name="_ScrobbleMinimumPercentage" xml:space="preserve">
+        <value>Scrobble minimum percentage</value>
+    </data>
+    <data name="_ScrobbleMinimumSeconds" xml:space="preserve">
+        <value>Scrobble minimum seconds</value>
+    </data>
+    <data name="_SyncPlayQueue" xml:space="preserve">
+        <value>Sync play queue</value>
+    </data>
+    <data name="_ThemeSystem" xml:space="preserve">
+        <value>System default</value>
+    </data>
+    <data name="_ThemeLight" xml:space="preserve">
+        <value>Light</value>
+    </data>
+    <data name="_ThemeDark" xml:space="preserve">
+        <value>Dark</value>
+    </data>
+    <data name="_ReplayGainModeNone" xml:space="preserve">
+        <value>Off</value>
+    </data>
+    <data name="_ReplayGainModeAuto" xml:space="preserve">
+        <value>Auto</value>
+    </data>
+    <data name="_ReplayGainModeAlbum" xml:space="preserve">
+        <value>Album</value>
+    </data>
+    <data name="_ReplayGainModeTrack" xml:space="preserve">
+        <value>Track</value>
+    </data>
+    <data name="_ReplayGainClippingOff" xml:space="preserve">
+        <value>Off</value>
+    </data>
+    <data name="_ReplayGainClippingReduceGain" xml:space="preserve">
+        <value>Reduce gain</value>
+    </data>
+    <data name="_LanguageEnglishGb" xml:space="preserve">
+        <value>English (UK)</value>
+    </data>
+    <data name="_LanguageEnglish" xml:space="preserve">
+        <value>English</value>
+    </data>
+    <data name="_SettingsValidationServerUri" xml:space="preserve">
+        <value>Server address must be a valid absolute URI.</value>
+    </data>
+    <data name="_SettingsValidationPreampRange" xml:space="preserve">
+        <value>Preamp must be between -50 and 50.</value>
+    </data>
+    <data name="_SettingsValidationScrobblePercentRange" xml:space="preserve">
+        <value>Scrobble minimum percentage must be between 0 and 100%.</value>
     </data>
 </root>

@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using WinSonic.Core;
@@ -17,6 +18,8 @@ using WinSonic.Service.Artwork;
 using WinSonic.Service.History;
 using WinSonic.Service.Misc;
 using WinSonic.Service.Playlist;
+using WinSonic.Service.SecureData;
+using WinSonic.Service.Settings;
 using WinSonic.Subsonic.Helpers;
 
 namespace WinSonic.Gui.Common;
@@ -48,6 +51,7 @@ public static class DependencyRegistrationExtensions
     {
         services.AddScoped<MainViewModel>();
         services.AddScoped<SettingsViewModel>();
+        services.AddScoped<SettingsWizardViewModel>();
         services.AddScoped<HomeViewModel>();
         services.AddScoped<TestViewModel>();
         services.AddScoped<PlayerWindowViewModel>();
@@ -82,6 +86,7 @@ public static class DependencyRegistrationExtensions
         services.AddScoped<IPlaylistService, CachedPlaylistService>();
         services.AddTransient<IArtworkService, CachedArtworkService>();
         services.AddScoped<IPlaybackHistoryService, StoredPlaybackHistoryService>();
+        services.AddScoped<ISettingsService, StoredSettingsService>();
 
         // Extra data services
         services.AddScoped<LiveArtworkService>();
@@ -94,14 +99,7 @@ public static class DependencyRegistrationExtensions
         services.AddSingleton<ISoundFlowPlayer, SoundFlowMultiPlayer>();
 
         //Api services
-        services.AddSingleton<SubsonicApiWrapper>(provider =>
-            {
-                //Temporary until we have a proper login flow
-                var builder = new SubsonicConnectionBuilder().WithDefaultUserCredentials();
-                var client = builder.Build();
-                return client;
-            }
-        );
+        services.AddSingleton<SubsonicApiWrapper>(CreateSubsonicApiWrapper);
 
         services.AddSingleton<SongFetcher>();
 
@@ -109,6 +107,32 @@ public static class DependencyRegistrationExtensions
         services.AddSingleton<SyncManager>();
 
         return services;
+    }
+
+    private static SubsonicApiWrapper CreateSubsonicApiWrapper(IServiceProvider provider)
+    {
+        var dbContext = provider.GetRequiredService<BaseDataContext>();
+        var secureDataService = provider.GetRequiredService<ISecureDataService>();
+
+        var settings = dbContext.Settings
+            .AsNoTracking()
+            .SingleOrDefault(s => s.Id == 1);
+
+        var builder = new SubsonicConnectionBuilder();
+
+        if (settings is not null && !string.IsNullOrWhiteSpace(settings.ServerAddress))
+        {
+            var password = string.IsNullOrWhiteSpace(settings.PasswordCredentialKey)
+                ? string.Empty
+                : secureDataService.GetValueByKey(settings.PasswordCredentialKey) ?? string.Empty;
+
+            builder
+                .WithServerUrl(settings.ServerAddress)
+                .WithUsernameAndPassword(settings.Username, password)
+                .WithIgnoreSslErrors(settings.IgnoreSslErrors);
+        }
+
+        return builder.Build();
     }
 
     public static void InitialiseServices(this IServiceProvider serviceProvider)

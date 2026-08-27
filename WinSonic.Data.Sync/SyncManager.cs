@@ -1,5 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
-using WinSonic.Data.Sqlite;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using WinSonic.Data;
 using WinSonic.Subsonic.Helpers;
 
 namespace WinSonic.Data.Sync;
@@ -7,14 +8,14 @@ namespace WinSonic.Data.Sync;
 public class SyncManager
 {
     private readonly SubsonicApiWrapper _api;
-    private readonly SqliteDataContextFactory _dbFactory;
+    private readonly IDbContextFactory<BaseDataContext> _dbFactory;
     private readonly ILogger<SyncManager> _logger;
 
     public static int DefaultCacheExpiryMins = 10080; // 7 days
 
     private readonly BigSync _bigSync;
 
-    public SyncManager(SubsonicApiWrapper api, SqliteDataContextFactory dbFactory, ILogger<SyncManager> logger, ILoggerFactory loggerFactory)
+    public SyncManager(SubsonicApiWrapper api, IDbContextFactory<BaseDataContext> dbFactory, ILogger<SyncManager> logger, ILoggerFactory loggerFactory)
     {
         _api = api;
         _dbFactory = dbFactory;
@@ -32,11 +33,16 @@ public class SyncManager
         _logger.LogInformation(message);
     }
 
-    public void StartBigSync()
+    public Task StartBigSyncAsync()
     {
         Log("Requesting Big Sync");
         _bigSyncCancellationToken = new CancellationTokenSource();
-        Task.Run(() => _bigSync.RunBigSync(_bigSyncCancellationToken.Token));
+        return Task.Run(() => _bigSync.RunBigSync(_bigSyncCancellationToken.Token));
+    }
+
+    public void StartBigSync()
+    {
+        _ = StartBigSyncAsync();
     }
 
     public async Task CancelAll()

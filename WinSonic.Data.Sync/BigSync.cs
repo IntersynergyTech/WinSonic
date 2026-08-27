@@ -1,5 +1,6 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using WinSonic.Data.Sqlite;
+using WinSonic.Data;
 using WinSonic.Data.Sync.SyncTasks;
 using WinSonic.Subsonic.Client.Model;
 using WinSonic.Subsonic.Helpers;
@@ -8,13 +9,13 @@ namespace WinSonic.Data.Sync;
 
 public class BigSync
 {
-    private readonly SqliteDataContextFactory _databaseFactory;
+    private readonly IDbContextFactory<BaseDataContext> _databaseFactory;
     private readonly SubsonicApiWrapper _api;
     private readonly ILogger<BigSync> _logger;
     private BaseDataContext _database;
     private const int ITEMS_PER_REQUEST = 500;
 
-    public BigSync(SqliteDataContextFactory databaseFactory, SubsonicApiWrapper api, ILogger<BigSync> logger)
+    public BigSync(IDbContextFactory<BaseDataContext> databaseFactory, SubsonicApiWrapper api, ILogger<BigSync> logger)
     {
         _databaseFactory = databaseFactory;
         _api = api;
@@ -25,7 +26,7 @@ public class BigSync
     {
         IsRunning = true;
         Log("Checking Syncability");
-        _database = _databaseFactory.Create();
+        _database = _databaseFactory.CreateDbContext();
         var dbConnect = _database.Database.CanConnect();
         var apiConnect = _api.IsAvailable();
         Log($"Syncability: API Available: {apiConnect} DB Available: {dbConnect}");

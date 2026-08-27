@@ -28,6 +28,26 @@ public class SubsonicConnectionBuilder
         return this;
     }
 
+    public SubsonicConnectionBuilder WithIgnoreSslErrors(bool ignoreSslErrors)
+    {
+        if (ignoreSslErrors)
+        {
+            config.RemoteCertificateValidationCallback = (_, _, _, _) => true;
+        }
+        else
+        {
+            config.RemoteCertificateValidationCallback = null;
+        }
+
+        return this;
+    }
+
+    public SubsonicConnectionBuilder WithTimeout(TimeSpan timeout)
+    {
+        config.Timeout = timeout;
+        return this;
+    }
+
     public SubsonicConnectionBuilder WithDefaultUserCredentials()
     {
         var defaultUrl = Environment.GetEnvironmentVariable(ENV_SUBSONIC_URL) ?? "http://localhost:4040";

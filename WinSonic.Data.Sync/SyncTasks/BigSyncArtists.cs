@@ -44,10 +44,12 @@ public static class BigSyncArtists
         var addIds = allDownloadedIds.Except(updateIds).ToList();
         Log($"Change summary: Add {addIds.Count}, Update {updateIds.Count}, Remove {removeIds.Count}");
         if (cancellationToken.IsCancellationRequested) return;
+        database.SaveChanges();
 
         Log($"Removing artists which no longer exist...");
         database.Artists.RemoveRange(database.Artists.Where(x => removeIds.Contains(x.Id)));
         if (cancellationToken.IsCancellationRequested) return;
+        database.SaveChanges();
 
         Log($"Adding new entries");
         var newArtists = downloadedArtists.Where(x => addIds.Contains(x.Id)).ToHashSet();
@@ -68,13 +70,22 @@ public static class BigSyncArtists
 
             var artist = downloadedArtist.CreateDbArtist();
 
-            database.Artists.Add(artist);
+            var addEntry = database.Artists.Add(artist);
             addCounter++;
         }
 
         Log($"Added {addCounter} new artists");
 
+        try
+        {
         database.SaveChanges();
+
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 
     private static List<ArtistID3> DownloadAllArtists(

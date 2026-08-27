@@ -20,8 +20,8 @@ public static class ArtistMapper
 
         if (!string.IsNullOrEmpty(source.CoverArt))
         {
-            var coverArt = new DbCoverArt(source.CoverArt).AddDefaultCacheables(SyncManager.DefaultCacheExpiryMins);
-            artist.CoverArt = coverArt;
+            //var coverArt = new DbCoverArt(source.CoverArt).AddDefaultCacheables(SyncManager.DefaultCacheExpiryMins);
+            //artist.CoverArt = coverArt;
         }
 
         artist.AddDefaultCacheables(SyncManager.DefaultCacheExpiryMins);

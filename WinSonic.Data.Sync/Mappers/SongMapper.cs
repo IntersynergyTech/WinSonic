@@ -11,6 +11,7 @@ public static class SongMapper
         this Child source,
         DbAlbum? existingAlbum,
         DbArtist? existingArtist,
+        DbCoverArt? existingCoverArt,
         Dictionary<string,DbArtist> existingArtists
     )
     {
@@ -67,7 +68,7 @@ public static class SongMapper
 
         if (!string.IsNullOrEmpty(source.CoverArt))
         {
-            var coverArt = new DbCoverArt(source.CoverArt).AddDefaultCacheables(SyncManager.DefaultCacheExpiryMins);
+            var coverArt = existingCoverArt ?? new DbCoverArt(source.CoverArt).AddDefaultCacheables(SyncManager.DefaultCacheExpiryMins);
             song.CoverArt = coverArt;
         }
 

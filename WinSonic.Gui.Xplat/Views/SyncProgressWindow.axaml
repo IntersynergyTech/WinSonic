@@ -1,0 +1,15 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:localisation="clr-namespace:WinSonic.Resources.Localisation;assembly=WinSonic.Resources"
+        mc:Ignorable="d" d:DesignWidth="520" d:DesignHeight="220"
+        x:Class="WinSonic.Gui.Xplat.Views.SyncProgressWindow"
+        Width="520" Height="220" CanResize="False" WindowStartupLocation="CenterScreen"
+        Title="{x:Static localisation:Strings._SyncLibrary}">
+    <StackPanel Margin="24" Spacing="18" VerticalAlignment="Center">
+        <TextBlock Text="{x:Static localisation:Strings._SyncingLibrary}" FontSize="22" FontWeight="SemiBold" />
+        <ProgressBar IsIndeterminate="True" Height="16" />
+        <TextBlock Text="{x:Static localisation:Strings._SyncingLibraryDescription}" TextWrapping="Wrap" />
+    </StackPanel>
+</Window>

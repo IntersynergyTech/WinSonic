@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WinSonic.Data.Sqlite;
 
@@ -10,9 +11,11 @@ using WinSonic.Data.Sqlite;
 namespace WinSonic.Data.Sqlite.Migrations
 {
     [DbContext(typeof(SqliteDataContext))]
-    partial class SqliteDataContextModelSnapshot : ModelSnapshot
+    [Migration("20260827135415_AddSettings")]
+    partial class AddSettings
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -681,8 +684,7 @@ namespace WinSonic.Data.Sqlite.Migrations
                 {
                     b.HasOne("WinSonic.Data.DbModels.DbCoverArt", "CoverArt")
                         .WithMany()
-                        .HasForeignKey("CoverArtId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("CoverArtId");
 
                     b.Navigation("CoverArt");
                 });
@@ -697,8 +699,7 @@ namespace WinSonic.Data.Sqlite.Migrations
 
                     b.HasOne("WinSonic.Data.DbModels.DbCoverArt", "CoverArt")
                         .WithMany()
-                        .HasForeignKey("CoverArtId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("CoverArtId");
 
                     b.Navigation("Album");
 
@@ -709,8 +710,7 @@ namespace WinSonic.Data.Sqlite.Migrations
                 {
                     b.HasOne("WinSonic.Data.DbModels.DbCoverArt", "CoverArt")
                         .WithMany()
-                        .HasForeignKey("CoverArtId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("CoverArtId");
 
                     b.Navigation("CoverArt");
                 });
@@ -741,8 +741,7 @@ namespace WinSonic.Data.Sqlite.Migrations
                 {
                     b.HasOne("WinSonic.Data.DbModels.DbCoverArt", "CoverArt")
                         .WithMany()
-                        .HasForeignKey("CoverArtId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("CoverArtId");
 
                     b.Navigation("CoverArt");
                 });
@@ -751,18 +750,15 @@ namespace WinSonic.Data.Sqlite.Migrations
                 {
                     b.HasOne("WinSonic.Data.DbModels.DbAlbum", "Album")
                         .WithMany("Songs")
-                        .HasForeignKey("AlbumId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("AlbumId");
 
                     b.HasOne("WinSonic.Data.DbModels.DbArtist", "Artist")
                         .WithMany()
-                        .HasForeignKey("ArtistId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("ArtistId");
 
                     b.HasOne("WinSonic.Data.DbModels.DbCoverArt", "CoverArt")
                         .WithMany()
-                        .HasForeignKey("CoverArtId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("CoverArtId");
 
                     b.Navigation("Album");
 
