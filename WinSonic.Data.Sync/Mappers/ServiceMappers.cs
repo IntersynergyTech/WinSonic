@@ -17,7 +17,9 @@ public static class ServiceMappers
             TimeSpan.FromSeconds(song.Duration ?? 0),
             song.IsExplicit,
             new ReplayGain(song.RgAlbumGain, song.RgAlbumPeak, song.RgTrackGain, song.RgTrackPeak),
-            song.Title
+            song.Title,
+            song.DiscNumber,
+            song.Track
         );
     }
     

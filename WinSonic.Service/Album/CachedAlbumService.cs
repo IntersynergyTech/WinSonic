@@ -44,7 +44,7 @@ public class CachedAlbumService : IAlbumService
             throw new InvalidOperationException("Album not found.");
         }
 
-        dbAlbum.Songs = dbAlbum.Songs.OrderBy(s => s.Track).ToList();
+        dbAlbum.Songs = dbAlbum.Songs.OrderBy(s => s.DiscNumber??0).ThenBy(s => s.Track??0).ToList();
 
         return dbAlbum.DbToAlbumFull();
     }

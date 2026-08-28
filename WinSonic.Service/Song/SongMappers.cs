@@ -25,7 +25,9 @@ public static class SongMappers
             TimeSpan.FromSeconds(song.Duration),
             song.ApiIsExplicit(),
             ApiToReplayGain(song.ReplayGain),
-            song.Title
+            song.Title,
+            null,
+            null
         );
     }
     
@@ -51,7 +53,9 @@ public static class SongMappers
             TimeSpan.FromSeconds(dbSong.Duration??0),
             dbSong.IsExplicit,
             new ReplayGain(dbSong.RgTrackGain, dbSong.RgTrackPeak, dbSong.RgAlbumGain, dbSong.RgAlbumPeak),
-            dbSong.Title
+            dbSong.Title,
+            dbSong.DiscNumber,
+            dbSong.Track
         );
     }
 }

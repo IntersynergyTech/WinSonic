@@ -51,6 +51,8 @@
                 <ItemsRepeater.ItemTemplate>
                     <DataTemplate DataType="models:Song">
                         <StackPanel Orientation="Horizontal" Margin="5">
+                            <TextBlock Text="{Binding DiscNumber}" Width="15" />
+                            <TextBlock Text="{Binding TrackNumber}" Width="15" />
                             <TextBlock Text="{Binding Title}" Width="220" />
                             <TextBlock Text="{Binding Artist}" Width="180" />
                             <TextBlock Text="{Binding Duration, Converter={StaticResource Timecode}}" Width="120" />

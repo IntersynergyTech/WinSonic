@@ -18,6 +18,9 @@ public class Song
 
     public string Title { get; }
 
+    public int? DiscNumber { get; set; }
+    public int? TrackNumber { get; set; }
+
     public Song(
         string id,
         AlbumInfo? album,
@@ -28,7 +31,9 @@ public class Song
         TimeSpan duration,
         bool isExplicit,
         ReplayGain replayGain,
-        string title
+        string title,
+        int? discNumber,
+        int? trackNumber
     )
     {
         Id = id;
@@ -41,5 +46,7 @@ public class Song
         IsExplicit = isExplicit;
         ReplayGain = replayGain;
         Title = title;
+        DiscNumber = discNumber;
+        TrackNumber = trackNumber;
     }
 }
