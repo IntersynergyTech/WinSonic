@@ -64,7 +64,8 @@ public static class BigSyncPlaylists
     {
         var addCounter = 0;
         var addedPlaylists = new List<DbPlaylist>();
-        var addedSongEntities = new Dictionary<string, DbSong>();
+        
+        var existingLocalSongs = database.Songs.Local.ToDictionary(x => x.Id);
 
         foreach (var downloadedPlaylist in downloadedPlaylists)
         {
@@ -73,7 +74,7 @@ public static class BigSyncPlaylists
 
             try
             {
-                var playlist = downloadedPlaylist.CreateDbPlaylist(addedSongEntities);
+                var playlist = downloadedPlaylist.CreateDbPlaylist(existingLocalSongs);
                 Log($"SavingGen");
                 database.AttachRange(playlist.Songs);
                 Log($"SavingAttached");

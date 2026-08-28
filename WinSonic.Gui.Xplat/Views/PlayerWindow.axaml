@@ -9,7 +9,7 @@
         x:Class="WinSonic.Gui.Xplat.Views.PlayerWindow"
         x:DataType="viewModels:PlayerWindowViewModel"
         Loaded="Control_OnLoaded"
-        Title="PlayerWindow">
+        Title="{x:Static localisation:Strings._WinSonicTitle}">
     <Design.DataContext>
         <viewModels:PlayerWindowViewModel />
     </Design.DataContext>

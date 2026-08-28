@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
@@ -104,10 +105,8 @@ public partial class App : Application
                 }
 
                 var nextWindow = new PlayerWindow { DataContext = services.GetRequiredService<PlayerWindowViewModel>() };
-                if (desktop.MainWindow == wizardWindow)
-                {
-                    desktop.MainWindow = nextWindow;
-                }
+                desktop.MainWindow = nextWindow;
+                nextWindow.Show();
 
                 wizardWindow.Close();
             };
