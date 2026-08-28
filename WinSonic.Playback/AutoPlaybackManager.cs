@@ -104,12 +104,13 @@ public class AutoPlaybackManager
         {
             try
             {
-                await _playbackHistoryService.ScrobbleCompleted(song);
-                _logger.LogDebug($"Scrobbled completed track: {song.Title}");
+                var playTime = DateTime.UtcNow.AddSeconds(-song.Duration.TotalSeconds);
+                await _playbackHistoryService.ScrobbleCompleted(song, playTime);
+                _logger.LogDebug($"Scrobbled completed track: {song.Title} started at {playTime}");
             }
             catch (Exception ex)
             {
-                _logger.LogDebug($"Error scrobbling completed track: {ex.Message}");
+                _logger.LogWarning($"Error scrobbling completed track: {ex.Message}");
             }
         });
     }

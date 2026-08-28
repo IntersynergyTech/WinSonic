@@ -2,7 +2,11 @@ namespace WinSonic.Core;
 
 public class StorageManager
 {
+#if DEBUG
+    private const string APPLICATION_BASE_FOLDER = "WinSonic_Debug";
+#else
     private const string APPLICATION_BASE_FOLDER = "WinSonic";
+#endif
     private const string SONGS_FOLDER = "SongsCache";
     private const string ARTWORK_FOLDER = "ArtworkCache";
     private const string LOGS_FOLDER = "Logs";

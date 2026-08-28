@@ -9,8 +9,8 @@ public static class AlbumMapper
 {
     public static DbAlbum CreateDbAlbum(
         this AlbumID3 source,
-        DbArtist existingArtist,
-        Dictionary<string, DbArtist> existingArtists
+        Dictionary<string, DbArtist> existingArtists,
+        Dictionary<string, DbCoverArt> existingCoverArt
     )
     {
         var album = new DbAlbum
@@ -36,7 +36,7 @@ public static class AlbumMapper
 
         if (!string.IsNullOrEmpty(source.CoverArt))
         {
-            var coverArt = new DbCoverArt(source.CoverArt).AddDefaultCacheables(SyncManager.DefaultCacheExpiryMins);
+            var coverArt = existingCoverArt.GetValueOrDefault(source.CoverArt) ?? new DbCoverArt(source.CoverArt).AddDefaultCacheables(SyncManager.DefaultCacheExpiryMins);
             album.CoverArt = coverArt;
         }
 
@@ -44,7 +44,7 @@ public static class AlbumMapper
             .Select(x => new DbAlbumMedia
                 {
                     Name = x.Title,
-                    CoverArt = new DbCoverArt(x.CoverArt).AddDefaultCacheables(SyncManager.DefaultCacheExpiryMins)
+                    CoverArt = existingCoverArt.GetValueOrDefault(x.CoverArt) ?? new DbCoverArt(x.CoverArt).AddDefaultCacheables(SyncManager.DefaultCacheExpiryMins)
                 }
             )
             .ToList();

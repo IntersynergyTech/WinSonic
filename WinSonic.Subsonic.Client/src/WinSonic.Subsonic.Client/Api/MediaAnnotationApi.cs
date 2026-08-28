@@ -71,7 +71,7 @@ namespace WinSonic.Subsonic.Client.Api
         /// <param name="submission">Whether this is a “submission” or a “now playing” notification. (optional, default to true)</param>
         /// <param name="operationIndex">Index associated with the operation.</param>
         /// <returns>SubsonicResponse</returns>
-        SubsonicResponse PostScrobble(string id, int? time = default, bool? submission = default, int operationIndex = 0);
+        SubsonicResponse PostScrobble(string id, long? time = default, bool? submission = default, int operationIndex = 0);
 
         /// <summary>
         /// Registers the local playback of one or more media files.
@@ -85,7 +85,7 @@ namespace WinSonic.Subsonic.Client.Api
         /// <param name="submission">Whether this is a “submission” or a “now playing” notification. (optional, default to true)</param>
         /// <param name="operationIndex">Index associated with the operation.</param>
         /// <returns>ApiResponse of SubsonicResponse</returns>
-        ApiResponse<SubsonicResponse> PostScrobbleWithHttpInfo(string id, int? time = default, bool? submission = default, int operationIndex = 0);
+        ApiResponse<SubsonicResponse> PostScrobbleWithHttpInfo(string id, long? time = default, bool? submission = default, int operationIndex = 0);
         /// <summary>
         /// Sets the rating for a music file.
         /// </summary>
@@ -210,7 +210,7 @@ namespace WinSonic.Subsonic.Client.Api
         /// <param name="submission">Whether this is a “submission” or a “now playing” notification. (optional, default to true)</param>
         /// <param name="operationIndex">Index associated with the operation.</param>
         /// <returns>SubsonicResponse</returns>
-        SubsonicResponse Scrobble(string id, int? time = default, bool? submission = default, int operationIndex = 0);
+        SubsonicResponse Scrobble(string id, long? time = default, bool? submission = default, int operationIndex = 0);
 
         /// <summary>
         /// Registers the local playback of one or more media files.
@@ -224,7 +224,7 @@ namespace WinSonic.Subsonic.Client.Api
         /// <param name="submission">Whether this is a “submission” or a “now playing” notification. (optional, default to true)</param>
         /// <param name="operationIndex">Index associated with the operation.</param>
         /// <returns>ApiResponse of SubsonicResponse</returns>
-        ApiResponse<SubsonicResponse> ScrobbleWithHttpInfo(string id, int? time = default, bool? submission = default, int operationIndex = 0);
+        ApiResponse<SubsonicResponse> ScrobbleWithHttpInfo(string id, long? time = default, bool? submission = default, int operationIndex = 0);
         /// <summary>
         /// Sets the rating for a music file.
         /// </summary>
@@ -361,7 +361,7 @@ namespace WinSonic.Subsonic.Client.Api
         /// <param name="operationIndex">Index associated with the operation.</param>
         /// <param name="cancellationToken">Cancellation Token to cancel the request.</param>
         /// <returns>Task of SubsonicResponse</returns>
-        System.Threading.Tasks.Task<SubsonicResponse> PostScrobbleAsync(string id, int? time = default, bool? submission = default, int operationIndex = 0, System.Threading.CancellationToken cancellationToken = default);
+        System.Threading.Tasks.Task<SubsonicResponse> PostScrobbleAsync(string id, long? time = default, bool? submission = default, int operationIndex = 0, System.Threading.CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Registers the local playback of one or more media files.
@@ -376,7 +376,7 @@ namespace WinSonic.Subsonic.Client.Api
         /// <param name="operationIndex">Index associated with the operation.</param>
         /// <param name="cancellationToken">Cancellation Token to cancel the request.</param>
         /// <returns>Task of ApiResponse (SubsonicResponse)</returns>
-        System.Threading.Tasks.Task<ApiResponse<SubsonicResponse>> PostScrobbleWithHttpInfoAsync(string id, int? time = default, bool? submission = default, int operationIndex = 0, System.Threading.CancellationToken cancellationToken = default);
+        System.Threading.Tasks.Task<ApiResponse<SubsonicResponse>> PostScrobbleWithHttpInfoAsync(string id, long? time = default, bool? submission = default, int operationIndex = 0, System.Threading.CancellationToken cancellationToken = default);
         /// <summary>
         /// Sets the rating for a music file.
         /// </summary>
@@ -510,7 +510,7 @@ namespace WinSonic.Subsonic.Client.Api
         /// <param name="operationIndex">Index associated with the operation.</param>
         /// <param name="cancellationToken">Cancellation Token to cancel the request.</param>
         /// <returns>Task of SubsonicResponse</returns>
-        System.Threading.Tasks.Task<SubsonicResponse> ScrobbleAsync(string id, int? time = default, bool? submission = default, int operationIndex = 0, System.Threading.CancellationToken cancellationToken = default);
+        System.Threading.Tasks.Task<SubsonicResponse> ScrobbleAsync(string id, long? time = default, bool? submission = default, int operationIndex = 0, System.Threading.CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Registers the local playback of one or more media files.
@@ -525,7 +525,7 @@ namespace WinSonic.Subsonic.Client.Api
         /// <param name="operationIndex">Index associated with the operation.</param>
         /// <param name="cancellationToken">Cancellation Token to cancel the request.</param>
         /// <returns>Task of ApiResponse (SubsonicResponse)</returns>
-        System.Threading.Tasks.Task<ApiResponse<SubsonicResponse>> ScrobbleWithHttpInfoAsync(string id, int? time = default, bool? submission = default, int operationIndex = 0, System.Threading.CancellationToken cancellationToken = default);
+        System.Threading.Tasks.Task<ApiResponse<SubsonicResponse>> ScrobbleWithHttpInfoAsync(string id, long? time = default, bool? submission = default, int operationIndex = 0, System.Threading.CancellationToken cancellationToken = default);
         /// <summary>
         /// Sets the rating for a music file.
         /// </summary>
@@ -1033,7 +1033,7 @@ namespace WinSonic.Subsonic.Client.Api
         /// <param name="submission">Whether this is a “submission” or a “now playing” notification. (optional, default to true)</param>
         /// <param name="operationIndex">Index associated with the operation.</param>
         /// <returns>SubsonicResponse</returns>
-        public SubsonicResponse PostScrobble(string id, int? time = default, bool? submission = default, int operationIndex = 0)
+        public SubsonicResponse PostScrobble(string id, long? time = default, bool? submission = default, int operationIndex = 0)
         {
             WinSonic.Subsonic.Client.Client.ApiResponse<SubsonicResponse> localVarResponse = PostScrobbleWithHttpInfo(id, time, submission);
             return localVarResponse.Data;
@@ -1048,7 +1048,7 @@ namespace WinSonic.Subsonic.Client.Api
         /// <param name="submission">Whether this is a “submission” or a “now playing” notification. (optional, default to true)</param>
         /// <param name="operationIndex">Index associated with the operation.</param>
         /// <returns>ApiResponse of SubsonicResponse</returns>
-        public WinSonic.Subsonic.Client.Client.ApiResponse<SubsonicResponse> PostScrobbleWithHttpInfo(string id, int? time = default, bool? submission = default, int operationIndex = 0)
+        public WinSonic.Subsonic.Client.Client.ApiResponse<SubsonicResponse> PostScrobbleWithHttpInfo(string id, long? time = default, bool? submission = default, int operationIndex = 0)
         {
             // verify the required parameter 'id' is set
             if (id == null)
@@ -1158,7 +1158,7 @@ namespace WinSonic.Subsonic.Client.Api
         /// <param name="operationIndex">Index associated with the operation.</param>
         /// <param name="cancellationToken">Cancellation Token to cancel the request.</param>
         /// <returns>Task of SubsonicResponse</returns>
-        public async System.Threading.Tasks.Task<SubsonicResponse> PostScrobbleAsync(string id, int? time = default, bool? submission = default, int operationIndex = 0, System.Threading.CancellationToken cancellationToken = default)
+        public async System.Threading.Tasks.Task<SubsonicResponse> PostScrobbleAsync(string id, long? time = default, bool? submission = default, int operationIndex = 0, System.Threading.CancellationToken cancellationToken = default)
         {
             WinSonic.Subsonic.Client.Client.ApiResponse<SubsonicResponse> localVarResponse = await PostScrobbleWithHttpInfoAsync(id, time, submission, operationIndex, cancellationToken).ConfigureAwait(false);
             return localVarResponse.Data;
@@ -1174,7 +1174,7 @@ namespace WinSonic.Subsonic.Client.Api
         /// <param name="operationIndex">Index associated with the operation.</param>
         /// <param name="cancellationToken">Cancellation Token to cancel the request.</param>
         /// <returns>Task of ApiResponse (SubsonicResponse)</returns>
-        public async System.Threading.Tasks.Task<WinSonic.Subsonic.Client.Client.ApiResponse<SubsonicResponse>> PostScrobbleWithHttpInfoAsync(string id, int? time = default, bool? submission = default, int operationIndex = 0, System.Threading.CancellationToken cancellationToken = default)
+        public async System.Threading.Tasks.Task<WinSonic.Subsonic.Client.Client.ApiResponse<SubsonicResponse>> PostScrobbleWithHttpInfoAsync(string id, long? time = default, bool? submission = default, int operationIndex = 0, System.Threading.CancellationToken cancellationToken = default)
         {
             // verify the required parameter 'id' is set
             if (id == null)
@@ -2298,7 +2298,7 @@ namespace WinSonic.Subsonic.Client.Api
         /// <param name="submission">Whether this is a “submission” or a “now playing” notification. (optional, default to true)</param>
         /// <param name="operationIndex">Index associated with the operation.</param>
         /// <returns>SubsonicResponse</returns>
-        public SubsonicResponse Scrobble(string id, int? time = default, bool? submission = default, int operationIndex = 0)
+        public SubsonicResponse Scrobble(string id, long? time = default, bool? submission = default, int operationIndex = 0)
         {
             WinSonic.Subsonic.Client.Client.ApiResponse<SubsonicResponse> localVarResponse = ScrobbleWithHttpInfo(id, time, submission);
             return localVarResponse.Data;
@@ -2313,7 +2313,7 @@ namespace WinSonic.Subsonic.Client.Api
         /// <param name="submission">Whether this is a “submission” or a “now playing” notification. (optional, default to true)</param>
         /// <param name="operationIndex">Index associated with the operation.</param>
         /// <returns>ApiResponse of SubsonicResponse</returns>
-        public WinSonic.Subsonic.Client.Client.ApiResponse<SubsonicResponse> ScrobbleWithHttpInfo(string id, int? time = default, bool? submission = default, int operationIndex = 0)
+        public WinSonic.Subsonic.Client.Client.ApiResponse<SubsonicResponse> ScrobbleWithHttpInfo(string id, long? time = default, bool? submission = default, int operationIndex = 0)
         {
             // verify the required parameter 'id' is set
             if (id == null)
@@ -2422,7 +2422,7 @@ namespace WinSonic.Subsonic.Client.Api
         /// <param name="operationIndex">Index associated with the operation.</param>
         /// <param name="cancellationToken">Cancellation Token to cancel the request.</param>
         /// <returns>Task of SubsonicResponse</returns>
-        public async System.Threading.Tasks.Task<SubsonicResponse> ScrobbleAsync(string id, int? time = default, bool? submission = default, int operationIndex = 0, System.Threading.CancellationToken cancellationToken = default)
+        public async System.Threading.Tasks.Task<SubsonicResponse> ScrobbleAsync(string id, long? time = default, bool? submission = default, int operationIndex = 0, System.Threading.CancellationToken cancellationToken = default)
         {
             WinSonic.Subsonic.Client.Client.ApiResponse<SubsonicResponse> localVarResponse = await ScrobbleWithHttpInfoAsync(id, time, submission, operationIndex, cancellationToken).ConfigureAwait(false);
             return localVarResponse.Data;
@@ -2438,7 +2438,7 @@ namespace WinSonic.Subsonic.Client.Api
         /// <param name="operationIndex">Index associated with the operation.</param>
         /// <param name="cancellationToken">Cancellation Token to cancel the request.</param>
         /// <returns>Task of ApiResponse (SubsonicResponse)</returns>
-        public async System.Threading.Tasks.Task<WinSonic.Subsonic.Client.Client.ApiResponse<SubsonicResponse>> ScrobbleWithHttpInfoAsync(string id, int? time = default, bool? submission = default, int operationIndex = 0, System.Threading.CancellationToken cancellationToken = default)
+        public async System.Threading.Tasks.Task<WinSonic.Subsonic.Client.Client.ApiResponse<SubsonicResponse>> ScrobbleWithHttpInfoAsync(string id, long? time = default, bool? submission = default, int operationIndex = 0, System.Threading.CancellationToken cancellationToken = default)
         {
             // verify the required parameter 'id' is set
             if (id == null)

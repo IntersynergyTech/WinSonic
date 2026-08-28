@@ -45,8 +45,15 @@ public static class BigSyncAlbums
         Log($"Change summary: Add {addIds.Count}, Update {updateIds.Count}, Remove {removeIds.Count}");
         if (cancellationToken.IsCancellationRequested) return;
 
+        database.SaveChanges();
+        if (cancellationToken.IsCancellationRequested) return;
+        
+
         Log($"Removing albums which no longer exist...");
         database.Albums.RemoveRange(database.Albums.Where(x => removeIds.Contains(x.Id)));
+        if (cancellationToken.IsCancellationRequested) return;
+
+        database.SaveChanges();
         if (cancellationToken.IsCancellationRequested) return;
 
         Log($"Adding new entries");
@@ -61,16 +68,18 @@ public static class BigSyncAlbums
     )
     {
         var existingArtists = database.Artists.ToDictionary(x => x.Id);
+        var existingCoverArt = database.CoverArt.ToDictionary(x => x.Id);
 
         var addCounter = 0;
 
         foreach (var downloadedAlbum in downloadedAlbums)
         {
             if (cancellationToken.IsCancellationRequested) break;
+    
+            var albumExistingArtist = existingArtists.GetValueOrDefault(downloadedAlbum.ArtistId) ?? database.Artists.Local.FirstOrDefault(x => x.Id == downloadedAlbum.ArtistId);
+            var albumExistingCoverArt = existingCoverArt.GetValueOrDefault(downloadedAlbum.CoverArt) ?? database.CoverArt.Local.FirstOrDefault(x => x.Id == downloadedAlbum.CoverArt);
 
-            var albumExistingArtist = existingArtists.GetValueOrDefault(downloadedAlbum.ArtistId);
-
-            var album = downloadedAlbum.CreateDbAlbum(albumExistingArtist, existingArtists);
+            var album = downloadedAlbum.CreateDbAlbum(existingArtists, existingCoverArt);
 
             database.Albums.Add(album);
             addCounter++;

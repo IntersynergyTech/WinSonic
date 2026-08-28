@@ -52,6 +52,7 @@ public class StoredPlaybackHistoryService : IPlaybackHistoryService
 
         _database.PlayHistory.Add(entry);
         await _database.SaveChangesAsync(cancellationToken);
+        _logger.LogDebug("Scrobbled completed for track: {SongTitle}", song.Title);
     }
 
     public Task ScrobbleNowPlaying(Core.Models.Song song, CancellationToken cancellationToken = default)
