@@ -1,6 +1,8 @@
 ﻿using System;
 using Avalonia;
 using Microsoft.Extensions.DependencyInjection;
+using WinSonic.Gui.Xplat.Mac.Platform;
+using WinSonic.Playback.Platform;
 
 namespace WinSonic.Gui.Xplat.Mac;
 
@@ -18,6 +20,7 @@ sealed class Program
 
     private static void ConfigureMacPlatformServices(IServiceCollection services)
     {
+        services.AddSingleton<ISystemMediaBroadcastService, MacMediaBroadcastService>();
     }
 
     // Avalonia configuration, don't remove; also used by visual designer.
