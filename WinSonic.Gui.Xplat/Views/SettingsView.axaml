@@ -13,7 +13,7 @@
         <vm:SettingsViewModel />
     </Design.DataContext>
     <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <StackPanel Margin="24" Spacing="18" MaxWidth="900">
+        <StackPanel Margin="24" Spacing="18" MaxWidth="1200">
             <TextBlock Text="{x:Static localisation:Strings._Settings}" FontSize="{DynamicResource WsFontSizeXl}" FontWeight="SemiBold"/>
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="{x:Static localisation:Strings._SettingsApplyAfterRestart}"></TextBlock>

@@ -125,7 +125,6 @@ public class AutoPlaybackManager
             Player.LoadStream(stream, queuedSong);
             Player.Play();
             UpdateNowPlaying(queuedSong);
-
             Task.Run(
                 (() =>
                 {

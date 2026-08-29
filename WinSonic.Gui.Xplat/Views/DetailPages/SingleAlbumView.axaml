@@ -13,7 +13,7 @@
         <converters:TimecodeToTextConverter x:Key="Timecode"/>
         <converters:TimecodeToApproximateTextConverter x:Key="ApproximateTimecode"/>
     </ContentPage.Resources>
-    <Grid>
+    <Grid MaxWidth="1200">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />

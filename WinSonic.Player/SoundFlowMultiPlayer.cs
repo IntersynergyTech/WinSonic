@@ -8,6 +8,7 @@ using SoundFlow.Enums;
 using SoundFlow.Metadata.Models;
 using SoundFlow.Providers;
 using SoundFlow.Structs;
+using SoundFlow.Structs.Events;
 using WinSonic.Core.Models;
 using WinSonic.Player.ReplayGain;
 using WinSonic.Service.Settings;
@@ -22,7 +23,6 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
     private readonly ISettingsService _settingsService;
 
     private MiniAudioEngine _engine;
-    private Dictionary<AudioFormat, SoundPlayer> _players = new ();
     private Dictionary<AudioFormat, AudioPlaybackDevice> _playbackDevices = new ();
     private DeviceInfo _outputDevice;
     private DeviceInfo _defaultOutputDevice;
@@ -31,11 +31,13 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
     private bool Muted = false;
 
     private MiniAudioDeviceConfig? _playbackDeviceConfig;
+    private bool suppressPlaybackStateChangeEvents = false;
 
     private Song? _currentSong;
     private AudioFormat _currentFormat;
     private AudioPlaybackDevice? _currentActivePlaybackDevice;
     private SoundPlayer? _currentActivePlayer;
+    private StreamDataProvider? _currentActiveProvider;
     private PlaybackState _playbackState;
 
     public SoundFlowMultiPlayer(ILoggerFactory loggerFactory, ISettingsService settingsService)
@@ -45,19 +47,98 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
         _replayGainProcessor = new (GetConfiguredReplayGain(), loggerFactory.CreateLogger<ReplayGainProcessor>());
 
         var engine = new MiniAudioEngine();
-        engine.UpdateAudioDevicesInfo();
         _engine = engine;
 
-        _defaultOutputDevice = engine.PlaybackDevices.FirstOrDefault(d => d.IsDefault);
+        engine.DeviceStopped += EngineOnDeviceStopped;
+        engine.DeviceStarted += EngineOnDeviceStarted;
+
+        UpdateSystemDefaultDevice();
 
         _replayGainProcessor.UpdateVolume(VolumeLevel);
 
         SelectOutputDevice(null);
     }
 
+    private void EngineOnDeviceStarted(object? sender, DeviceEventArgs e)
+    {
+        _logger.LogDebug("{capability} device '{deviceName}' started.", e.Device.Capability, e.Device.Info?.Name);
+    }
+
+    private void EngineOnDeviceStopped(object? sender, DeviceEventArgs e)
+    {
+        _logger.LogDebug("{capability} device '{deviceName}' stopped.", e.Device.Capability, e.Device.Info?.Name);
+    }
+
+    private void UpdateSystemDefaultDevice()
+    {
+        _engine.UpdateAudioDevicesInfo();
+        _defaultOutputDevice = _engine.PlaybackDevices.FirstOrDefault(d => d.IsDefault);
+    }
+
     public void SetOutputDevice(IntPtr? deviceId)
     {
+        if (_currentActivePlayer == null)
+        {
+            _logger.LogDebug("No active player, selecting output device without preserving state.");
+            SelectOutputDevice(deviceId);
+            return;
+        }
+
+        suppressPlaybackStateChangeEvents = true;
+        var isPlaying = _currentActivePlayer.State == SoundFlow.Enums.PlaybackState.Playing;
+        var currentTimestamp = _currentActivePlayer.Time;
+        var currentVolume = _currentActivePlayer.Volume;
+        var currentMute = _currentActivePlayer.Mute;
+        
+        UnloadPlayer(disposeProvider: false);
         SelectOutputDevice(deviceId);
+        
+        _currentActiveProvider.Seek(0);
+        
+        var playbackDevice = GetFormatPlaybackDevice(_currentFormat);
+
+        _logger.LogDebug("Starting playback device for format [{format}]", _currentFormat.ToShortString());
+        _currentActivePlaybackDevice = playbackDevice;
+        _currentActivePlaybackDevice.Start();
+        
+        RegisterPlayer(currentVolume, currentMute, currentTimestamp);
+        
+        if (isPlaying)
+        {
+            _currentActivePlayer.Play();
+        }
+        _logger.LogInformation("Output device changed to {deviceName}. Playback state preserved: {isPlaying}, timestamp: {currentTimestamp}, volume: {currentVolume}, mute: {currentMute}",
+            _outputDevice.Name,
+            isPlaying,
+            currentTimestamp,
+            currentVolume, currentMute);
+        
+        suppressPlaybackStateChangeEvents = false;
+    }
+
+    private void RegisterPlayer(
+        float volume,
+        bool mute,
+        float timestamp = 0
+    )
+    {
+        _logger.LogDebug("Creating sound player for stream {title}", _currentActiveProvider.FormatInfo.Tags.Title);
+        var player = new SoundPlayer(_engine, _currentFormat, _currentActiveProvider);
+        player.Volume = volume;
+        player.Mute = mute;
+        player.PlaybackEnded += PlayerOnPlaybackEnded;
+
+        _currentActivePlaybackDevice.MasterMixer.AddComponent(player);
+
+        _logger.LogDebug(
+            "Created player for format [{format}] with volume {volume} (RG: {replayGainedVolume}). Ready to go",
+            _currentFormat.ToShortString(),
+            VolumeLevel,
+            volume
+        );
+
+        player.Seek(timestamp);
+        _currentActivePlayer = player;
     }
 
     public DeviceInfo[] GetAvailableDevices()
@@ -86,6 +167,7 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
             ReplayGainClippingPrevention.ReduceGain => ClippingPreventionMode.Reduce,
             _ => ClippingPreventionMode.Off
         };
+
         var config = new ReplayGainConfiguration
         {
             Mode = mappedMode,
@@ -105,12 +187,17 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
         {
             _outputDevice = _engine.PlaybackDevices.FirstOrDefault(d => d.Id == deviceId);
         }
-        else if(settingsDeviceName != null)
+        else if (settingsDeviceName != null)
         {
             _outputDevice = _engine.PlaybackDevices.FirstOrDefault(d => d.Name == settingsDeviceName);
+
             if (_outputDevice == null)
             {
-                _logger.LogWarning("Settings preffered device named {settingsDeviceName} not found. Falling back to default output device.", settingsDeviceName);
+                _logger.LogWarning(
+                    "Settings preffered device named {settingsDeviceName} not found. Falling back to default output device.",
+                    settingsDeviceName
+                );
+
                 _outputDevice = _defaultOutputDevice;
             }
         }
@@ -120,6 +207,7 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
         }
 
         DisposePlaybackDevices();
+        
     }
 
     private void DisposePlaybackDevices()
@@ -129,33 +217,68 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
             device.Dispose();
         }
 
-        _players.Clear();
+        _playbackDevices.Clear();
     }
 
-    private AudioPlaybackDevice GetFormatPlaybackDevice(AudioFormat format)
+    private AudioPlaybackDevice GetFormatPlaybackDevice(AudioFormat format, bool forceReinit = false)
     {
-        if (!_playbackDevices.ContainsKey(format))
+        if (forceReinit || !_playbackDevices.ContainsKey(format))
         {
             InitFormatPlaybackDevice(format);
         }
 
-        return _playbackDevices[format];
+        var existingPlayer = _playbackDevices[format];
+        return existingPlayer;
     }
 
     private void InitFormatPlaybackDevice(AudioFormat format)
     {
-        _logger.LogDebug("Initializing playback device for format [{format}] on {outputDevice}", format.ToShortString(), _outputDevice.Name);
+        _logger.LogDebug(
+            "Initializing playback device for format [{format}] on {outputDevice}",
+            format.ToShortString(),
+            _outputDevice.Name
+        );
+
         AudioPlaybackDevice device;
+
         try
         {
             device = _engine.InitializePlaybackDevice(_outputDevice, format, _playbackDeviceConfig);
+            _playbackDevices[format] = device;
         }
         catch (Exception e)
         {
-            _logger.LogError("Error initializing playback device for format [{format}] on {outputDevice}: {e}", format.ToShortString(), _outputDevice.Name, e.Message);
-            device = _engine.InitializePlaybackDevice(_defaultOutputDevice, format, _playbackDeviceConfig);
+            _logger.LogError(
+                "Error initializing playback device for format [{format}] on {outputDevice}: {e}",
+                format.ToShortString(),
+                _outputDevice.Name,
+                e.Message
+            );
+
+            try
+            {
+                _logger.LogWarning("Trying to reinit to system default output device... ");
+                UpdateSystemDefaultDevice();
+
+                _logger.LogWarning(
+                    "Initializing platback for fallback  device... {defaultOutputDevice}",
+                    _defaultOutputDevice.Name
+                );
+
+                device = _engine.InitializePlaybackDevice(_defaultOutputDevice, format, _playbackDeviceConfig);
+                _playbackDevices[format] = device;
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(
+                    exception,
+                    "Unable to initialize playback for any device. Error: {exception}",
+                    exception.Message
+                );
+
+                Stop();
+            }
         }
-        _playbackDevices[format] = device;
     }
 
     public void LoadStream(Stream stream, Song song)
@@ -166,7 +289,7 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
         _currentSong = song;
     }
 
-    private void UnloadPlayer()
+    private void UnloadPlayer(bool disposeProvider = true)
     {
         if (_currentActivePlayer == null) return;
 
@@ -174,15 +297,19 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
 
         _currentActivePlayer.Stop();
         _currentActivePlaybackDevice?.MasterMixer.RemoveComponent(_currentActivePlayer);
-        _currentActivePlayer.Dispose();
+        if (disposeProvider)
+        {
+            // This doesn't just dispose the player, but it's stream provider too. Which is exceedingly unhelpful when we're trying to use it on another player. I'll get cleaned up later I'm sure :)
+            _currentActivePlayer.Dispose();
+        }
         _currentActivePlayer = null;
     }
 
     private SoundPlayer GetPlayerForStream(Stream stream, Song song)
     {
         _logger.LogDebug("GPFS");
-        var provider = new StreamDataProvider(_engine, stream);
-        var providerFormat = provider.FormatInfo!;
+        _currentActiveProvider = new StreamDataProvider(_engine, stream);
+        var providerFormat = _currentActiveProvider.FormatInfo!;
 
         var format = ParseFormatFrom(providerFormat);
 
@@ -191,13 +318,17 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
             if (_currentActivePlaybackDevice != null)
             {
                 _logger.LogDebug(
-                    "Switching format from [{currentFormat}] to [{format}]", _currentFormat.ToShortString(), format.ToShortString()
+                    "Switching format from [{currentFormat}] to [{format}]",
+                    _currentFormat.ToShortString(),
+                    format.ToShortString()
                 );
 
                 if (_currentActivePlaybackDevice.IsRunning)
                 {
                     _logger.LogDebug(
-                        "Stopping current playback device for format [{currentFormat}] : currently isRunning {isRunning}", _currentFormat.ToShortString(), _currentActivePlaybackDevice.IsRunning
+                        "Stopping current playback device for format [{currentFormat}] : currently isRunning {isRunning}",
+                        _currentFormat.ToShortString(),
+                        _currentActivePlaybackDevice.IsRunning
                     );
 
                     _currentActivePlaybackDevice.Stop();
@@ -220,19 +351,9 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
         );
 
         _currentFormat = format;
-        _logger.LogDebug("Creating sound player for stream {title}", provider.FormatInfo.Tags.Title);
-        var player = new SoundPlayer(_engine, format, provider);
-        player.Volume = replayGainedVolume;
-        player.Mute = Muted;
-        player.PlaybackEnded += PlayerOnPlaybackEnded;
-
-        _currentActivePlaybackDevice.MasterMixer.AddComponent(player);
-
-        _logger.LogDebug(
-            "Created player for format [{format}] with volume {volume} (RG: {replayGainedVolume}). Ready to go", format.ToShortString(), VolumeLevel, replayGainedVolume
-        );
-
-        return player;
+        
+        RegisterPlayer(replayGainedVolume, Muted);
+        return _currentActivePlayer;
     }
 
     private void PlayerOnPlaybackEnded(object? sender, EventArgs e)
@@ -294,9 +415,12 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
 
     private void ChangePlaybackState(PlaybackState state)
     {
-        _logger.LogDebug("Changing playback state from {oldState} to {newState}", PlaybackState, state);
-        PlaybackState = state;
-        PlaybackStateChanged?.Invoke(this, state);
+        if (!suppressPlaybackStateChangeEvents)
+        {
+            _logger.LogDebug("Changing playback state from {oldState} to {newState}", PlaybackState, state);
+            PlaybackState = state;
+            PlaybackStateChanged?.Invoke(this, state);
+        }
     }
 
     public PlaybackState PlaybackState { get; private set; }

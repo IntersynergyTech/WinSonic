@@ -22,6 +22,7 @@ public partial class SettingsViewModel : PageModelBase
     private readonly ISettingsService? _settingsService;
     private readonly ISoundFlowPlayer _player;
     private int _id;
+    private bool _hasLoaded;
 
     [ObservableProperty] public partial bool CheckForUpdates { get; set; }
     [ObservableProperty] public partial string LanguageIetf { get; set; } = SupportedLanguages.DefaultLanguageIetf;
@@ -147,6 +148,8 @@ public partial class SettingsViewModel : PageModelBase
 
     private async Task LoadSettingsAsync()
     {
+        _hasLoaded = false;
+        
         if (_settingsService is null)
         {
             return;
@@ -195,6 +198,8 @@ public partial class SettingsViewModel : PageModelBase
             : null;
 
         SyncPlayQueue = settings.SyncPlayQueue;
+
+        _hasLoaded = true;
     }
 
     private static double? ToStoredScrobbleMinPercentage(decimal? percentDisplayValue)
@@ -342,6 +347,11 @@ public partial class SettingsViewModel : PageModelBase
         if (value is not null)
         {
             OutputDevice = value.Value?.Name;
+
+            if (_hasLoaded)
+            {
+                _player.SetOutputDevice(value.Value.Value.Id);
+            }
         }
     }
 
