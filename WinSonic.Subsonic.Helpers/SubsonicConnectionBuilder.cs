@@ -14,7 +14,7 @@ public class SubsonicConnectionBuilder
     {
         ApplyCommon();
     }
-    
+
     public SubsonicConnectionBuilder WithServerUrl(string url)
     {
         config.BasePath = url;
@@ -60,11 +60,26 @@ public class SubsonicConnectionBuilder
         config.ApiKey["c"] = API_CLIENT_NAME;
         config.ApiKey["f"] = API_FORMAT;
     }
-    
+
+    private static string userAgentString = string.Empty;
+
+    private string GetUserAgent()
+    {
+        if (string.IsNullOrEmpty(userAgentString))
+        {
+            var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+            var version = assembly.GetName().Version?.ToString() ?? "1.0.0";
+            var platform = System.Runtime.InteropServices.RuntimeInformation.OSDescription;
+            var arch = System.Runtime.InteropServices.RuntimeInformation.OSArchitecture.ToString();
+            userAgentString = $"WinSonic/{version} ({arch} | {platform})";
+        }
+        return userAgentString;
+    }
+
     public SubsonicApiWrapper Build()
     {
-        
-        
+        config.UserAgent = GetUserAgent();
+
         var instance = new SubsonicApiWrapper(config);
         return instance;
     }

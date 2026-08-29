@@ -1,88 +1,67 @@
-using System.Diagnostics;
 using Microsoft.Extensions.Logging;
 using WinSonic.Core;
 using WinSonic.Core.Models;
+using WinSonic.Service.Song;
 using WinSonic.Subsonic.Helpers;
 
 namespace WinSonic.Player;
 
 public class SongFetcher
 {
-    private const string DOWNLOAD_FORMAT = "raw";
-
-    public SubsonicApiWrapper _api { get; }
-    public StorageManager _storage { get; }
     private readonly ILogger<SongFetcher> _logger;
+    private readonly ISongService _songService;
 
-    public SongFetcher(SubsonicApiWrapper api, StorageManager storage, ILogger<SongFetcher> logger)
+    public SongFetcher(SubsonicApiWrapper api, StorageManager storage, ILogger<SongFetcher> logger, ISongService songService)
     {
-        _api = api;
-        _storage = storage;
         _logger = logger;
+        _songService = songService;
     }
 
     public Stream FetchSong(Song song)
     {
+        return FetchSong(song, SongRequest.OriginalSource(), acceptAnyCached: true);
+    }
+
+    public Stream FetchSong(Song song, SongRequest? request, bool acceptAnyCached = true)
+    {
         var songId = song.Id;
-        _logger.LogDebug("Fetching song: " + songId);
-        // Check if it exists
-        var songFile = _storage.GetSongFileInfo(songId);
+        _logger.LogDebug(
+            "Fetching song {SongId} via song service (format={Format}, maxBitRate={BitRate}, acceptAnyCached={AcceptAnyCached}, original={Original}).",
+            songId,
+            request?.Format,
+            request?.MaxBitRate,
+            acceptAnyCached,
+            request?.RequestOriginalSource ?? false
+        );
 
-        // If we don't have it already we will have to stream on demand.
-        if (!songFile.Exists)
-        {
-            _logger.LogDebug("Song not found in storage, streaming: " + songId);
-            return StreamSong(song);
-        }
-
-        _logger.LogDebug($"[{songId}] Loading from local file");
-        return _storage.OpenSongFile(songId);
+        return _songService
+            .GetSongAsync(songId, request, acceptAnyCached)
+            .GetAwaiter()
+            .GetResult();
     }
 
     public void PrefetchSong(Song song)
     {
+        PrefetchSong(song, SongRequest.OriginalSource(), acceptAnyCached: true);
+    }
+
+    public void PrefetchSong(Song song, SongRequest? request, bool acceptAnyCached = true)
+    {
         var songId = song.Id;
-        _logger.LogDebug($"[{songId}] Prefetching");
-        var songFile = _storage.GetSongFileInfo(songId);
+        _logger.LogDebug(
+            "Prefetching song {SongId} via song service (format={Format}, maxBitRate={BitRate}, acceptAnyCached={AcceptAnyCached}, original={Original}).",
+            songId,
+            request?.Format,
+            request?.MaxBitRate,
+            acceptAnyCached,
+            request?.RequestOriginalSource ?? false
+        );
 
-        if (!songFile.Exists)
-        {
-            _logger.LogDebug($"[{songId}] Not available in storage. Downloading for next play.");
-            DownloadSong(song);
-            _logger.LogDebug($"[{songId}] Song downloaded.");
-        }
-        else
-        {
-            _logger.LogDebug($"[{songId}] Song already available locally.");
-        }
-    }
+        using var _ = _songService
+            .GetSongAsync(songId, request, acceptAnyCached)
+            .GetAwaiter()
+            .GetResult();
 
-    private Stream StreamSong(Song song)
-    {
-        var download = _api.MediaRetrieval.StreamWithHttpInfo(song.Id, format: DOWNLOAD_FORMAT);
-
-        try
-        {
-            var downloadStream = download.Data;
-            var memoryStream = new MemoryStream();
-            downloadStream.CopyToAsync(memoryStream);
-            memoryStream.Position = 0;
-            return memoryStream;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogDebug($"[{song.Id}] Error streaming song: {ex.Message}");
-            throw;
-        }
-    }
-
-    private void DownloadSong(Song song)
-    {
-        // We copy to a memory stream first to avoid partial downloads in case of errors or not being fast enough.
-        var downloadStream = _api.MediaRetrieval.Stream(song.Id, format: DOWNLOAD_FORMAT);
-        var memoryStream = new MemoryStream();
-        downloadStream.CopyTo(memoryStream);
-        memoryStream.Position = 0;
-        _storage.SaveSongFile(song.Id, memoryStream);
+        _logger.LogDebug("Prefetch complete for song {SongId}.", songId);
     }
 }

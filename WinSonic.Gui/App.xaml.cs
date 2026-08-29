@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Threading;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using WinSonic.Core;
@@ -37,11 +38,11 @@ public partial class App : Application
         Instance = this;
         base.OnStartup(e);
         GlobalContext.Dispatcher = Dispatcher.CurrentDispatcher;
-        InitGlobalContext();
         var serviceCollection = new ServiceCollection();
         ConfigureServices(serviceCollection);
         _serviceProvider = serviceCollection.BuildServiceProvider();
         ServiceProvider = _serviceProvider;
+        InitGlobalContext(_serviceProvider);
         var mainWindow = _serviceProvider.GetRequiredService<PlayerWindow>();
         mainWindow.Show();
     }
@@ -81,33 +82,17 @@ public partial class App : Application
         base.OnExit(e);
     }
 
-    private static void InitGlobalContext()
+    private static void InitGlobalContext(IServiceProvider serviceProvider)
     {
         Console.WriteLine("Initialising Global Context...");
-
-        GlobalContext.PlayQueue = new PlayQueue();
-
-        GlobalContext.StorageManager = new StorageManager();
-        GlobalContext.StorageManager.EnsureDirectoriesExist();
-
-        var builder = new SubsonicConnectionBuilder().WithDefaultUserCredentials();
-        var client = builder.Build();
-        GlobalContext.Subsonic = client;
-
-        GlobalContext.SongFetcher = new SongFetcher(GlobalContext.Subsonic, GlobalContext.StorageManager);
-
-        var player = new SoundFlowMultiPlayer();
-        GlobalContext.AudioPlayer = player;
-
-        GlobalContext.AutoPlaybackManager = new AutoPlaybackManager(
-            GlobalContext.PlayQueue,
-            GlobalContext.SongFetcher,
-            GlobalContext.AudioPlayer
-        );
-
-        GlobalContext.DbContextFactory = new SqliteDataContextFactory(storageManager: GlobalContext.StorageManager);
-
-        GlobalContext.SyncManager = new SyncManager(client, GlobalContext.DbContextFactory);
+        GlobalContext.StorageManager = serviceProvider.GetRequiredService<StorageManager>();
+        GlobalContext.PlayQueue = serviceProvider.GetRequiredService<PlayQueue>();
+        GlobalContext.Subsonic = serviceProvider.GetRequiredService<SubsonicApiWrapper>();
+        GlobalContext.SongFetcher = serviceProvider.GetRequiredService<SongFetcher>();
+        GlobalContext.AudioPlayer = serviceProvider.GetRequiredService<ISoundFlowPlayer>();
+        GlobalContext.AutoPlaybackManager = serviceProvider.GetRequiredService<AutoPlaybackManager>();
+        GlobalContext.SyncManager = serviceProvider.GetRequiredService<SyncManager>();
+        GlobalContext.DbContextFactory = (SqliteDataContextFactory)serviceProvider.GetRequiredService<IDbContextFactory<BaseDataContext>>();
 
         Console.WriteLine("Initialised.");
     }

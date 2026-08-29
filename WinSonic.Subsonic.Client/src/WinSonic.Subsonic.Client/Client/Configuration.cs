@@ -157,6 +157,7 @@ namespace WinSonic.Subsonic.Client.Client
             IDictionary<string, string> defaultHeaders,
             IDictionary<string, string> apiKey,
             IDictionary<string, string> apiKeyPrefix,
+            
             string basePath = "https://example-opensubsonic-compatible-server.com") : this()
         {
             if (string.IsNullOrWhiteSpace(basePath))

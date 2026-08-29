@@ -1,10 +1,15 @@
 ﻿using System.Diagnostics;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using WinSonic.Core;
 using WinSonic.Core.Enums;
 using WinSonic.Core.Models;
+using WinSonic.Data;
+using WinSonic.Data.Sqlite;
 using WinSonic.Playback;
 using WinSonic.Player;
 using WinSonic.Player.ReplayGain;
+using WinSonic.Service.Song;
 using WinSonic.Service.Playlist;
 using WinSonic.Subsonic.Helpers;
 using Timer = System.Timers.Timer;
@@ -32,6 +37,7 @@ internal class Program
     private static bool _lastLineKeyPressed = false;
     private static Timer _nowPlayingBarRefreshTimer = new (500);
     private static int lastLineLength = 0;
+    private static readonly ILoggerFactory LoggerFactory = Microsoft.Extensions.Logging.LoggerFactory.Create(builder => builder.AddDebug());
 
     private static void NowPlayingTimerTick(object? sender, System.Timers.ElapsedEventArgs e)
     {
@@ -98,7 +104,24 @@ internal class Program
 
         _playQueue = new PlayQueue();
 
-        _songFetcher = new SongFetcher(client, _storageManager);
+        var dbContextFactory = new SqliteDataContextFactory(
+            _storageManager,
+            LoggerFactory.CreateLogger<SqliteDataContextFactory>(),
+            LoggerFactory
+        );
+        var liveSongService = new LiveSongService(client, LoggerFactory.CreateLogger<LiveSongService>());
+        var songService = new CachedSongService(
+            _storageManager,
+            dbContextFactory,
+            liveSongService,
+            LoggerFactory.CreateLogger<CachedSongService>()
+        );
+        _songFetcher = new SongFetcher(
+            client,
+            _storageManager,
+            LoggerFactory.CreateLogger<SongFetcher>(),
+            songService
+        );
 
         _autoPlaybackManager = new AutoPlaybackManager(_playQueue, _songFetcher, _player);
 

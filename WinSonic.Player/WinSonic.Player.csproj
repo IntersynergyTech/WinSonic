@@ -4,7 +4,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <LangVersion>14</LangVersion>
-        <TargetFrameworks>net10.0;net9.0</TargetFrameworks>
+        <TargetFramework>net10.0</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
@@ -16,6 +16,7 @@
       <ProjectReference Include="..\WinSonic.Core\WinSonic.Core.csproj" />
       <ProjectReference Include="..\WinSonic.Subsonic.Client\src\WinSonic.Subsonic.Client\WinSonic.Subsonic.Client.csproj" />
       <ProjectReference Include="..\WinSonic.Subsonic.Helpers\WinSonic.Subsonic.Helpers.csproj" />
+      <ProjectReference Include="..\WinSonic.Service\WinSonic.Service.csproj" />
     </ItemGroup>
 
 </Project>

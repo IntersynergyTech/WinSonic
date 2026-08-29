@@ -19,6 +19,7 @@ using WinSonic.Service.History;
 using WinSonic.Service.Misc;
 using WinSonic.Service.Playlist;
 using WinSonic.Service.SecureData;
+using WinSonic.Service.Song;
 using WinSonic.Service.Settings;
 using WinSonic.Subsonic.Helpers;
 
@@ -85,11 +86,13 @@ public static class DependencyRegistrationExtensions
         services.AddScoped<IArtistService, CachedArtistService>();
         services.AddScoped<IPlaylistService, CachedPlaylistService>();
         services.AddTransient<IArtworkService, CachedArtworkService>();
+        services.AddSingleton<ISongService, CachedSongService>();
         services.AddScoped<IPlaybackHistoryService, StoredPlaybackHistoryService>();
         services.AddScoped<ISettingsService, StoredSettingsService>();
 
         // Extra data services
         services.AddScoped<LiveArtworkService>();
+        services.AddSingleton<LiveSongService>();
         services.AddScoped<ServerPlaybackHistoryService>();
 
         //Playback services
