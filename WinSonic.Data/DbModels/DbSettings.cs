@@ -17,6 +17,9 @@ public class DbSettings
     public ReplayGainMode ReplayGainMode { get; set; }
     public ReplayGainClippingPrevention ClippingPrevention { get; set; }
     public double? Preamp { get; set; }
+    public bool RequestOriginalFiles { get; set; }
+    public TranscodeFormat TranscodeFormat { get; set; }
+    public int TranscodeBitrate { get; set; }
     
     // Server settings
     public string ServerAddress { get; set; }

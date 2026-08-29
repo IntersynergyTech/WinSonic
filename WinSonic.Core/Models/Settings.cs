@@ -15,6 +15,9 @@ public class Settings
     public ReplayGainMode ReplayGainMode { get; set; }
     public ReplayGainClippingPrevention ClippingPrevention { get; set; }
     public double? Preamp { get; set; }
+    public bool RequestOriginalFiles { get; set; } = true;
+    public TranscodeFormat TranscodeFormat { get; set; } = TranscodeFormat.Mp3;
+    public int TranscodeBitrate { get; set; } = 320;
 
     // Server settings
     public string ServerAddress { get; set; } = string.Empty;
@@ -40,4 +43,12 @@ public enum ReplayGainClippingPrevention
 {
     Off,
     ReduceGain
+}
+
+public enum TranscodeFormat
+{
+    Ogg,
+    Mp3,
+    Opus,
+    M4aAac
 }

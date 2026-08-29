@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Logging;
 using WinSonic.Core;
 using WinSonic.Core.Models;
+using WinSonic.Service.Settings;
 using WinSonic.Service.Song;
 using WinSonic.Subsonic.Helpers;
 
@@ -10,16 +11,42 @@ public class SongFetcher
 {
     private readonly ILogger<SongFetcher> _logger;
     private readonly ISongService _songService;
+    private readonly ISettingsService _settingsService;
 
-    public SongFetcher(SubsonicApiWrapper api, StorageManager storage, ILogger<SongFetcher> logger, ISongService songService)
+    public SongFetcher(SubsonicApiWrapper api, StorageManager storage, ILogger<SongFetcher> logger, ISongService songService, ISettingsService settingsService)
     {
         _logger = logger;
         _songService = songService;
+        _settingsService = settingsService;
+    }
+    
+    private SongRequest GetTranscodeSettings()
+    {
+        var settings = _settingsService.GetSettingsAsync().GetAwaiter().GetResult();
+
+        if (settings.RequestOriginalFiles)
+        {
+            return SongRequest.OriginalSource();
+        }
+
+        return new SongRequest
+        {
+            RequestOriginalSource = false,
+            Format = settings.TranscodeFormat switch
+            {
+                TranscodeFormat.Ogg => "ogg",
+                TranscodeFormat.Mp3 => "mp3",
+                TranscodeFormat.Opus => "opus",
+                TranscodeFormat.M4aAac => "aac",
+                _ => throw new ArgumentOutOfRangeException(nameof(settings.TranscodeFormat), settings.TranscodeFormat, "Unsupported transcode format.")
+            },
+            MaxBitRate = settings.TranscodeBitrate
+        };
     }
 
     public Stream FetchSong(Song song)
     {
-        return FetchSong(song, SongRequest.OriginalSource(), acceptAnyCached: true);
+        return FetchSong(song, GetTranscodeSettings(), acceptAnyCached: true);
     }
 
     public Stream FetchSong(Song song, SongRequest? request, bool acceptAnyCached = true)
@@ -42,7 +69,7 @@ public class SongFetcher
 
     public void PrefetchSong(Song song)
     {
-        PrefetchSong(song, SongRequest.OriginalSource(), acceptAnyCached: true);
+        PrefetchSong(song, GetTranscodeSettings(), acceptAnyCached: true);
     }
 
     public void PrefetchSong(Song song, SongRequest? request, bool acceptAnyCached = true)

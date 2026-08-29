@@ -9,6 +9,7 @@ namespace WinSonic.Service.Settings;
 public class StoredSettingsService : ISettingsService
 {
     private const int SettingsRowId = 1;
+    private static readonly int[] AllowedTranscodeBitrates = [48, 96, 128, 192, 256, 320];
 
     private readonly BaseDataContext _dataContext;
     private readonly ISecureDataService _secureDataService;
@@ -34,14 +35,18 @@ public class StoredSettingsService : ISettingsService
         var normalisedServerAddress = settings.ServerAddress.Trim();
         var normalisedUsername = settings.Username.Trim();
         var expectedPasswordCredentialKey = BuildPasswordCredentialKey(normalisedServerAddress, normalisedUsername);
+        var supportedTranscodeFormat = NormalizeTranscodeFormat(settings.TranscodeFormat);
+        var transcodeFormatChanged = settings.TranscodeFormat != supportedTranscodeFormat;
 
         if (settings.ServerAddress != normalisedServerAddress ||
             settings.Username != normalisedUsername ||
-            settings.PasswordCredentialKey != expectedPasswordCredentialKey)
+            settings.PasswordCredentialKey != expectedPasswordCredentialKey ||
+            transcodeFormatChanged)
         {
             settings.ServerAddress = normalisedServerAddress;
             settings.Username = normalisedUsername;
             settings.PasswordCredentialKey = expectedPasswordCredentialKey;
+            settings.TranscodeFormat = supportedTranscodeFormat;
             await _dataContext.SaveChangesAsync(cancellationToken);
         }
 
@@ -109,12 +114,16 @@ public class StoredSettingsService : ISettingsService
             ReplayGainMode = Core.Models.ReplayGainMode.Album,
             ClippingPrevention = Core.Models.ReplayGainClippingPrevention.Off,
             Preamp = null,
+            RequestOriginalFiles = true,
+            TranscodeFormat = Core.Models.TranscodeFormat.Mp3,
+            TranscodeBitrate = 320,
             ServerAddress = string.Empty,
             Username = string.Empty,
             IgnoreSslErrors = false,
             ScrobbleToServer = true,
             ScrobbleMinimumPercentage = null,
             ScrobbleMinimumSeconds = null,
+            ScrobbleOnCompletion = true,
             SyncPlayQueue = false
         };
     }
@@ -132,6 +141,19 @@ public class StoredSettingsService : ISettingsService
             throw new ArgumentOutOfRangeException(nameof(settings), "Preamp must be between -50 and 50.");
         }
 
+        if (settings.TranscodeFormat != Core.Models.TranscodeFormat.Mp3)
+        {
+            throw new ArgumentOutOfRangeException(nameof(settings), "TranscodeFormat must be MP3.");
+        }
+
+        if (!AllowedTranscodeBitrates.Contains(settings.TranscodeBitrate))
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(settings),
+                $"TranscodeBitrate must be one of: {string.Join(", ", AllowedTranscodeBitrates)}."
+            );
+        }
+
         if (settings.ScrobbleMinimumPercentage is < 0 or > 1)
         {
             throw new ArgumentOutOfRangeException(nameof(settings), "ScrobbleMinimumPercentage must be between 0 and 1.");
@@ -141,6 +163,11 @@ public class StoredSettingsService : ISettingsService
     private static string? NullIfWhitespace(string? value)
     {
         return string.IsNullOrWhiteSpace(value) ? null : value.Trim();
+    }
+
+    private static Data.Enums.TranscodeFormat NormalizeTranscodeFormat(Data.Enums.TranscodeFormat value)
+    {
+        return Data.Enums.TranscodeFormat.Mp3;
     }
 
     private static string BuildPasswordCredentialKey(string serverAddress, string username)

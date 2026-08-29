@@ -45,7 +45,7 @@
             <Border Padding="16" CornerRadius="8" Background="{DynamicResource CalendarViewOutOfScopeBackground}">
                 <StackPanel Spacing="10">
                     <TextBlock Text="{x:Static localisation:Strings._SettingsPlayback}" FontWeight="SemiBold" />
-                    <Grid ColumnDefinitions="220,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto" RowSpacing="12" ColumnSpacing="16">
+                    <Grid ColumnDefinitions="220,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="12" ColumnSpacing="16">
                         <TextBlock Grid.Row="0" Grid.Column="0" Text="{x:Static localisation:Strings._OutputDevice}" VerticalAlignment="Center"/>
                         <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding OutputDeviceOptions}"
                                   SelectedItem="{Binding SelectedOutputDeviceOption}"
@@ -63,6 +63,17 @@
                                   DisplayMemberBinding="{Binding DisplayName}" />
                         <TextBlock Grid.Row="3" Grid.Column="0" Text="{x:Static localisation:Strings._Preamp}" VerticalAlignment="Center"/>
                         <NumericUpDown Grid.Row="3" Grid.Column="1" Value="{Binding Preamp}" Minimum="-50" Maximum="50" Increment="0.5" FormatString="0.##" />
+                        <CheckBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Content="{x:Static localisation:Strings._RequestOriginalFiles}" IsChecked="{Binding RequestOriginalFiles}" />
+                        <TextBlock Grid.Row="5" Grid.Column="0" Text="{x:Static localisation:Strings._TranscodeFormat}" VerticalAlignment="Center"/>
+                        <ComboBox Grid.Row="5" Grid.Column="1" ItemsSource="{Binding TranscodeFormatOptions}"
+                                  SelectedItem="{Binding SelectedTranscodeFormatOption}"
+                                  MinWidth="300"
+                                  DisplayMemberBinding="{Binding DisplayName}" />
+                        <TextBlock Grid.Row="6" Grid.Column="0" Text="{x:Static localisation:Strings._TranscodeBitrate}" VerticalAlignment="Center"/>
+                        <ComboBox Grid.Row="6" Grid.Column="1" ItemsSource="{Binding TranscodeBitrateOptions}"
+                                  SelectedItem="{Binding SelectedTranscodeBitrateOption}"
+                                  MinWidth="300"
+                                  DisplayMemberBinding="{Binding DisplayName}" />
                     </Grid>
                 </StackPanel>
             </Border>
@@ -70,7 +81,7 @@
             <Border Padding="16" CornerRadius="8" Background="{DynamicResource CalendarViewOutOfScopeBackground}">
                 <StackPanel Spacing="10">
                     <TextBlock Text="{x:Static localisation:Strings._SettingsServer}" FontWeight="SemiBold" />
-                    <Grid ColumnDefinitions="220,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="12" ColumnSpacing="16">
+                    <Grid ColumnDefinitions="220,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="12" ColumnSpacing="16">
                         <TextBlock Grid.Row="0" Grid.Column="0" Text="{x:Static localisation:Strings._ServerAddress}" VerticalAlignment="Center"/>
                         <TextBox x:Name="ServerAddressTextBox" Grid.Row="0" Grid.Column="1" Text="{Binding ServerAddress}" PlaceholderText="https://your-subsonic-server" LostFocus="ServerAddressTextBox_LostFocus" />
                         <TextBlock Grid.Row="1" Grid.Column="0" Text="{x:Static localisation:Strings._Username}" VerticalAlignment="Center"/>
@@ -83,7 +94,8 @@
                         <NumericUpDown Grid.Row="5" Grid.Column="1" Value="{Binding ScrobbleMinimumPercentage}" Minimum="0" Maximum="100" Increment="0.05" FormatString="0.##" />
                         <TextBlock Grid.Row="6" Grid.Column="0" Text="{x:Static localisation:Strings._ScrobbleMinimumSeconds}" VerticalAlignment="Center"/>
                         <NumericUpDown Grid.Row="6" Grid.Column="1" Value="{Binding ScrobbleMinimumSeconds}" Minimum="0" Maximum="86400" Increment="1" FormatString="0.##" />
-                        <CheckBox Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" Content="{x:Static localisation:Strings._SyncPlayQueue}" IsChecked="{Binding SyncPlayQueue}" />
+                        <CheckBox Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" Content="{x:Static localisation:Strings._ScrobbleOnCompletion}" IsChecked="{Binding ScrobbleOnCompletion}" />
+                        <CheckBox Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" Content="{x:Static localisation:Strings._SyncPlayQueue}" IsChecked="{Binding SyncPlayQueue}" />
                     </Grid>
                 </StackPanel>
             </Border>

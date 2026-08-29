@@ -207,6 +207,18 @@
     <data name="_Preamp" xml:space="preserve">
         <value>Preamp (dB)</value>
     </data>
+    <data name="_RequestOriginalFiles" xml:space="preserve">
+        <value>Request original files</value>
+    </data>
+    <data name="_TranscodeFormat" xml:space="preserve">
+        <value>Transcode format</value>
+    </data>
+    <data name="_TranscodeBitrate" xml:space="preserve">
+        <value>Transcode bitrate (kbps)</value>
+    </data>
+    <data name="_TranscodeFormatMp3" xml:space="preserve">
+        <value>MP3</value>
+    </data>
     <data name="_ServerAddress" xml:space="preserve">
         <value>Server address</value>
     </data>
@@ -227,6 +239,9 @@
     </data>
     <data name="_ScrobbleMinimumSeconds" xml:space="preserve">
         <value>Scrobble minimum seconds</value>
+    </data>
+    <data name="_ScrobbleOnCompletion" xml:space="preserve">
+        <value>Scrobble on completion</value>
     </data>
     <data name="_SyncPlayQueue" xml:space="preserve">
         <value>Sync play queue</value>

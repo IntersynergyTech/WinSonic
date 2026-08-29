@@ -226,12 +226,16 @@ public partial class SettingsWizardViewModel : PageModelBase
             ReplayGainMode = ReplayGainMode.Album,
             ClippingPrevention = ReplayGainClippingPrevention.Off,
             Preamp = 0,
+            RequestOriginalFiles = true,
+            TranscodeFormat = TranscodeFormat.Mp3,
+            TranscodeBitrate = 320,
             ServerAddress = normalisedServerAddress,
             Username = Username.Trim(),
             IgnoreSslErrors = IgnoreSslErrors,
             ScrobbleToServer = true,
             ScrobbleMinimumPercentage = 0.75,
             ScrobbleMinimumSeconds = 60,
+            ScrobbleOnCompletion = true,
             SyncPlayQueue = false
         };
 

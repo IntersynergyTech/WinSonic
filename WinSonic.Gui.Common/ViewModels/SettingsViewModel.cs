@@ -18,6 +18,7 @@ public partial class SettingsViewModel : PageModelBase
     private const string SystemThemeKey = "system";
     private const string LightThemeKey = "fluent-light";
     private const string DarkThemeKey = "fluent-dark";
+    private static readonly int[] SupportedTranscodeBitrates = [48, 96, 128, 192, 256, 320];
 
     private readonly ISettingsService? _settingsService;
     private readonly ISoundFlowPlayer _player;
@@ -38,6 +39,11 @@ public partial class SettingsViewModel : PageModelBase
     public partial ReplayGainClippingPrevention ClippingPrevention { get; set; } = ReplayGainClippingPrevention.Off;
     [ObservableProperty]
     public partial OptionItem<ReplayGainClippingPrevention>? SelectedClippingPreventionOption { get; set; }
+    [ObservableProperty] public partial bool RequestOriginalFiles { get; set; } = true;
+    [ObservableProperty] public partial TranscodeFormat TranscodeFormat { get; set; } = TranscodeFormat.Mp3;
+    [ObservableProperty] public partial OptionItem<TranscodeFormat>? SelectedTranscodeFormatOption { get; set; }
+    [ObservableProperty] public partial int TranscodeBitrate { get; set; } = 320;
+    [ObservableProperty] public partial OptionItem<int>? SelectedTranscodeBitrateOption { get; set; }
     [NotifyDataErrorInfo]
     [Range(
         typeof(decimal),
@@ -77,6 +83,8 @@ public partial class SettingsViewModel : PageModelBase
     [ObservableProperty] public partial IReadOnlyList<OptionItem<ReplayGainMode>> ReplayGainModeOptions { get; set; }
     [ObservableProperty]
     public partial IReadOnlyList<OptionItem<ReplayGainClippingPrevention>> ClippingPreventionOptions { get; set; }
+    [ObservableProperty] public partial IReadOnlyList<OptionItem<TranscodeFormat>> TranscodeFormatOptions { get; set; }
+    [ObservableProperty] public partial IReadOnlyList<OptionItem<int>> TranscodeBitrateOptions { get; set; }
     [ObservableProperty] public partial IReadOnlyList<OptionItem<DeviceInfo?>> OutputDeviceOptions { get; set; }
 
     public SettingsViewModel(ISettingsService settingsService, ISoundFlowPlayer player)
@@ -91,6 +99,8 @@ public partial class SettingsViewModel : PageModelBase
         ThemeOptions = BuildThemeOptions();
         ReplayGainModeOptions = BuildReplayGainModeOptions();
         ClippingPreventionOptions = BuildClippingPreventionOptions();
+        TranscodeFormatOptions = BuildTranscodeFormatOptions();
+        TranscodeBitrateOptions = BuildTranscodeBitrateOptions();
         OutputDeviceOptions = BuildOutputDeviceOptions(_player);
         _ = LoadSettingsAsync();
     }
@@ -131,13 +141,17 @@ public partial class SettingsViewModel : PageModelBase
             ReplayGainMode = ReplayGainMode,
             ClippingPrevention = ClippingPrevention,
             Preamp = Preamp.HasValue ? (double?) Preamp.Value : null,
+            RequestOriginalFiles = RequestOriginalFiles,
+            TranscodeFormat = TranscodeFormat,
+            TranscodeBitrate = TranscodeBitrate,
             ServerAddress = normalisedServerAddress,
             Username = Username.Trim(),
             IgnoreSslErrors = IgnoreSslErrors,
             ScrobbleToServer = ScrobbleToServer,
             ScrobbleMinimumPercentage = ToStoredScrobbleMinPercentage(ScrobbleMinimumPercentage),
             ScrobbleMinimumSeconds = ScrobbleMinimumSeconds.HasValue ? (double?) ScrobbleMinimumSeconds.Value : null,
-            ScrobbleOnCompletion = ScrobbleOnCompletion
+            ScrobbleOnCompletion = ScrobbleOnCompletion,
+            SyncPlayQueue = SyncPlayQueue
         };
 
         var passwordToSave = string.IsNullOrWhiteSpace(ServerPasswordInput) ? null : ServerPasswordInput;
@@ -180,6 +194,14 @@ public partial class SettingsViewModel : PageModelBase
 
         SelectedClippingPreventionOption = ClippingPreventionOptions.FirstOrDefault(x => x.Value == ClippingPrevention)
             ?? ClippingPreventionOptions.First();
+
+        RequestOriginalFiles = settings.RequestOriginalFiles;
+        TranscodeFormat = settings.TranscodeFormat;
+        SelectedTranscodeFormatOption = TranscodeFormatOptions.FirstOrDefault(x => x.Value == TranscodeFormat)
+            ?? TranscodeFormatOptions.First();
+        TranscodeBitrate = settings.TranscodeBitrate;
+        SelectedTranscodeBitrateOption = TranscodeBitrateOptions.FirstOrDefault(x => x.Value == TranscodeBitrate)
+            ?? TranscodeBitrateOptions.First();
 
         SelectedOutputDeviceOption = OutputDeviceOptions.FirstOrDefault(x => x.Value?.Name == OutputDevice)
             ?? OutputDeviceOptions.First();
@@ -258,6 +280,21 @@ public partial class SettingsViewModel : PageModelBase
                 Strings._ReplayGainClippingReduceGain
             )
         ];
+    }
+
+    private static IReadOnlyList<OptionItem<TranscodeFormat>> BuildTranscodeFormatOptions()
+    {
+        return
+        [
+            new OptionItem<TranscodeFormat>(TranscodeFormat.Mp3, Strings._TranscodeFormatMp3)
+        ];
+    }
+
+    private static IReadOnlyList<OptionItem<int>> BuildTranscodeBitrateOptions()
+    {
+        return SupportedTranscodeBitrates
+            .Select(bitrate => new OptionItem<int>(bitrate, bitrate.ToString()))
+            .ToArray();
     }
 
     private static IReadOnlyList<OptionItem<DeviceInfo?>> BuildOutputDeviceOptions(ISoundFlowPlayer player)
@@ -352,6 +389,22 @@ public partial class SettingsViewModel : PageModelBase
             {
                 _player.SetOutputDevice(value.Value.Value.Id);
             }
+        }
+    }
+
+    partial void OnSelectedTranscodeFormatOptionChanged(OptionItem<TranscodeFormat>? value)
+    {
+        if (value is not null)
+        {
+            TranscodeFormat = value.Value;
+        }
+    }
+
+    partial void OnSelectedTranscodeBitrateOptionChanged(OptionItem<int>? value)
+    {
+        if (value is not null)
+        {
+            TranscodeBitrate = value.Value;
         }
     }
 

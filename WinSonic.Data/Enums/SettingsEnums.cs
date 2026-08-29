@@ -14,4 +14,10 @@ public enum ReplayGainClippingPrevention
     ReduceGain
 }
 
-
+public enum TranscodeFormat
+{
+    Ogg,
+    Mp3,
+    Opus,
+    M4aAac
+}
