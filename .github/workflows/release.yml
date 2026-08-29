@@ -132,7 +132,7 @@ jobs:
 
   macos:
     needs: version
-    runs-on: macos-14
+    runs-on: macos-26
     env:
       VERSION: ${{ needs.version.outputs.version }}
       RID: osx-arm64
