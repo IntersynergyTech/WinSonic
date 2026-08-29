@@ -27,6 +27,7 @@ public partial class PlaybackControlsViewModel : ViewModelBase
 
     [ObservableProperty] public partial string? Title { get; private set; }
     [ObservableProperty] public partial string? Artist { get; private set; }
+    [ObservableProperty] public partial bool ShowExplicitFlag { get; private set; }
 
     [ObservableProperty] public partial CoverArtViewModel CoverArt { get; private set; }
 
@@ -155,7 +156,7 @@ public partial class PlaybackControlsViewModel : ViewModelBase
 
         Title = apm.NowPlaying?.Title;
         Artist = apm.NowPlaying?.Artist;
-
+        ShowExplicitFlag = apm.NowPlaying?.IsExplicit ?? false;
         PlaybackState = apm.Player.PlaybackState;
 
         CoverArt.CoverArtId = apm.NowPlaying?.CoverArtId;

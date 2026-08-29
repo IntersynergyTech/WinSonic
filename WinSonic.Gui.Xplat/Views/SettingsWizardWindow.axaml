@@ -30,9 +30,9 @@
                     <TextBlock Text="{x:Static localisation:Strings._SettingsGeneral}" FontSize="18" FontWeight="SemiBold"/>
                     <Grid ColumnDefinitions="180,*" RowDefinitions="Auto,Auto" RowSpacing="12" ColumnSpacing="16">
                         <TextBlock Grid.Row="0" Grid.Column="0" Text="{x:Static localisation:Strings._Language}" VerticalAlignment="Center"/>
-                        <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding LanguageOptions}" SelectedItem="{Binding SelectedLanguageOption}" DisplayMemberBinding="{Binding DisplayName}" />
+                        <ComboBox Grid.Row="0" Grid.Column="1" MinWidth="300" ItemsSource="{Binding LanguageOptions}" SelectedItem="{Binding SelectedLanguageOption}" DisplayMemberBinding="{Binding DisplayName}" />
                         <TextBlock Grid.Row="1" Grid.Column="0" Text="{x:Static localisation:Strings._Theme}" VerticalAlignment="Center"/>
-                        <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding ThemeOptions}" SelectedItem="{Binding SelectedThemeOption}" DisplayMemberBinding="{Binding DisplayName}" />
+                        <ComboBox Grid.Row="1" Grid.Column="1" MinWidth="300" ItemsSource="{Binding ThemeOptions}" SelectedItem="{Binding SelectedThemeOption}" DisplayMemberBinding="{Binding DisplayName}" />
                     </Grid>
                 </StackPanel>
             </TabItem>

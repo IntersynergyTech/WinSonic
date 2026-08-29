@@ -110,7 +110,7 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
             _outputDevice = _engine.PlaybackDevices.FirstOrDefault(d => d.Name == settingsDeviceName);
             if (_outputDevice == null)
             {
-                _logger.LogWarning($"Settings preffered device named {settingsDeviceName} not found. Falling back to default output device.");
+                _logger.LogWarning("Settings preffered device named {settingsDeviceName} not found. Falling back to default output device.", settingsDeviceName);
                 _outputDevice = _defaultOutputDevice;
             }
         }
@@ -220,7 +220,7 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
         );
 
         _currentFormat = format;
-        _logger.LogDebug($"Creating sound player for stream {provider.FormatInfo.Tags.Title}");
+        _logger.LogDebug("Creating sound player for stream {title}", provider.FormatInfo.Tags.Title);
         var player = new SoundPlayer(_engine, format, provider);
         player.Volume = replayGainedVolume;
         player.Mute = Muted;

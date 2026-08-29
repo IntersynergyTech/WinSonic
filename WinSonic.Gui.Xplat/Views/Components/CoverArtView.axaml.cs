@@ -38,6 +38,7 @@ public partial class CoverArtView : UserControl
         if (Context is null) return;
 
         Context.CoverArtSourceData = null;
+        Disc.IsVisible = true;
         var newCoverArtId = Context.CoverArtId;
         var newCoverArtDimensions = Context.Dimensions;
 
@@ -92,7 +93,8 @@ public partial class CoverArtView : UserControl
                                 Dispatcher.Post(() =>
                                     {
                                         if (!cancellationToken.IsCancellationRequested)
-                                        {
+                                        {   
+                                            Disc.IsVisible = false;
                                             Context.CoverArtSourceData = bitmap;
                                         }
                                     }

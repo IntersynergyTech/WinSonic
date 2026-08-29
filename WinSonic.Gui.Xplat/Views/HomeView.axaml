@@ -14,49 +14,80 @@
         <vm:HomeViewModel />
     </Design.DataContext>
     <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch" ColumnDefinitions="*,*">
+        <Viewbox Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center" Stretch="UniformToFill" StretchDirection="Both">
+            <Grid ClipToBounds="False"  Opacity="0.40" VerticalAlignment="Center" HorizontalAlignment="Center" Height="300">
+                <controls:CoverArtControl IsVisible="True" CoverArtId="{Binding NowPlaying.CoverArtId}"  Margin="-50" VerticalAlignment="Center" HorizontalAlignment="Center" Width="400" Height="400" Dimensions="160">
+                    <controls:CoverArtControl.Effect>
+                        <BlurEffect Radius="50" />
+                    </controls:CoverArtControl.Effect>
+                </controls:CoverArtControl>
+            </Grid>
+        </Viewbox>
         <StackPanel Grid.Column="0" Margin="24,48" HorizontalAlignment="Right"
                     VerticalAlignment="Center" Spacing="10" MaxWidth="600">
-            <Border Background="{DynamicResource CalendarViewOutOfScopeBackground}" Padding="18" CornerRadius="12">
-                <StackPanel Spacing="6">
+            <Grid>
+
+                <Border Background="{DynamicResource CalendarViewOutOfScopeBackground}" Opacity="0.75" CornerRadius="12">
+                </Border>
+                <StackPanel Spacing="6" Margin="18">
                     <Button Theme="{DynamicResource InvisibleButtonWrapper}" Command="{Binding GoToAlbumCommand}">
                         <StackPanel>
                             <ContentControl Content="{Binding CoverArtModel}"></ContentControl>
-                            <TextBlock Text="{Binding NowPlaying.Title}" Margin="0,4" FontSize="{DynamicResource WsFontSizeXl}" FontWeight="SemiLight"/>
-                            <TextBlock Text="{Binding NowPlaying.Album.Title}" FontSize="{DynamicResource WsFontSizeLrg}" />
+                            <TextBlock Text="{Binding NowPlaying.Title}" Margin="0,4"
+                                       FontSize="{DynamicResource WsFontSizeXl}" FontWeight="SemiLight" />
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Border IsVisible="{Binding NowPlaying.IsExplicit}" CornerRadius="4" Background="#55888888"
+                                        Width="16" Height="16" Margin="0,0,4,0">
+                                    <TextBlock Text="E" VerticalAlignment="Center" HorizontalAlignment="Center"
+                                               FontSize="{DynamicResource WsFontSizeSml}" />
+                                </Border>
+                                <TextBlock Text="{Binding NowPlaying.Album.Title}" FontSize="{DynamicResource WsFontSizeLrg}" />
+                            </StackPanel>
                         </StackPanel>
                     </Button>
-                    <TextBlock Text="{Binding NowPlaying.Artist}" FontSize="{DynamicResource WsFontSizeMed}"/>
+                    <TextBlock Text="{Binding NowPlaying.Artist}" FontSize="{DynamicResource WsFontSizeMed}" />
                 </StackPanel>
-            </Border>
+            </Grid>
         </StackPanel>
-        <Grid Margin="24,24" Background="{DynamicResource ButtonBackground}" Grid.Column="1"  HorizontalAlignment="Stretch"
-                    VerticalAlignment="Stretch" RowDefinitions="Auto, *" >
-            
+        <Grid Margin="24,24" Grid.Column="1"
+              HorizontalAlignment="Stretch"
+              VerticalAlignment="Stretch">
+            <Grid >
+
+            <Border Background="{DynamicResource CalendarViewOutOfScopeBackground}" Opacity="0.75" CornerRadius="12"></Border>
+                <Grid Margin="8" RowDefinitions="Auto, *">
                 <TextBlock Grid.Row="0" Text="{x:Static localisation:Strings._NowPlaying}" />
-            <ListBox Margin="0,12" Background="Transparent" Grid.Row="1" ItemsSource="{Binding PlayQueue}" MinHeight="100">
-                <ListBox.ItemTemplate>
-                    <DataTemplate DataType="models:Song">
-                        <Grid ColumnDefinitions="Auto, *" Margin="8,4">
-                            <controls:CoverArtControl Width="48" Height="48" Dimensions="96" CoverArtId="{Binding CoverArtId}" />
-                            <StackPanel Grid.Column="1" Margin="8,0" Spacing="2" VerticalAlignment="Center">
-                                <TextBlock Text="{Binding Title}" FontSize="{DynamicResource WsFontSizeMed}" />
-                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                    <Border IsVisible="{Binding IsExplicit}" CornerRadius="4" Background="#55888888" Width="16" Height="16" Margin="0,0,4,0">
-                                        <TextBlock Text="E" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="{DynamicResource WsFontSizeSml}" />
-                                    </Border>
-                                    <TextBlock Text="{Binding Artist}" Height="16" FontSize="{DynamicResource WsFontSizeSml}" />
+                <ListBox Margin="0,12" Background="Transparent" Grid.Row="1" ItemsSource="{Binding PlayQueue}"
+                         MinHeight="100">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate DataType="models:Song">
+                            <Grid ColumnDefinitions="Auto, *" Margin="8,4">
+                                <controls:CoverArtControl Width="48" Height="48" Dimensions="96"
+                                                          CoverArtId="{Binding CoverArtId}" />
+                                <StackPanel Grid.Column="1" Margin="8,0" Spacing="2" VerticalAlignment="Center">
+                                    <TextBlock Text="{Binding Title}" FontSize="{DynamicResource WsFontSizeMed}" />
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <Border IsVisible="{Binding IsExplicit}" CornerRadius="4" Background="#55888888"
+                                                Width="16" Height="16" Margin="0,0,4,0">
+                                            <TextBlock Text="E" VerticalAlignment="Center" HorizontalAlignment="Center"
+                                                       FontSize="{DynamicResource WsFontSizeSml}" />
+                                        </Border>
+                                        <TextBlock Text="{Binding Artist}" Height="16"
+                                                   FontSize="{DynamicResource WsFontSizeSml}" />
+                                    </StackPanel>
                                 </StackPanel>
-                            </StackPanel>
-                        </Grid>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-                <ListBox.Styles> 
-                    <Style Selector="ListBoxItem">
-                        <Setter Property="Padding" Value="0" /> 
-                        <Setter Property="Margin" Value="0,0" /> 
-                    </Style> 
-                </ListBox.Styles>
-            </ListBox>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                    <ListBox.Styles>
+                        <Style Selector="ListBoxItem">
+                            <Setter Property="Padding" Value="0" />
+                            <Setter Property="Margin" Value="0,0" />
+                        </Style>
+                    </ListBox.Styles>
+                </ListBox>
+                </Grid>
+            </Grid>
         </Grid>
     </Grid>
 
