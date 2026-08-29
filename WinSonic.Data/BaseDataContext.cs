@@ -156,10 +156,10 @@ public class BaseDataContext : DbContext
 
         builder.Property(a => a.LanguageIetf).IsRequired().HasMaxLength(32);
         builder.Property(a => a.ThemeKey).HasMaxLength(64);
-        builder.Property(a => a.OutputDevice).HasMaxLength(256);
         builder.Property(a => a.ServerAddress).IsRequired().HasMaxLength(512);
         builder.Property(a => a.Username).IsRequired().HasMaxLength(256);
         builder.Property(a => a.PasswordCredentialKey).IsRequired().HasMaxLength(256);
+        builder.Property(a => a.OutputDevice).HasMaxLength(256);
     }
 
     void ConfigureAlbumMedia(EntityTypeBuilder<DbAlbumMedia> builder)

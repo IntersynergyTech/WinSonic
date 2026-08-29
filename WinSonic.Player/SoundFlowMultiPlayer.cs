@@ -10,13 +10,17 @@ using SoundFlow.Providers;
 using SoundFlow.Structs;
 using WinSonic.Core.Models;
 using WinSonic.Player.ReplayGain;
+using WinSonic.Service.Settings;
 using PlaybackState = WinSonic.Core.Enums.PlaybackState;
+using ReplayGainMode = WinSonic.Player.ReplayGain.ReplayGainMode;
 
 namespace WinSonic.Player;
 
 public class SoundFlowMultiPlayer : ISoundFlowPlayer
 {
     private readonly ILogger<SoundFlowMultiPlayer> _logger;
+    private readonly ISettingsService _settingsService;
+
     private MiniAudioEngine _engine;
     private Dictionary<AudioFormat, SoundPlayer> _players = new ();
     private Dictionary<AudioFormat, AudioPlaybackDevice> _playbackDevices = new ();
@@ -34,10 +38,11 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
     private SoundPlayer? _currentActivePlayer;
     private PlaybackState _playbackState;
 
-    public SoundFlowMultiPlayer(ILoggerFactory loggerFactory, IntPtr? deviceId = null)
+    public SoundFlowMultiPlayer(ILoggerFactory loggerFactory, ISettingsService settingsService)
     {
+        _settingsService = settingsService;
         _logger = loggerFactory.CreateLogger<SoundFlowMultiPlayer>();
-        _replayGainProcessor = new (ReplayGainConfiguration.Default, loggerFactory.CreateLogger<ReplayGainProcessor>());
+        _replayGainProcessor = new (GetConfiguredReplayGain(), loggerFactory.CreateLogger<ReplayGainProcessor>());
 
         var engine = new MiniAudioEngine();
         engine.UpdateAudioDevicesInfo();
@@ -47,7 +52,7 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
 
         _replayGainProcessor.UpdateVolume(VolumeLevel);
 
-        SelectOutputDevice(deviceId);
+        SelectOutputDevice(null);
     }
 
     public void SetOutputDevice(IntPtr? deviceId)
@@ -55,15 +60,63 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
         SelectOutputDevice(deviceId);
     }
 
+    public DeviceInfo[] GetAvailableDevices()
+    {
+        _engine.UpdateAudioDevicesInfo();
+
+        var devices = _engine.PlaybackDevices;
+        return devices;
+    }
+
+    private ReplayGainConfiguration GetConfiguredReplayGain()
+    {
+        var settings = _settingsService.GetSettingsAsync().GetAwaiter().GetResult();
+
+        var mappedMode = settings.ReplayGainMode switch
+        {
+            Core.Models.ReplayGainMode.None => ReplayGainMode.None,
+            Core.Models.ReplayGainMode.Track => ReplayGainMode.Track,
+            Core.Models.ReplayGainMode.Album => ReplayGainMode.Album,
+            Core.Models.ReplayGainMode.Auto => ReplayGainMode.Album, //todo: implement auto mode
+        };
+
+        var mappedClipPrevention = settings.ClippingPrevention switch
+        {
+            ReplayGainClippingPrevention.Off => ClippingPreventionMode.Off,
+            ReplayGainClippingPrevention.ReduceGain => ClippingPreventionMode.Reduce,
+            _ => ClippingPreventionMode.Off
+        };
+        var config = new ReplayGainConfiguration
+        {
+            Mode = mappedMode,
+            ClippingPrevention = mappedClipPrevention,
+            PreampAdjustment = ((float?) settings.Preamp) ?? 0,
+            PreampEnabled = settings.Preamp != 0
+        };
+
+        return config;
+    }
+
     private void SelectOutputDevice(IntPtr? deviceId)
     {
-        if (deviceId == null)
+        var settingsDeviceName = _settingsService.GetSettingsAsync().GetAwaiter().GetResult().OutputDevice;
+
+        if (deviceId != null)
         {
-            _outputDevice = _defaultOutputDevice;
+            _outputDevice = _engine.PlaybackDevices.FirstOrDefault(d => d.Id == deviceId);
+        }
+        else if(settingsDeviceName != null)
+        {
+            _outputDevice = _engine.PlaybackDevices.FirstOrDefault(d => d.Name == settingsDeviceName);
+            if (_outputDevice == null)
+            {
+                _logger.LogWarning($"Settings preffered device named {settingsDeviceName} not found. Falling back to default output device.");
+                _outputDevice = _defaultOutputDevice;
+            }
         }
         else
         {
-            _outputDevice = _engine.PlaybackDevices.FirstOrDefault(d => d.Id == deviceId);
+            _outputDevice = _defaultOutputDevice;
         }
 
         DisposePlaybackDevices();
@@ -91,9 +144,17 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
 
     private void InitFormatPlaybackDevice(AudioFormat format)
     {
-        _logger.LogDebug($"Initializing playback device for format [{format.ToShortString()}] on {_outputDevice.Name}");
-
-        var device = _engine.InitializePlaybackDevice(_outputDevice, format, _playbackDeviceConfig);
+        _logger.LogDebug("Initializing playback device for format [{format}] on {outputDevice}", format.ToShortString(), _outputDevice.Name);
+        AudioPlaybackDevice device;
+        try
+        {
+            device = _engine.InitializePlaybackDevice(_outputDevice, format, _playbackDeviceConfig);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError("Error initializing playback device for format [{format}] on {outputDevice}: {e}", format.ToShortString(), _outputDevice.Name, e.Message);
+            device = _engine.InitializePlaybackDevice(_defaultOutputDevice, format, _playbackDeviceConfig);
+        }
         _playbackDevices[format] = device;
     }
 
@@ -130,25 +191,25 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
             if (_currentActivePlaybackDevice != null)
             {
                 _logger.LogDebug(
-                    $"Switching format from [{_currentFormat.ToShortString()}] to [{format.ToShortString()}]"
+                    "Switching format from [{currentFormat}] to [{format}]", _currentFormat.ToShortString(), format.ToShortString()
                 );
 
                 if (_currentActivePlaybackDevice.IsRunning)
                 {
                     _logger.LogDebug(
-                        $"Stopping current playback device for format [{_currentFormat.ToShortString()}] : currently isRunning {_currentActivePlaybackDevice.IsRunning}"
+                        "Stopping current playback device for format [{currentFormat}] : currently isRunning {isRunning}", _currentFormat.ToShortString(), _currentActivePlaybackDevice.IsRunning
                     );
 
                     _currentActivePlaybackDevice.Stop();
-                    _logger.LogDebug($"Current playback device stopped");
+                    _logger.LogDebug("Current playback device stopped");
                 }
             }
 
-            _logger.LogDebug($"Getting playback device for format [{format.ToShortString()}]");
+            _logger.LogDebug("Getting playback device for format [{format}]", format.ToShortString());
 
             var playbackDevice = GetFormatPlaybackDevice(format);
 
-            _logger.LogDebug($"Starting playback device for format [{format.ToShortString()}]");
+            _logger.LogDebug("Starting playback device for format [{format}]", format.ToShortString());
             _currentActivePlaybackDevice = playbackDevice;
             _currentActivePlaybackDevice.Start();
         }
@@ -168,7 +229,7 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
         _currentActivePlaybackDevice.MasterMixer.AddComponent(player);
 
         _logger.LogDebug(
-            $"Created player for format [{format.ToShortString()}] with volume {VolumeLevel} (RG: {replayGainedVolume}). Ready to go"
+            "Created player for format [{format}] with volume {volume} (RG: {replayGainedVolume}). Ready to go", format.ToShortString(), VolumeLevel, replayGainedVolume
         );
 
         return player;
@@ -209,7 +270,7 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
             Layout = channelLayout
         };
 
-        _logger.LogDebug($"Parsed format from info: {newFormat.ToShortString()}");
+        _logger.LogDebug("Parsed format from info: {newFormat}", newFormat.ToShortString());
         return newFormat;
     }
 
@@ -233,7 +294,7 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
 
     private void ChangePlaybackState(PlaybackState state)
     {
-        _logger.LogDebug($"[PLAYER] Changing playback state from {PlaybackState} to {state}");
+        _logger.LogDebug("Changing playback state from {oldState} to {newState}", PlaybackState, state);
         PlaybackState = state;
         PlaybackStateChanged?.Invoke(this, state);
     }

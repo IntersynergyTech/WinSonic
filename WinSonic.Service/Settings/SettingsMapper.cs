@@ -24,6 +24,7 @@ internal static class SettingsMapper
             ScrobbleToServer = source.ScrobbleToServer,
             ScrobbleMinimumPercentage = source.ScrobbleMinimumPercentage,
             ScrobbleMinimumSeconds = source.ScrobbleMinimumSeconds,
+            ScrobbleOnCompletion = source.ScrobbleOnCompletion,
             SyncPlayQueue = source.SyncPlayQueue
         };
     }
@@ -48,6 +49,7 @@ internal static class SettingsMapper
             ScrobbleToServer = source.ScrobbleToServer,
             ScrobbleMinimumPercentage = source.ScrobbleMinimumPercentage,
             ScrobbleMinimumSeconds = source.ScrobbleMinimumSeconds,
+            ScrobbleOnCompletion = source.ScrobbleOnCompletion,
             SyncPlayQueue = source.SyncPlayQueue
         };
     }

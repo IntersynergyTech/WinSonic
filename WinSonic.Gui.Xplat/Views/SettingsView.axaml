@@ -13,10 +13,14 @@
         <vm:SettingsViewModel />
     </Design.DataContext>
     <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <StackPanel Margin="24" Spacing="18">
+        <StackPanel Margin="24" Spacing="18" MaxWidth="900">
             <TextBlock Text="{x:Static localisation:Strings._Settings}" FontSize="{DynamicResource WsFontSizeXl}" FontWeight="SemiBold"/>
-            <TextBlock Text="{Binding ErrorMessage}" Foreground="#ff5f5f" FontWeight="SemiBold"/>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{x:Static localisation:Strings._SettingsApplyAfterRestart}"></TextBlock>
+                <TextBlock Text="{Binding ErrorMessage}" Foreground="#ff5f5f" FontWeight="SemiBold"/>
             <TextBlock Text="{Binding InfoMessage}" Foreground="#7fd17f" FontWeight="SemiBold"/>
+                
+            </StackPanel>
 
             <Border Padding="16" CornerRadius="8" Background="{DynamicResource CalendarViewOutOfScopeBackground}">
                 <StackPanel Spacing="10">
@@ -27,10 +31,12 @@
                         <TextBlock Grid.Row="2" Grid.Column="0" Text="{x:Static localisation:Strings._Language}" VerticalAlignment="Center"/>
                         <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding LanguageOptions}"
                                   SelectedItem="{Binding SelectedLanguageOption}"
+                                  MinWidth="300"
                                   DisplayMemberBinding="{Binding DisplayName}" />
                         <TextBlock Grid.Row="3" Grid.Column="0" Text="{x:Static localisation:Strings._Theme}" VerticalAlignment="Center"/>
                         <ComboBox Grid.Row="3" Grid.Column="1" ItemsSource="{Binding ThemeOptions}"
                                   SelectedItem="{Binding SelectedThemeOption}"
+                                  MinWidth="300"
                                   DisplayMemberBinding="{Binding DisplayName}" />
                     </Grid>
                 </StackPanel>
@@ -39,16 +45,21 @@
             <Border Padding="16" CornerRadius="8" Background="{DynamicResource CalendarViewOutOfScopeBackground}">
                 <StackPanel Spacing="10">
                     <TextBlock Text="{x:Static localisation:Strings._SettingsPlayback}" FontWeight="SemiBold" />
-                    <Grid ColumnDefinitions="220,*" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="12" ColumnSpacing="16">
+                    <Grid ColumnDefinitions="220,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto" RowSpacing="12" ColumnSpacing="16">
                         <TextBlock Grid.Row="0" Grid.Column="0" Text="{x:Static localisation:Strings._OutputDevice}" VerticalAlignment="Center"/>
-                        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding OutputDevice}" />
+                        <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding OutputDeviceOptions}"
+                                  SelectedItem="{Binding SelectedOutputDeviceOption}"
+                                  MinWidth="300"
+                                  DisplayMemberBinding="{Binding DisplayName}" />
                         <TextBlock Grid.Row="1" Grid.Column="0" Text="{x:Static localisation:Strings._ReplayGainMode}" VerticalAlignment="Center"/>
                         <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding ReplayGainModeOptions}"
                                   SelectedItem="{Binding SelectedReplayGainModeOption}"
+                                  MinWidth="300"
                                   DisplayMemberBinding="{Binding DisplayName}" />
                         <TextBlock Grid.Row="2" Grid.Column="0" Text="{x:Static localisation:Strings._ClippingPrevention}" VerticalAlignment="Center"/>
                         <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding ClippingPreventionOptions}"
                                   SelectedItem="{Binding SelectedClippingPreventionOption}"
+                                  MinWidth="300"
                                   DisplayMemberBinding="{Binding DisplayName}" />
                         <TextBlock Grid.Row="3" Grid.Column="0" Text="{x:Static localisation:Strings._Preamp}" VerticalAlignment="Center"/>
                         <NumericUpDown Grid.Row="3" Grid.Column="1" Value="{Binding Preamp}" Minimum="-50" Maximum="50" Increment="0.5" FormatString="0.##" />

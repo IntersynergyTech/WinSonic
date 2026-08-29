@@ -1,9 +1,12 @@
+using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
 using System.ComponentModel.DataAnnotations;
+using SoundFlow.Structs;
 using WinSonic.Core.Models;
 using WinSonic.Gui.Common.GuiServices;
+using WinSonic.Player;
 using WinSonic.Resources.Localisation;
 using WinSonic.Service.Settings;
 using CoreSettings = WinSonic.Core.Models.Settings;
@@ -17,6 +20,7 @@ public partial class SettingsViewModel : PageModelBase
     private const string DarkThemeKey = "fluent-dark";
 
     private readonly ISettingsService? _settingsService;
+    private readonly ISoundFlowPlayer _player;
     private int _id;
 
     [ObservableProperty] public partial bool CheckForUpdates { get; set; }
@@ -26,53 +30,67 @@ public partial class SettingsViewModel : PageModelBase
     [ObservableProperty] public partial OptionItem<string>? SelectedThemeOption { get; set; }
     [ObservableProperty] public partial bool SyncLyrics { get; set; }
     [ObservableProperty] public partial string? OutputDevice { get; set; }
+    [ObservableProperty] public partial OptionItem<DeviceInfo?>? SelectedOutputDeviceOption { get; set; }
     [ObservableProperty] public partial ReplayGainMode ReplayGainMode { get; set; } = ReplayGainMode.Album;
     [ObservableProperty] public partial OptionItem<ReplayGainMode>? SelectedReplayGainModeOption { get; set; }
-    [ObservableProperty] public partial ReplayGainClippingPrevention ClippingPrevention { get; set; } = ReplayGainClippingPrevention.Off;
-    [ObservableProperty] public partial OptionItem<ReplayGainClippingPrevention>? SelectedClippingPreventionOption { get; set; }
+    [ObservableProperty]
+    public partial ReplayGainClippingPrevention ClippingPrevention { get; set; } = ReplayGainClippingPrevention.Off;
+    [ObservableProperty]
+    public partial OptionItem<ReplayGainClippingPrevention>? SelectedClippingPreventionOption { get; set; }
     [NotifyDataErrorInfo]
-    [Range(typeof(decimal), "-50", "50", ErrorMessageResourceType = typeof(Strings), ErrorMessageResourceName = nameof(Strings._SettingsValidationPreampRange))]
-    [ObservableProperty] public partial decimal? Preamp { get; set; }
+    [Range(
+        typeof(decimal),
+        "-50",
+        "50",
+        ErrorMessageResourceType = typeof(Strings),
+        ErrorMessageResourceName = nameof(Strings._SettingsValidationPreampRange)
+    )]
+    [ObservableProperty]
+    public partial decimal? Preamp { get; set; }
     [NotifyDataErrorInfo]
     [CustomValidation(typeof(SettingsViewModel), nameof(ValidateServerAddress))]
-    [ObservableProperty] public partial string ServerAddress { get; set; } = string.Empty;
+    [ObservableProperty]
+    public partial string ServerAddress { get; set; } = string.Empty;
     [ObservableProperty] public partial string Username { get; set; } = string.Empty;
     [ObservableProperty] public partial string ServerPasswordInput { get; set; } = string.Empty;
     [ObservableProperty] public partial bool IgnoreSslErrors { get; set; }
     [ObservableProperty] public partial bool ScrobbleToServer { get; set; }
     [NotifyDataErrorInfo]
-    [Range(typeof(decimal), "0", "100", ErrorMessageResourceType = typeof(Strings), ErrorMessageResourceName = nameof(Strings._SettingsValidationScrobblePercentRange))]
-    [ObservableProperty] public partial decimal? ScrobbleMinimumPercentage { get; set; }
+    [Range(
+        typeof(decimal),
+        "0",
+        "100",
+        ErrorMessageResourceType = typeof(Strings),
+        ErrorMessageResourceName = nameof(Strings._SettingsValidationScrobblePercentRange)
+    )]
+    [ObservableProperty]
+    public partial decimal? ScrobbleMinimumPercentage { get; set; }
     [ObservableProperty] public partial decimal? ScrobbleMinimumSeconds { get; set; }
+    [ObservableProperty] public partial bool ScrobbleOnCompletion { get; set; }
     [ObservableProperty] public partial bool SyncPlayQueue { get; set; }
     [ObservableProperty] public partial string? ErrorMessage { get; set; }
     [ObservableProperty] public partial string? InfoMessage { get; set; }
 
-    public IReadOnlyList<OptionItem<string>> LanguageOptions { get; }
-    public IReadOnlyList<OptionItem<string>> ThemeOptions { get; }
-    public IReadOnlyList<OptionItem<ReplayGainMode>> ReplayGainModeOptions { get; }
-    public IReadOnlyList<OptionItem<ReplayGainClippingPrevention>> ClippingPreventionOptions { get; }
+    [ObservableProperty] public partial IReadOnlyList<OptionItem<string>> LanguageOptions { get; set; }
+    [ObservableProperty] public partial IReadOnlyList<OptionItem<string>> ThemeOptions { get; set; }
+    [ObservableProperty] public partial IReadOnlyList<OptionItem<ReplayGainMode>> ReplayGainModeOptions { get; set; }
+    [ObservableProperty]
+    public partial IReadOnlyList<OptionItem<ReplayGainClippingPrevention>> ClippingPreventionOptions { get; set; }
+    [ObservableProperty] public partial IReadOnlyList<OptionItem<DeviceInfo?>> OutputDeviceOptions { get; set; }
 
-    public SettingsViewModel(ISettingsService settingsService)
+    public SettingsViewModel(ISettingsService settingsService, ISoundFlowPlayer player)
     {
         _settingsService = settingsService;
-        LanguageOptions = BuildLanguageOptions();
-        ThemeOptions = BuildThemeOptions();
-        ReplayGainModeOptions = BuildReplayGainModeOptions();
-        ClippingPreventionOptions = BuildClippingPreventionOptions();
-    }
-
-    public SettingsViewModel()
-    {
-        _settingsService = DependencyService.Services?.GetService<ISettingsService>();
-        LanguageOptions = BuildLanguageOptions();
-        ThemeOptions = BuildThemeOptions();
-        ReplayGainModeOptions = BuildReplayGainModeOptions();
-        ClippingPreventionOptions = BuildClippingPreventionOptions();
+        _player = player;
     }
 
     public override void OnLoaded()
     {
+        LanguageOptions = BuildLanguageOptions();
+        ThemeOptions = BuildThemeOptions();
+        ReplayGainModeOptions = BuildReplayGainModeOptions();
+        ClippingPreventionOptions = BuildClippingPreventionOptions();
+        OutputDeviceOptions = BuildOutputDeviceOptions(_player);
         _ = LoadSettingsAsync();
     }
 
@@ -88,16 +106,19 @@ public partial class SettingsViewModel : PageModelBase
         }
 
         ValidateAllProperties();
+
         if (HasErrors)
         {
             ErrorMessage = GetErrors()
                 .OfType<ValidationResult>()
                 .Select(result => result.ErrorMessage)
                 .FirstOrDefault(message => !string.IsNullOrWhiteSpace(message));
+
             return;
         }
 
         var normalisedServerAddress = NormaliseServerAddress(ServerAddress);
+
         var model = new CoreSettings
         {
             Id = _id,
@@ -115,7 +136,7 @@ public partial class SettingsViewModel : PageModelBase
             ScrobbleToServer = ScrobbleToServer,
             ScrobbleMinimumPercentage = ToStoredScrobbleMinPercentage(ScrobbleMinimumPercentage),
             ScrobbleMinimumSeconds = ScrobbleMinimumSeconds.HasValue ? (double?) ScrobbleMinimumSeconds.Value : null,
-            SyncPlayQueue = SyncPlayQueue
+            ScrobbleOnCompletion = ScrobbleOnCompletion
         };
 
         var passwordToSave = string.IsNullOrWhiteSpace(ServerPasswordInput) ? null : ServerPasswordInput;
@@ -135,35 +156,55 @@ public partial class SettingsViewModel : PageModelBase
 
         _id = settings.Id;
         CheckForUpdates = settings.CheckForUpdates;
-        LanguageIetf = string.IsNullOrWhiteSpace(settings.LanguageIetf) ? SupportedLanguages.DefaultLanguageIetf : settings.LanguageIetf;
-        SelectedLanguageOption = LanguageOptions.FirstOrDefault(x => x.Value == LanguageIetf) ?? LanguageOptions.First();
+
+        LanguageIetf = string.IsNullOrWhiteSpace(settings.LanguageIetf)
+            ? SupportedLanguages.DefaultLanguageIetf
+            : settings.LanguageIetf;
+
+        SelectedLanguageOption =
+            LanguageOptions.FirstOrDefault(x => x.Value == LanguageIetf) ?? LanguageOptions.First();
+
         ThemeKey = string.IsNullOrWhiteSpace(settings.ThemeKey) ? SystemThemeKey : settings.ThemeKey!;
         SelectedThemeOption = ThemeOptions.FirstOrDefault(x => x.Value == ThemeKey) ?? ThemeOptions.First();
         SyncLyrics = settings.SyncLyrics;
         OutputDevice = settings.OutputDevice;
         ReplayGainMode = settings.ReplayGainMode;
-        SelectedReplayGainModeOption = ReplayGainModeOptions.FirstOrDefault(x => x.Value == ReplayGainMode) ?? ReplayGainModeOptions.First();
+
+        SelectedReplayGainModeOption = ReplayGainModeOptions.FirstOrDefault(x => x.Value == ReplayGainMode)
+            ?? ReplayGainModeOptions.First();
+
         ClippingPrevention = settings.ClippingPrevention;
-        SelectedClippingPreventionOption = ClippingPreventionOptions.FirstOrDefault(x => x.Value == ClippingPrevention) ?? ClippingPreventionOptions.First();
-        Preamp = settings.Preamp.HasValue ? (decimal?)settings.Preamp.Value : null;
+
+        SelectedClippingPreventionOption = ClippingPreventionOptions.FirstOrDefault(x => x.Value == ClippingPrevention)
+            ?? ClippingPreventionOptions.First();
+
+        SelectedOutputDeviceOption = OutputDeviceOptions.FirstOrDefault(x => x.Value?.Name == OutputDevice)
+            ?? OutputDeviceOptions.First();
+
+        Preamp = settings.Preamp.HasValue ? (decimal?) settings.Preamp.Value : null;
         ServerAddress = settings.ServerAddress;
         Username = settings.Username;
         ServerPasswordInput = string.Empty;
         IgnoreSslErrors = settings.IgnoreSslErrors;
         ScrobbleToServer = settings.ScrobbleToServer;
         ScrobbleMinimumPercentage = ToPercentageDisplayValue(settings.ScrobbleMinimumPercentage);
-        ScrobbleMinimumSeconds = settings.ScrobbleMinimumSeconds.HasValue ? (decimal?) settings.ScrobbleMinimumSeconds.Value : null;
+        ScrobbleOnCompletion = settings.ScrobbleOnCompletion;
+
+        ScrobbleMinimumSeconds = settings.ScrobbleMinimumSeconds.HasValue
+            ? (decimal?) settings.ScrobbleMinimumSeconds.Value
+            : null;
+
         SyncPlayQueue = settings.SyncPlayQueue;
     }
 
     private static double? ToStoredScrobbleMinPercentage(decimal? percentDisplayValue)
     {
-        return percentDisplayValue.HasValue ? (double?)(percentDisplayValue.Value / 100m) : null;
+        return percentDisplayValue.HasValue ? (double?) (percentDisplayValue.Value / 100m) : null;
     }
 
     private static decimal? ToPercentageDisplayValue(double? storedValue)
     {
-        return storedValue.HasValue ? (decimal)(storedValue.Value * 100d) : null;
+        return storedValue.HasValue ? (decimal) (storedValue.Value * 100d) : null;
     }
 
     private static string? NullIfWhitespace(string? value)
@@ -174,12 +215,7 @@ public partial class SettingsViewModel : PageModelBase
     private static IReadOnlyList<OptionItem<string>> BuildLanguageOptions()
     {
         return SupportedLanguages.All
-            .Select(language =>
-                new OptionItem<string>(
-                    language.IetfTag,
-                    language.DisplayName
-                )
-            )
+            .Select(language => new OptionItem<string>(language.IetfTag, language.DisplayName))
             .ToArray();
     }
 
@@ -208,15 +244,41 @@ public partial class SettingsViewModel : PageModelBase
     {
         return
         [
-            new OptionItem<ReplayGainClippingPrevention>(ReplayGainClippingPrevention.Off, Strings._ReplayGainClippingOff),
-            new OptionItem<ReplayGainClippingPrevention>(ReplayGainClippingPrevention.ReduceGain, Strings._ReplayGainClippingReduceGain)
+            new OptionItem<ReplayGainClippingPrevention>(
+                ReplayGainClippingPrevention.Off,
+                Strings._ReplayGainClippingOff
+            ),
+            new OptionItem<ReplayGainClippingPrevention>(
+                ReplayGainClippingPrevention.ReduceGain,
+                Strings._ReplayGainClippingReduceGain
+            )
         ];
+    }
+
+    private static IReadOnlyList<OptionItem<DeviceInfo?>> BuildOutputDeviceOptions(ISoundFlowPlayer player)
+    {
+        var devices = player.GetAvailableDevices().OrderBy(device => device.Name).ToList();
+
+        // Apparently there can be multiple default devices, so we just take the first one if there are multiple.
+        DeviceInfo? defaultDevice = devices.FirstOrDefault(x => x.IsDefault);
+
+        var mappedDevices = devices.Select(device => new OptionItem<DeviceInfo?>(device, device.Name)).ToList();
+
+        var defaultDeviceOption = new OptionItem<DeviceInfo?>(
+            null,
+            Strings._SystemDefaultAudioDevice.Replace("{{device}}", defaultDevice?.Name ?? Strings._Unavailable)
+        );
+
+        mappedDevices.Insert(0, defaultDeviceOption);
+        return mappedDevices;
     }
 
     public static ValidationResult? ValidateServerAddress(string serverAddress, ValidationContext _context)
     {
         var normalisedServerAddress = NormaliseServerAddress(serverAddress);
-        if (string.IsNullOrWhiteSpace(normalisedServerAddress) || Uri.TryCreate(normalisedServerAddress, UriKind.Absolute, out _))
+
+        if (string.IsNullOrWhiteSpace(normalisedServerAddress)
+            || Uri.TryCreate(normalisedServerAddress, UriKind.Absolute, out _))
         {
             return ValidationResult.Success;
         }
@@ -232,6 +294,7 @@ public partial class SettingsViewModel : PageModelBase
         }
 
         var trimmedServerAddress = serverAddress.Trim();
+
         if (trimmedServerAddress.Contains("://", StringComparison.OrdinalIgnoreCase))
         {
             return trimmedServerAddress;
@@ -259,6 +322,7 @@ public partial class SettingsViewModel : PageModelBase
     public void ApplyServerAddressNormalization()
     {
         var normalisedServerAddress = NormaliseServerAddress(ServerAddress);
+
         if (!string.Equals(ServerAddress, normalisedServerAddress, StringComparison.Ordinal))
         {
             ServerAddress = normalisedServerAddress;
@@ -270,6 +334,14 @@ public partial class SettingsViewModel : PageModelBase
         if (value is not null)
         {
             ReplayGainMode = value.Value;
+        }
+    }
+
+    partial void OnSelectedOutputDeviceOptionChanged(OptionItem<DeviceInfo?>? value)
+    {
+        if (value is not null)
+        {
+            OutputDevice = value.Value?.Name;
         }
     }
 

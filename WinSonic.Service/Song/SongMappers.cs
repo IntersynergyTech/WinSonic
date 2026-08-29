@@ -30,7 +30,7 @@ public static class SongMappers
             null
         );
     }
-    
+
     public static bool ApiIsExplicit(this Api.Child child)
     {
         return child.ExplicitStatus == Api.ExplicitStatus.Explicit;
@@ -40,7 +40,7 @@ public static class SongMappers
     {
         return new ReplayGain(replayGain.TrackGain, replayGain.TrackPeak, replayGain.AlbumGain, replayGain.AlbumPeak);
     }
-    
+
     public static Core.Models.Song DbToSong(Data.DbModels.DbSong dbSong)
     {
         return new Core.Models.Song(

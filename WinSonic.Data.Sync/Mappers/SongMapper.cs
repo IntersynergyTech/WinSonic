@@ -1,6 +1,7 @@
 using WinSonic.Data.DbModels;
 using WinSonic.Data.Enums;
 using WinSonic.Data.Utilities;
+using WinSonic.Subsonic.Client.Model;
 using Child = WinSonic.Subsonic.Client.Model.Child;
 
 namespace WinSonic.Data.Sync.Mappers;
@@ -38,7 +39,8 @@ public static class SongMapper
             RgAlbumGain = source.ReplayGain.AlbumGain,
             RgTrackGain = source.ReplayGain.TrackGain,
             RgAlbumPeak = source.ReplayGain.AlbumPeak,
-            RgTrackPeak = source.ReplayGain.TrackPeak
+            RgTrackPeak = source.ReplayGain.TrackPeak,
+            IsExplicit = source.ExplicitStatus == ExplicitStatus.Explicit
         };
 
         song.AddDefaultCacheables(SyncManager.DefaultCacheExpiryMins);

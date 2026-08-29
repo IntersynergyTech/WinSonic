@@ -554,5 +554,23 @@ namespace WinSonic.Resources.Localisation {
                 return ResourceManager.GetString("_SettingsValidationScrobblePercentRange", resourceCulture);
             }
         }
+        
+        public static string _SystemDefaultAudioDevice {
+            get {
+                return ResourceManager.GetString("_SystemDefaultAudioDevice", resourceCulture);
+            }
+        }
+        
+        public static string _Unavailable {
+            get {
+                return ResourceManager.GetString("_Unavailable", resourceCulture);
+            }
+        }
+        
+        public static string _SettingsApplyAfterRestart {
+            get {
+                return ResourceManager.GetString("_SettingsApplyAfterRestart", resourceCulture);
+            }
+        }
     }
 }

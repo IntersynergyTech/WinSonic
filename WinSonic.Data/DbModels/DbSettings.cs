@@ -26,6 +26,7 @@ public class DbSettings
     public bool ScrobbleToServer { get; set; }
     public double? ScrobbleMinimumPercentage { get; set; }
     public double? ScrobbleMinimumSeconds { get; set; }
+    public bool ScrobbleOnCompletion { get; set; }
     public bool SyncPlayQueue { get; set; }
     
 }

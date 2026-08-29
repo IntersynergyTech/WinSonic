@@ -14,14 +14,6 @@ public partial class HomeView : ContentPage
         InitializeComponent();
     }
 
-    private void SettingButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-    {
-        if (this.Navigation != null)
-        {
-            Navigation.PushAsync(new Views.SettingsView() { DataContext = new SettingsViewModel() });
-        }
-    }
-
     private void Control_OnLoaded(object? sender, RoutedEventArgs e)
     {
         _localContext = Context;

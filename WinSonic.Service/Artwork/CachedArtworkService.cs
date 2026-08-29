@@ -156,7 +156,7 @@ public class CachedArtworkService : IArtworkService
         int? dimension
     )
     {
-        _logger.LogDebug($"Getting artwork for {coverArtId} with acceptAnyCached={acceptAnyCached} with dimension={dimension}. Cached results: {cachedResults.Count}");
+        _logger.LogDebug("Getting artwork for {coverArtId} with acceptAnyCached={acceptAnyCached} with dimension={dimension}. Cached results: {cachedResultsCount}", coverArtId, acceptAnyCached, dimension, cachedResults.Count);
 
         var exact = cachedResults.FirstOrDefault(c => c.Dimension == dimension);
 
@@ -197,7 +197,7 @@ public class CachedArtworkService : IArtworkService
 
     private bool TryFile(DbCachedCoverArt art, out Stream stream)
     {
-        _logger.LogDebug($"Trying file for {art.Filename} {art.Id} dim {art.Dimension} parent {art.ParentItem.Id}");
+        _logger.LogDebug("Trying file for {filename} {artId} dim {dimension} parent {parentId}", art.Filename, art.Id, art.Dimension, art.ParentItem.Id);    
 
         try
         {
@@ -205,6 +205,7 @@ public class CachedArtworkService : IArtworkService
 
             if (stream.Length == 0)
             {
+                _logger.LogWarning("File is empty for {filename} {artId} dim {dimension} parent {parentId}", art.Filename, art.Id, art.Dimension, art.ParentItem.Id);
                 stream.Close();
                 return Fail(out stream);
             }
@@ -213,6 +214,7 @@ public class CachedArtworkService : IArtworkService
         }
         catch (FileNotFoundException)
         {
+            _logger.LogWarning("File not found for {filename} {artId} dim {dimension} parent {parentId}", art.Filename, art.Id, art.Dimension, art.ParentItem.Id);
             return Fail(out stream);
         }
 

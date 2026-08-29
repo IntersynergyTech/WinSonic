@@ -61,9 +61,9 @@ public static class PlaylistMappers
 
     public static PlaylistFull DbToPlaylistFull(this Data.DbModels.DbPlaylist playlist)
     {
-        
+
         var songs = playlist.Songs.ConvertList(SongMappers.DbToSong);
-        
+
         return new PlaylistFull(
             id: playlist.Id,
             name: playlist.Title,
@@ -75,7 +75,7 @@ public static class PlaylistMappers
             owner: playlist.Owner,
             isPublic: playlist.IsPublic,
             coverArtId: playlist.CoverArt?.Id,
-            isReadOnly: playlist.IsReadOnly, 
+            isReadOnly: playlist.IsReadOnly,
             entries: songs
         );
     }

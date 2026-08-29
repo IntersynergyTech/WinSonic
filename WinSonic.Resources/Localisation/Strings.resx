@@ -25,7 +25,7 @@
         <value>WinSonic</value>
     </data>
     <data name="_WinSonicSubtitle" xml:space="preserve">
-        <value>An OpenSubsonic compatible media player for Windows.</value>
+        <value>An OpenSubsonic compatible media player for Windows (and Mac and Linux).</value>
     </data>
     <data name="_WinSonicAbout" xml:space="preserve">
         <value>About ahh</value>
@@ -272,5 +272,14 @@
     </data>
     <data name="_SettingsValidationScrobblePercentRange" xml:space="preserve">
         <value>Scrobble minimum percentage must be between 0 and 100%.</value>
+    </data>
+    <data name="_SystemDefaultAudioDevice" xml:space="preserve">
+        <value>System Default ({{device}})</value>
+    </data>
+    <data name="_Unavailable" xml:space="preserve">
+        <value>Unavailable</value>
+    </data>
+    <data name="_SettingsApplyAfterRestart" xml:space="preserve">
+        <value>Changes to settings will not apply until the application is restarted. Also most of the settings don't do anything yet</value>
     </data>
 </root>

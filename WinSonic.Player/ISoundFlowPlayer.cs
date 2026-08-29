@@ -1,3 +1,4 @@
+using SoundFlow.Structs;
 using WinSonic.Core.Enums;
 using WinSonic.Core.Models;
 using WinSonic.Player.ReplayGain;
@@ -29,5 +30,7 @@ public interface ISoundFlowPlayer
     public Song? NowPlaying { get; }
 
     public ReplayGainConfiguration ReplayGainConfiguration { get; set; }
+
+    public DeviceInfo[] GetAvailableDevices();
 
 }

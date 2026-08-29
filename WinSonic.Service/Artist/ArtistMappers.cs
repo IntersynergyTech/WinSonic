@@ -7,7 +7,7 @@ public static class ArtistMappers
     {
         return new Core.Models.Artist(artist.Id, artist.Name, artist.SortName);
     }
-    
+
     public static Core.Models.Artist DbToArtist(Data.DbModels.DbArtist artist)
     {
         return new Core.Models.Artist(artist.Id, artist.Title, artist.SortTitle);

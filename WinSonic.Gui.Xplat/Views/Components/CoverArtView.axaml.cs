@@ -45,7 +45,7 @@ public partial class CoverArtView : UserControl
 
         _currentCoverArtId = newCoverArtId;
 
-        _logger.LogDebug($"Updating cover art image for ID: {newCoverArtId}");
+        _logger.LogDebug("Updating cover art image for ID: {newCoverArtId}", newCoverArtId);
 
         if (_artworkService is null || String.IsNullOrEmpty(newCoverArtId))
         {

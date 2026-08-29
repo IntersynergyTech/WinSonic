@@ -19,7 +19,7 @@ public class CachedPlaylistService : IPlaylistService
 
     public async Task<PlaylistFull> GetPlaylistByIdAsync(string id)
     {
-        _logger.LogDebug($"Requesting playlist {id} from Database");
+        _logger.LogDebug("Requesting playlist {id} from Database", id);
 
         var dbPlaylist = await _dataContext.Playlists
             .Include(p => p.Songs)

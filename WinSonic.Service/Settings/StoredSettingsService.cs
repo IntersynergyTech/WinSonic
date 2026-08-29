@@ -56,7 +56,6 @@ public class StoredSettingsService : ISettingsService
 
         settings.Id = SettingsRowId;
         settings.ThemeKey = NullIfWhitespace(settings.ThemeKey);
-        settings.OutputDevice = NullIfWhitespace(settings.OutputDevice);
         settings.ServerAddress = settings.ServerAddress.Trim();
         settings.Username = settings.Username.Trim();
         settings.PasswordCredentialKey = BuildPasswordCredentialKey(settings.ServerAddress, settings.Username);

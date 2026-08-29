@@ -34,8 +34,8 @@ public class StoredPlaybackHistoryService : IPlaybackHistoryService
 
         var entry = new DbPlayHistoryEntry
         {
-            Song = dbSong!, 
-            PlayedAt = scrobbleTime, 
+            Song = dbSong!,
+            PlayedAt = scrobbleTime,
             Scrobbled = false
         };
 

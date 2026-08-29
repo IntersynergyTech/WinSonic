@@ -40,7 +40,12 @@
                             <controls:CoverArtControl Width="48" Height="48" Dimensions="96" CoverArtId="{Binding CoverArtId}" />
                             <StackPanel Grid.Column="1" Margin="8,0" Spacing="2" VerticalAlignment="Center">
                                 <TextBlock Text="{Binding Title}" FontSize="{DynamicResource WsFontSizeMed}" />
-                                <TextBlock Text="{Binding Artist}" FontSize="{DynamicResource WsFontSizeSml}" />
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Border IsVisible="{Binding IsExplicit}" CornerRadius="4" Background="#55888888" Width="16" Height="16" Margin="0,0,4,0">
+                                        <TextBlock Text="E" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="{DynamicResource WsFontSizeSml}" />
+                                    </Border>
+                                    <TextBlock Text="{Binding Artist}" Height="16" FontSize="{DynamicResource WsFontSizeSml}" />
+                                </StackPanel>
                             </StackPanel>
                         </Grid>
                     </DataTemplate>

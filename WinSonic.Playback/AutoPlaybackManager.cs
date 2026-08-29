@@ -14,14 +14,14 @@ public class AutoPlaybackManager
     private readonly IPlaybackHistoryService _playbackHistoryService;
     private readonly ILogger<AutoPlaybackManager> _logger;
     private readonly ISystemMediaBroadcastService _systemMediaBroadcastService;
-    
+
     public PlayQueue Queue { get; }
     public SongFetcher Fetcher { get; }
     public ISoundFlowPlayer Player { get; }
-    
+
     public Song? NowPlaying { get; private set; }
-    
-    
+
+
     public AutoPlaybackManager(
         PlayQueue queue,
         SongFetcher fetcher,
@@ -39,17 +39,17 @@ public class AutoPlaybackManager
         _logger = logger;
 
         Player.PlaybackStateChanged += OnPlaybackStateChanged;
-        
+
         _systemMediaBroadcastService.PauseRequested += (sender, args) => Player.Pause();
         _systemMediaBroadcastService.PlayRequested += (sender, args) => Player.Play();
         _systemMediaBroadcastService.NextRequested += (sender, args) => NextSong();
         _systemMediaBroadcastService.SetVolumeRequested += (sender, volume) => SetVolume((float)volume);
     }
-    
+
     private void UpdateNowPlaying(Song? song)
     {
         NowPlaying = song;
-        
+
         if (song != null)
         {
             _systemMediaBroadcastService.BroadcastMediaInfo(song.Title, song.Artist, song.Album.Title);
@@ -58,28 +58,28 @@ public class AutoPlaybackManager
                 try
                 {
                     await _playbackHistoryService.ScrobbleNowPlaying(song);
-                    _logger.LogDebug($"Scrobbled now playing track: {song.Title}");
+                    _logger.LogDebug("Scrobbled now playing track: {songTitle}", song.Title);
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogDebug($"Error scrobbling now playing track: {ex.Message}");
+                    _logger.LogDebug("Error scrobbling now playing track: {errorMessage}", ex.Message);
                 }
             });
         }
-        
+
         NowPlayingChanged?.Invoke(this, song);
     }
-    
+
     public event EventHandler<Song?> NowPlayingChanged;
 
     public void StartPlayback()
     {
         PlayNextSongIfAvailable();
     }
-    
+
     private void OnPlaybackStateChanged(object? sender, PlaybackState e)
     {
-        _logger.LogDebug($"Playback state change reported: {e}");
+        _logger.LogDebug("Playback state change reported: {playbackState}", e);
         if (e == PlaybackState.Ended)
         {
             ScrobbleTrack(NowPlaying);
@@ -94,10 +94,10 @@ public class AutoPlaybackManager
         if (NowPlaying?.Id != Player.NowPlaying?.Id)
         {
             UpdateNowPlaying(Player.NowPlaying);
-            
+
         }
     }
-    
+
     private void ScrobbleTrack(Song song)
     {
         Task.Run(async () =>
@@ -106,11 +106,11 @@ public class AutoPlaybackManager
             {
                 var playTime = DateTime.UtcNow.AddSeconds(-song.Duration.TotalSeconds);
                 await _playbackHistoryService.ScrobbleCompleted(song, playTime);
-                _logger.LogDebug($"Scrobbled completed track: {song.Title} started at {playTime}");
+                _logger.LogDebug("Scrobbled completed track: {songTitle} started at {playTime}", song.Title, playTime);
             }
             catch (Exception ex)
             {
-                _logger.LogWarning($"Error scrobbling completed track: {ex.Message}");
+                _logger.LogWarning("Error scrobbling completed track: {errorMessage}", ex.Message);
             }
         });
     }
@@ -120,7 +120,7 @@ public class AutoPlaybackManager
         var queuedSong = Queue.Dequeue();
         if (queuedSong != null)
         {
-            _logger.LogDebug($"Playing next song: {queuedSong.Title}");
+            _logger.LogDebug("Playing next song: {songTitle}", queuedSong.Title);
             var stream = Fetcher.FetchSong(queuedSong);
             Player.LoadStream(stream, queuedSong);
             Player.Play();
@@ -134,7 +134,7 @@ public class AutoPlaybackManager
                     if (nextUp != null)
                     {
                         _systemMediaBroadcastService.SetCanGoNext(true);
-                        _logger.LogDebug($"Async prefretch next song {nextUp.Title}:");
+                        _logger.LogDebug("Async prefetch next song: {songTitle}", nextUp.Title);
                         Fetcher.PrefetchSong(nextUp);
                     }
                     else
@@ -144,7 +144,7 @@ public class AutoPlaybackManager
                     }
                 })
             );
-           
+
         }
     }
 
