@@ -14,6 +14,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\WinSonic.Core\WinSonic.Core.csproj" />
+      <ProjectReference Include="..\WinSonic.Player.Codecs\WinSonic.Player.Codecs.csproj" />
       <ProjectReference Include="..\WinSonic.Subsonic.Client\src\WinSonic.Subsonic.Client\WinSonic.Subsonic.Client.csproj" />
       <ProjectReference Include="..\WinSonic.Subsonic.Helpers\WinSonic.Subsonic.Helpers.csproj" />
       <ProjectReference Include="..\WinSonic.Service\WinSonic.Service.csproj" />

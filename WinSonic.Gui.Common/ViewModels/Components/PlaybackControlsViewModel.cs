@@ -186,8 +186,8 @@ public partial class PlaybackControlsViewModel : ViewModelBase
         Duration = apm.Player.NowPlayingDuration;
 
         SliderCurrent = (int?) Position?.TotalSeconds;
-        SliderDuration = (int?) Duration?.TotalSeconds;
-
+        SliderDuration = (int?) Duration?.TotalSeconds ?? 300;
+        
         Title = apm.NowPlaying?.Title;
         Artist = apm.NowPlaying?.Artist;
         ShowExplicitFlag = apm.NowPlaying?.IsExplicit ?? false;

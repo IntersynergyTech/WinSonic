@@ -17,11 +17,11 @@
     <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch" ColumnDefinitions="*,*">
         <Viewbox Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center" Stretch="UniformToFill" StretchDirection="Both">
             <Grid ClipToBounds="False"  Opacity="0.40" VerticalAlignment="Center" HorizontalAlignment="Center" Height="300">
-                <controls:CoverArtControl IsVisible="True" CoverArtId="{Binding CoverArtModel.CoverArtId}"  Margin="-50" VerticalAlignment="Center" HorizontalAlignment="Center" Width="400" Height="400" Dimensions="96">
-                    <controls:CoverArtControl.Effect>
+                <ContentControl Content="{Binding CoverArtModel}" IsVisible="True" Margin="-50" VerticalAlignment="Center" HorizontalAlignment="Center" Width="400" Height="400">
+                    <ContentControl.Effect>
                         <BlurEffect Radius="64" />
-                    </controls:CoverArtControl.Effect>
-                </controls:CoverArtControl>
+                    </ContentControl.Effect>
+                </ContentControl>
             </Grid>
         </Viewbox>
         <StackPanel Grid.Column="0" Margin="24,48" HorizontalAlignment="Right"

@@ -10,6 +10,7 @@ using SoundFlow.Providers;
 using SoundFlow.Structs;
 using SoundFlow.Structs.Events;
 using WinSonic.Core.Models;
+using WinSonic.Player.Codecs;
 using WinSonic.Player.ReplayGain;
 using WinSonic.Service.Settings;
 using PlaybackState = WinSonic.Core.Enums.PlaybackState;
@@ -48,6 +49,7 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
 
         var engine = new MiniAudioEngine();
         _engine = engine;
+        _engine.RegisterCodecFactory(new WinSonicAdditionalCodecFactory());
 
         engine.DeviceStopped += EngineOnDeviceStopped;
         engine.DeviceStarted += EngineOnDeviceStarted;
@@ -122,7 +124,7 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
         float timestamp = 0
     )
     {
-        _logger.LogDebug("Creating sound player for stream {title}", _currentActiveProvider.FormatInfo.Tags.Title);
+        _logger.LogDebug("Creating sound player for stream {title}", _currentActiveProvider.FormatInfo.Tags?.Title);
         var player = new SoundPlayer(_engine, _currentFormat, _currentActiveProvider);
         player.Volume = volume;
         player.Mute = mute;
@@ -308,7 +310,7 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
     private SoundPlayer GetPlayerForStream(Stream stream, Song song)
     {
         _logger.LogDebug("GPFS");
-        _currentActiveProvider = new StreamDataProvider(_engine, stream);
+        _currentActiveProvider = new StreamDataProvider(_engine, stream, new ReadOptions{DurationAccuracy = DurationAccuracy.FastEstimate, ReadTags = false});
         var providerFormat = _currentActiveProvider.FormatInfo!;
 
         var format = ParseFormatFrom(providerFormat);

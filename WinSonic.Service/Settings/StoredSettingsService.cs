@@ -141,9 +141,9 @@ public class StoredSettingsService : ISettingsService
             throw new ArgumentOutOfRangeException(nameof(settings), "Preamp must be between -50 and 50.");
         }
 
-        if (settings.TranscodeFormat != Core.Models.TranscodeFormat.Mp3)
+        if (settings.TranscodeFormat is not (Core.Models.TranscodeFormat.Mp3 or Core.Models.TranscodeFormat.Opus))
         {
-            throw new ArgumentOutOfRangeException(nameof(settings), "TranscodeFormat must be MP3.");
+            throw new ArgumentOutOfRangeException(nameof(settings), "TranscodeFormat must be MP3 or Opus.");
         }
 
         if (!AllowedTranscodeBitrates.Contains(settings.TranscodeBitrate))
@@ -167,7 +167,9 @@ public class StoredSettingsService : ISettingsService
 
     private static Data.Enums.TranscodeFormat NormalizeTranscodeFormat(Data.Enums.TranscodeFormat value)
     {
-        return Data.Enums.TranscodeFormat.Mp3;
+        return value is Data.Enums.TranscodeFormat.Mp3 or Data.Enums.TranscodeFormat.Opus
+            ? value
+            : Data.Enums.TranscodeFormat.Mp3;
     }
 
     private static string BuildPasswordCredentialKey(string serverAddress, string username)

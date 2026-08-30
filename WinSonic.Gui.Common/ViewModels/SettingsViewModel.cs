@@ -283,7 +283,8 @@ public partial class SettingsViewModel : PageModelBase
     {
         return
         [
-            new OptionItem<TranscodeFormat>(TranscodeFormat.Mp3, Strings._TranscodeFormatMp3)
+            new OptionItem<TranscodeFormat>(TranscodeFormat.Mp3, Strings._TranscodeFormatMp3),
+            new OptionItem<TranscodeFormat>(TranscodeFormat.Opus, Strings._TranscodeFormatOpus)
         ];
     }
 

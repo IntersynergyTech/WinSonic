@@ -42,7 +42,7 @@
                 </StackPanel>
                 <TextBlock Grid.Column="4"
                            Text="{Binding Song.Duration, Converter={StaticResource CommonTimecodeToText}}"
-                           Background="BlueViolet" HorizontalAlignment="Stretch" TextAlignment="Right"
+                           HorizontalAlignment="Stretch" TextAlignment="Right"
                            VerticalAlignment="Center" />
                 <!-- todo flyout menu thing on col 5 -->
             </Grid>
@@ -97,7 +97,7 @@
                 </StackPanel>
                 <TextBlock Grid.Column="4"
                            Text="{Binding Song.Duration, Converter={StaticResource CommonTimecodeToText}}"
-                           Background="BlueViolet" HorizontalAlignment="Stretch" TextAlignment="Right"
+                           HorizontalAlignment="Stretch" TextAlignment="Right"
                            VerticalAlignment="Center" />
                 <!-- todo flyout menu thing on col 5 -->
             </Grid>

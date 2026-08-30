@@ -422,28 +422,34 @@ namespace WinSonic.Resources.Localisation {
                 return ResourceManager.GetString("_Preamp", resourceCulture);
             }
         }
-
+        
         public static string _RequestOriginalFiles {
             get {
                 return ResourceManager.GetString("_RequestOriginalFiles", resourceCulture);
             }
         }
-
+        
         public static string _TranscodeFormat {
             get {
                 return ResourceManager.GetString("_TranscodeFormat", resourceCulture);
             }
         }
-
+        
         public static string _TranscodeBitrate {
             get {
                 return ResourceManager.GetString("_TranscodeBitrate", resourceCulture);
             }
         }
-
+        
         public static string _TranscodeFormatMp3 {
             get {
                 return ResourceManager.GetString("_TranscodeFormatMp3", resourceCulture);
+            }
+        }
+        
+        public static string _TranscodeFormatOpus {
+            get {
+                return ResourceManager.GetString("_TranscodeFormatOpus", resourceCulture);
             }
         }
         
@@ -488,7 +494,7 @@ namespace WinSonic.Resources.Localisation {
                 return ResourceManager.GetString("_ScrobbleMinimumSeconds", resourceCulture);
             }
         }
-
+        
         public static string _ScrobbleOnCompletion {
             get {
                 return ResourceManager.GetString("_ScrobbleOnCompletion", resourceCulture);
