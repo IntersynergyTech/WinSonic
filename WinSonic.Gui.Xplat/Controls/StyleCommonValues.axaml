@@ -5,9 +5,12 @@
     
     <!-- Font Sizes -->
     <sys:Double x:Key="WsFontSizeXs">9</sys:Double>
-    <sys:Double x:Key="WsFontSizeSml">11</sys:Double>
-    <sys:Double x:Key="WsFontSizeMed">14</sys:Double>
-    <sys:Double x:Key="WsFontSizeLrg">18</sys:Double>
-    <sys:Double x:Key="WsFontSizeXl">24</sys:Double>
+    <sys:Double x:Key="WsFontSizeSmall">10</sys:Double>
+    <sys:Double x:Key="WsFontSizeSemiSmall">12</sys:Double>
+    <sys:Double x:Key="WsFontSizeMedium">14</sys:Double>
+    <sys:Double x:Key="WsFontSizeSemiLarge">16</sys:Double>
+    <sys:Double x:Key="WsFontSizeLarge">18</sys:Double>
+    <sys:Double x:Key="WsFontSizeXl">20</sys:Double>
+    <sys:Double x:Key="WsFontSizeXxl">24</sys:Double>
     <sys:Double x:Key="WsFontSizeHero">40</sys:Double>
 </ResourceDictionary>

@@ -3,8 +3,8 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
 using WinSonic.Core.Enums;
-using WinSonic.Data.DbModels;
 using WinSonic.Gui.Common.GuiServices;
+using WinSonic.Gui.Common.Messages;
 using WinSonic.Gui.Common.Utility;
 using WinSonic.Gui.Common.ViewModels.DetailPages;
 using WinSonic.Playback;
@@ -84,8 +84,42 @@ public partial class PlaybackControlsViewModel : ViewModelBase
 
         _autoPlaybackManager.NowPlayingChanged += AutoPlaybackManagerOnNowPlayingChanged;
 
+        TrackContextService.RegisterPlayHandler(this, HandlePlayMessage);
+        TrackContextService.RegisterQueueHandler(this, HandleQueueMessage);
+
         CoverArt = DependencyService.Services.GetService<CoverArtViewModel>();
         CoverArt.Dimensions = 160;
+    }
+
+    private void HandlePlayMessage(TrackContextPlayMessage message)
+    {
+        Task.Run(() =>
+        {
+            _autoPlaybackManager.Queue.ResetAndEnqueueFromSource(message.GetSongs(), false);
+            _autoPlaybackManager.NextSong();
+        });
+    }
+
+    private void HandleQueueMessage(TrackContextQueueMessage message)
+    {
+        Task.Run(() =>
+        {
+            switch (message.Type)
+            {
+                case TrackContextQueueMessage.TrackContextQueueType.PlayNext:
+                    _autoPlaybackManager.Queue.Enqueue(message.Song, true);
+                    break;
+                case TrackContextQueueMessage.TrackContextQueueType.AddToQueue:
+                    _autoPlaybackManager.Queue.Enqueue(message.Song, false);
+                    break;
+                case TrackContextQueueMessage.TrackContextQueueType.AddToEnd:
+                    _autoPlaybackManager.Queue.UpcomingFromSource.Enqueue(message.Song);
+                    break;
+            }
+
+            // Prefetch either way because it might not be available yet
+            _autoPlaybackManager.Fetcher.PrefetchSong(message.Song);
+        });
     }
 
     private void AutoPlaybackManagerOnNowPlayingChanged(object? sender, Song? e)

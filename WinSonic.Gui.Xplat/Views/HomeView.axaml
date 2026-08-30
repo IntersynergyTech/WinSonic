@@ -6,6 +6,7 @@
              xmlns:localisation="clr-namespace:WinSonic.Resources.Localisation;assembly=WinSonic.Resources"
              xmlns:controls="clr-namespace:WinSonic.Gui.Xplat.Controls"
              xmlns:models="clr-namespace:WinSonic.Core.Models;assembly=WinSonic.Core"
+             xmlns:core="clr-namespace:WinSonic.Core;assembly=WinSonic.Core"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              Header="Home"
              x:DataType="vm:HomeViewModel"
@@ -33,19 +34,16 @@
                     <Button Theme="{DynamicResource InvisibleButtonWrapper}" Command="{Binding GoToAlbumCommand}">
                         <StackPanel>
                             <ContentControl Content="{Binding CoverArtModel}"></ContentControl>
-                            <TextBlock Text="{Binding NowPlaying.Title}" Margin="0,4"
-                                       FontSize="{DynamicResource WsFontSizeXl}" FontWeight="SemiLight" />
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <Border IsVisible="{Binding NowPlaying.IsExplicit}" CornerRadius="4" Background="#55888888"
-                                        Width="16" Height="16" Margin="0,0,4,0">
-                                    <TextBlock Text="E" VerticalAlignment="Center" HorizontalAlignment="Center"
-                                               FontSize="{DynamicResource WsFontSizeSml}" />
+                            <StackPanel Orientation="Horizontal"  Margin="0,4">
+                                <TextBlock Text="{Binding NowPlaying.Title}" FontSize="{DynamicResource WsFontSizeXxl}" FontWeight="SemiLight" />
+                                <Border IsVisible="{Binding NowPlaying.IsExplicit}" CornerRadius="4" Background="#55888888" Width="16" Height="16" Margin="8,0,0,0">
+                                    <TextBlock Text="E" VerticalAlignment="Center" HorizontalAlignment="Center" Opacity="0.7" FontSize="{DynamicResource WsFontSizeSmall}" />
                                 </Border>
-                                <TextBlock Text="{Binding NowPlaying.Album.Title}" FontSize="{DynamicResource WsFontSizeLrg}" />
                             </StackPanel>
+                                <TextBlock Text="{Binding NowPlaying.Album.Title}" FontSize="{DynamicResource WsFontSizeLarge}" />
                         </StackPanel>
                     </Button>
-                    <TextBlock Text="{Binding NowPlaying.Artist}" FontSize="{DynamicResource WsFontSizeMed}" />
+                    <TextBlock Text="{Binding NowPlaying.Artist}" FontSize="{DynamicResource WsFontSizeMedium}" />
                 </StackPanel>
             </Grid>
         </StackPanel>
@@ -60,20 +58,21 @@
                 <ListBox Margin="0,12" Background="Transparent" Grid.Row="1" ItemsSource="{Binding PlayQueue}"
                          MinHeight="100">
                     <ListBox.ItemTemplate>
-                        <DataTemplate DataType="models:Song">
+                        <DataTemplate DataType="core:PlayQueueItem">
                             <Grid ColumnDefinitions="Auto, *" Margin="8,4">
                                 <controls:CoverArtControl Width="48" Height="48" Dimensions="96"
-                                                          CoverArtId="{Binding CoverArtId}" />
+                                                          CoverArtId="{Binding Song.CoverArtId}" />
                                 <StackPanel Grid.Column="1" Margin="8,0" Spacing="2" VerticalAlignment="Center">
-                                    <TextBlock Text="{Binding Title}" FontSize="{DynamicResource WsFontSizeMed}" />
+                                    <TextBlock Text="{Binding Song.Title}" FontSize="{DynamicResource WsFontSizeMedium}" />
                                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                        <Border IsVisible="{Binding IsExplicit}" CornerRadius="4" Background="#55888888"
-                                                Width="16" Height="16" Margin="0,0,4,0">
-                                            <TextBlock Text="E" VerticalAlignment="Center" HorizontalAlignment="Center"
-                                                       FontSize="{DynamicResource WsFontSizeSml}" />
+                                        <Border IsVisible="{Binding Song.IsExplicit}" CornerRadius="4" Background="#55888888" Width="16" Height="16" Margin="0,0,4,0">
+                                            <TextBlock Text="E" VerticalAlignment="Center" HorizontalAlignment="Center" Opacity="0.7" FontSize="{DynamicResource WsFontSizeSmall}" />
                                         </Border>
-                                        <TextBlock Text="{Binding Artist}" Height="16"
-                                                   FontSize="{DynamicResource WsFontSizeSml}" />
+                                        <Border IsVisible="{Binding IsManuallyEnqueued}" CornerRadius="4" Background="#5500BB00" Width="16" Height="16" Margin="0,0,4,0">
+                                            <TextBlock Text="Q" VerticalAlignment="Center" HorizontalAlignment="Center" Opacity="0.7" FontSize="{DynamicResource WsFontSizeSmall}" />
+                                        </Border>
+                                        <TextBlock Text="{Binding Song.Artist}" Height="16"
+                                                   FontSize="{DynamicResource WsFontSizeSmall}" />
                                     </StackPanel>
                                 </StackPanel>
                             </Grid>

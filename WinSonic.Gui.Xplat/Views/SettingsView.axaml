@@ -14,7 +14,7 @@
     </Design.DataContext>
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel Margin="24" Spacing="18" MaxWidth="1200">
-            <TextBlock Text="{x:Static localisation:Strings._Settings}" FontSize="{DynamicResource WsFontSizeXl}" FontWeight="SemiBold"/>
+            <TextBlock Text="{x:Static localisation:Strings._Settings}" FontSize="{DynamicResource WsFontSizeXxl}" FontWeight="SemiBold"/>
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="{x:Static localisation:Strings._SettingsApplyAfterRestart}"></TextBlock>
                 <TextBlock Text="{Binding ErrorMessage}" Foreground="#ff5f5f" FontWeight="SemiBold"/>

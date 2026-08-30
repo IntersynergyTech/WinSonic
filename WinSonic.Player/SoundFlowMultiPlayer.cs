@@ -89,20 +89,20 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
         var currentTimestamp = _currentActivePlayer.Time;
         var currentVolume = _currentActivePlayer.Volume;
         var currentMute = _currentActivePlayer.Mute;
-        
+
         UnloadPlayer(disposeProvider: false);
         SelectOutputDevice(deviceId);
-        
+
         _currentActiveProvider.Seek(0);
-        
+
         var playbackDevice = GetFormatPlaybackDevice(_currentFormat);
 
         _logger.LogDebug("Starting playback device for format [{format}]", _currentFormat.ToShortString());
         _currentActivePlaybackDevice = playbackDevice;
         _currentActivePlaybackDevice.Start();
-        
+
         RegisterPlayer(currentVolume, currentMute, currentTimestamp);
-        
+
         if (isPlaying)
         {
             _currentActivePlayer.Play();
@@ -112,7 +112,7 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
             isPlaying,
             currentTimestamp,
             currentVolume, currentMute);
-        
+
         suppressPlaybackStateChangeEvents = false;
     }
 
@@ -207,7 +207,7 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
         }
 
         DisposePlaybackDevices();
-        
+
     }
 
     private void DisposePlaybackDevices()
@@ -351,7 +351,7 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
         );
 
         _currentFormat = format;
-        
+
         RegisterPlayer(replayGainedVolume, Muted);
         return _currentActivePlayer;
     }

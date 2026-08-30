@@ -95,7 +95,15 @@ public partial class CoverArtView : UserControl
                                         if (!cancellationToken.IsCancellationRequested)
                                         {   
                                             Disc.IsVisible = false;
-                                            Context.CoverArtSourceData = bitmap;
+
+                                            try
+                                            {
+                                                Context.CoverArtSourceData = bitmap;
+                                            }
+                                            catch (Exception e)
+                                            {
+                                                _logger.LogError(e, "Error setting cover art image source.");
+                                            }
                                         }
                                     }
                                 );

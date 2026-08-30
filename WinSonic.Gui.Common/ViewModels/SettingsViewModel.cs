@@ -1,11 +1,8 @@
-using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.Extensions.DependencyInjection;
 using System.ComponentModel.DataAnnotations;
 using SoundFlow.Structs;
 using WinSonic.Core.Models;
-using WinSonic.Gui.Common.GuiServices;
 using WinSonic.Player;
 using WinSonic.Resources.Localisation;
 using WinSonic.Service.Settings;
@@ -387,7 +384,7 @@ public partial class SettingsViewModel : PageModelBase
 
             if (_hasLoaded)
             {
-                _player.SetOutputDevice(value.Value.Value.Id);
+                _player.SetOutputDevice(value.Value?.Id);
             }
         }
     }

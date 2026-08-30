@@ -16,7 +16,7 @@ public partial class SinglePlaylistViewModel : PageModelBase
     private readonly ILogger<SinglePlaylistViewModel> _logger;
 
     [ObservableProperty] public partial PlaylistInfo PlaylistInfo { get; set; }
-    [ObservableProperty] public partial ObservableCollection<Song> Songs { get; set; } = new ();
+    [ObservableProperty] public partial ObservableCollection<TrackListEntry> Songs { get; set; } = new ();
     [ObservableProperty] public partial CoverArtViewModel CoverArt { get; set; }
 
 
@@ -43,7 +43,7 @@ public partial class SinglePlaylistViewModel : PageModelBase
             if (PlaylistInfo != null)
             {
                 var fullPlaylist = await _playlistService.GetPlaylistByIdAsync(PlaylistInfo.Id);
-                Songs = new ObservableCollection<Song>(fullPlaylist.Entries);
+                Songs = new ObservableCollection<TrackListEntry>(fullPlaylist.Entries.Select(e => new PlaylistTrackListEntry(e, fullPlaylist)));
             }
         });
     }
@@ -53,10 +53,10 @@ public partial class SinglePlaylistViewModel : PageModelBase
     public void PlayPlaylist(bool shuffle = false)
     {
         if (PlaylistInfo == null) return;
-
+        //todo switch to track context play request
         _logger.LogDebug("Playing playlist: {playlistName}, Shuffle: {shuffle}", PlaylistInfo.Name, shuffle);
 
-        _autoPlaybackManager.Queue.ResetAndEnqueueFromSource(Songs, shuffle);
+        _autoPlaybackManager.Queue.ResetAndEnqueueFromSource(Songs.Select(s => s.Song).ToList(), shuffle);
         _autoPlaybackManager.StartPlayback();
     }
 }

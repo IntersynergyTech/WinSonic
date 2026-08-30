@@ -11,6 +11,7 @@ using WinSonic.Gui.Common.ViewModels.Components;
 using WinSonic.Gui.Common.ViewModels.DetailPages;
 using WinSonic.Misc.ImageTools;
 using WinSonic.Playback;
+using WinSonic.Playback.Platform;
 using WinSonic.Player;
 using WinSonic.Service.Album;
 using WinSonic.Service.Artist;
@@ -138,9 +139,28 @@ public static class DependencyRegistrationExtensions
         return builder.Build();
     }
 
+    public static void AddDebugDummies(this IServiceCollection services)
+    {
+#if DEBUG
+        services.AddSingletonFallback<ISystemMediaBroadcastService, DummySystemMediaBroadcastService>();
+#endif
+    }
+
+    static IServiceCollection AddSingletonFallback<TInterface, TImplementation>(this IServiceCollection services) where TImplementation : class, TInterface where TInterface : class
+    {
+        if (services.All(s => s.ServiceType != typeof(TInterface)))
+        {
+            services.AddSingleton<TInterface, TImplementation>();
+        }
+
+        return services;
+    }
+
     public static void InitialiseServices(this IServiceProvider serviceProvider)
     {
         var storageManager = serviceProvider.GetRequiredService<StorageManager>();
         storageManager.EnsureDirectoriesExist();
     }
+
+
 }

@@ -63,6 +63,7 @@ public partial class PlayerWindowViewModel : PageModelBase
 
     public PlayerWindowViewModel()
     {
+        _playlistService = DependencyService.Services.GetService<IPlaylistService>();
         Init();
     }
 

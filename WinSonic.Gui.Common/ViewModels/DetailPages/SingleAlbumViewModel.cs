@@ -16,7 +16,7 @@ public partial class SingleAlbumViewModel : PageModelBase
     private readonly ILogger<SingleAlbumViewModel> _logger;
     [ObservableProperty] public partial CoverArtViewModel CoverArt { get; set; }
     [ObservableProperty] public partial AlbumInfo? AlbumInfo { get; set; }
-    [ObservableProperty] public partial ObservableCollection<Song> Songs { get; set; } = new();
+    [ObservableProperty] public partial ObservableCollection<TrackListEntry> Songs { get; set; } = new();
 
     public SingleAlbumViewModel(IAlbumService albumService, AutoPlaybackManager autoPlaybackManager, CoverArtViewModel coverArtViewModel, ILogger<SingleAlbumViewModel> logger)
     {
@@ -43,7 +43,7 @@ public partial class SingleAlbumViewModel : PageModelBase
             }
 
             var fullAlbum = await _albumService.GetAlbumByIdAsync(AlbumInfo.Id);
-            Songs = new ObservableCollection<Song>(fullAlbum.Songs);
+            Songs = new ObservableCollection<TrackListEntry>(fullAlbum.Songs.Select(s => new AlbumTrackListEntry(s, fullAlbum)));
         });
     }
 
@@ -51,8 +51,8 @@ public partial class SingleAlbumViewModel : PageModelBase
     public void PlayAlbum(bool shuffle = false)
     {
         if (AlbumInfo == null) return;
-
-        _autoPlaybackManager.Queue.ResetAndEnqueueFromSource(Songs, shuffle);
+        // Todo switch to context play
+        _autoPlaybackManager.Queue.ResetAndEnqueueFromSource(Songs.Select(s => s.Song).ToList(), shuffle);
         _autoPlaybackManager.StartPlayback();
     }
 }

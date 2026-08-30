@@ -24,7 +24,7 @@ namespace WinSonic.Gui.Xplat;
 public partial class App : Application
 {
     public static Action<IServiceCollection>? ConfigurePlatformSpecificServices { get; set; }
-    
+
     public override void Initialize()
     {
         Log.Logger = new LoggerConfiguration()
@@ -65,6 +65,10 @@ public partial class App : Application
         collection.AddXplatServices();
 
         ConfigurePlatformSpecificServices?.Invoke(collection);
+
+#if DEBUG
+        collection.AddDebugDummies();
+#endif
 
         collection.AddSerilog();
 

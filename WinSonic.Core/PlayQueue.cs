@@ -8,7 +8,7 @@ public class PlayQueue
     public ConcurrentQueue<Song> UpcomingFromSource { get; } = new ConcurrentQueue<Song>();
     public LinkedList<Song> ManuallyEnqueued { get; } = new LinkedList<Song>();
 
-    private bool _playFromManualQueue = false;
+    private bool _playFromManualQueue = true;
 
     public void Clear()
     {
@@ -78,22 +78,46 @@ public class PlayQueue
         
     }
 
-    public IEnumerable<Song> EnumerateQueue()
+    public IEnumerable<PlayQueueItem> EnumerateQueue(bool fullyContiguous = true)
     {
         if (_playFromManualQueue && ManuallyEnqueued.Count > 0)
         {
             foreach (var song in ManuallyEnqueued)
             {
-                yield return song;
+                var pqi = new PlayQueueItem(song, true);
+                yield return pqi;
+            }
+
+            if (fullyContiguous)
+            {
+                foreach (var song in UpcomingFromSource)
+                {
+                    yield return new(song);
+                }
             }
         }
         else
         {
             foreach (var song in UpcomingFromSource)
             {
-                yield return song;
+                yield return new(song);
             }
         }
     }
+
     
+}
+
+public class PlayQueueItem
+{
+    public PlayQueueItem(Song song, bool isManuallyEnqueued = false)
+    {
+        Song = song;    
+        IsManuallyEnqueued = isManuallyEnqueued;
+    }
+        
+    public Song Song { get; }
+    public bool IsManuallyEnqueued { get; }
+        
+    public static implicit operator Song(PlayQueueItem item) => item.Song;
 }

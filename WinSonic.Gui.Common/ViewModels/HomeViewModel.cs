@@ -2,13 +2,13 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
+using WinSonic.Core;
 using WinSonic.Core.Models;
 using WinSonic.Gui.Common.GuiServices;
 using WinSonic.Gui.Common.ViewModels.Components;
 using WinSonic.Gui.Common.ViewModels.DetailPages;
 using WinSonic.Playback;
 using WinSonic.Service.Album;
-using PlayQueue = WinSonic.Core.PlayQueue;
 
 namespace WinSonic.Gui.Common.ViewModels;
 
@@ -22,7 +22,7 @@ public partial class HomeViewModel : PageModelBase
 
     [ObservableProperty, NotifyPropertyChangedFor(nameof(PlayQueue))] public partial Song? NowPlaying { get; set; }
 
-    [ObservableProperty] public partial ObservableCollection<Song> PlayQueue { get; set; } = new();
+    [ObservableProperty] public partial ObservableCollection<PlayQueueItem> PlayQueue { get; set; } = new();
     
     public HomeViewModel(
         CoverArtViewModel coverArtModel,
@@ -61,7 +61,7 @@ public partial class HomeViewModel : PageModelBase
         NowPlaying = song;
         CoverArtModel.CoverArtId = song?.CoverArtId;
         
-        var observableQueue = new ObservableCollection<Song>(_playbackManager.Queue.EnumerateQueue());
+        var observableQueue = new ObservableCollection<PlayQueueItem>(_playbackManager.Queue.EnumerateQueue());
         PlayQueue = observableQueue;
     }
 

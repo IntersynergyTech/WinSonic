@@ -1,5 +1,121 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:models="clr-namespace:WinSonic.Core.Models;assembly=WinSonic.Core"
+                    xmlns:converters="clr-namespace:WinSonic.Gui.Xplat.Misc.Converters"
+                    xmlns:components="clr-namespace:WinSonic.Gui.Common.ViewModels.Components;assembly=WinSonic.Gui.Common"
+                    xmlns:controls="clr-namespace:WinSonic.Gui.Xplat.Controls">
     <!-- Add Resources Here -->
+
+    <converters:TimecodeToTextConverter x:Key="CommonTimecodeToText" />
+
+    <DataTemplate x:Key="AlbumViewTrackListEntry" DataType="components:TrackListEntry">
+        <Border CornerRadius="8" Padding="12,6">
+            <Grid ColumnDefinitions="48, 1.5*, 1* 48, 48, 48" Height="48">
+                <TextBlock Grid.Column="0" Text="{Binding Song.TrackNumber}" VerticalAlignment="Center"
+                           HorizontalAlignment="Stretch" TextAlignment="Right" Opacity="0.8"
+                           FontSize="{DynamicResource WsFontSizeXxl}" />
+                <TextBlock Grid.Column="1" Text="{Binding Song.Title}" Margin="18,0" VerticalAlignment="Center"
+                           FontSize="{DynamicResource WsFontSizeMedium}" />
+                <TextBlock Grid.Column="2" Text="{Binding Song.Artist}" VerticalAlignment="Center" />
+                <!-- todo conditional heart indicator thing on col 3 -->
+                <StackPanel Grid.Column="2" HorizontalAlignment="Right" Orientation="Horizontal">
+                    <StackPanel>
+                        <Button Command="{Binding AddToQueueCommand}" IsVisible="True"
+                                FontSize="{DynamicResource WsFontSizeSemiSmall}">
+                            AddQueue
+                        </Button>
+                        <Button Command="{Binding QueueNextCommand}" IsVisible="True"
+                                FontSize="{DynamicResource WsFontSizeSemiSmall}">
+                            PlayNext
+                        </Button>
+                    </StackPanel>
+                    <StackPanel>
+                        <Button Command="{Binding PlayContextCommand}" CommandParameter="{x:False}" IsVisible="True"
+                                FontSize="{DynamicResource WsFontSizeSemiSmall}">
+                            PlayFrom
+                        </Button>
+                        <Button Command="{Binding PlayContextCommand}" CommandParameter="{x:True}" IsVisible="True"
+                                FontSize="{DynamicResource WsFontSizeSemiSmall}">
+                            PlayShuffle
+                        </Button>
+                    </StackPanel>
+                </StackPanel>
+                <TextBlock Grid.Column="4"
+                           Text="{Binding Song.Duration, Converter={StaticResource CommonTimecodeToText}}"
+                           Background="BlueViolet" HorizontalAlignment="Stretch" TextAlignment="Right"
+                           VerticalAlignment="Center" />
+                <!-- todo flyout menu thing on col 5 -->
+            </Grid>
+            <Border.Styles>
+                <Style Selector="Button">
+                    <Setter Property="IsVisible" Value="False" />
+                </Style>
+                <Style Selector="Border">
+                    <Setter Property="Background" Value="Transparent" />
+                </Style>
+                <Style Selector="Border:pointerover > Grid >  Button">
+                    <Setter Property="IsVisible" Value="True" />
+                </Style>
+                <Style Selector="Border:pointerover">
+                    <Setter Property="Background" Value="#55888888" />
+                </Style>
+
+            </Border.Styles>
+        </Border>
+    </DataTemplate>
     
+    <DataTemplate x:Key="PlaylistViewTrackListEntry" DataType="components:TrackListEntry">
+        <Border CornerRadius="8" Padding="12,6">
+            <Grid ColumnDefinitions="48, 1.5*, 1* 48, 48, 48" Height="48">
+                <!--<controls:CoverArtControl Grid.Column="0" Width="48" Height="48" Dimensions="96"
+                                 CoverArtId="{Binding Song.CoverArtId}" />-->
+                <TextBlock Grid.Column="1" Margin="18,0" Text="{Binding Song.Title}" VerticalAlignment="Center"
+                           FontSize="{DynamicResource WsFontSizeMedium}" />
+                <TextBlock Grid.Column="2" Text="{Binding Song.Artist}" VerticalAlignment="Center" />
+                <!-- todo conditional heart indicator thing on col 3 -->
+                <StackPanel Grid.Column="2" HorizontalAlignment="Right" Orientation="Horizontal">
+                    <StackPanel>
+                        <Button Command="{Binding AddToQueueCommand}" IsVisible="True"
+                                FontSize="{DynamicResource WsFontSizeSemiSmall}">
+                            AddQueue
+                        </Button>
+                        <Button Command="{Binding QueueNextCommand}" IsVisible="True"
+                                FontSize="{DynamicResource WsFontSizeSemiSmall}">
+                            PlayNext
+                        </Button>
+                    </StackPanel>
+                    <StackPanel>
+                        <Button Command="{Binding PlayContextCommand}" CommandParameter="{x:False}" IsVisible="True"
+                                FontSize="{DynamicResource WsFontSizeSemiSmall}">
+                            PlayFrom
+                        </Button>
+                        <Button Command="{Binding PlayContextCommand}" CommandParameter="{x:True}" IsVisible="True"
+                                FontSize="{DynamicResource WsFontSizeSemiSmall}">
+                            PlayShuffle
+                        </Button>
+                    </StackPanel>
+                </StackPanel>
+                <TextBlock Grid.Column="4"
+                           Text="{Binding Song.Duration, Converter={StaticResource CommonTimecodeToText}}"
+                           Background="BlueViolet" HorizontalAlignment="Stretch" TextAlignment="Right"
+                           VerticalAlignment="Center" />
+                <!-- todo flyout menu thing on col 5 -->
+            </Grid>
+            <Border.Styles>
+                <Style Selector="Button">
+                    <Setter Property="IsVisible" Value="False" />
+                </Style>
+                <Style Selector="Border">
+                    <Setter Property="Background" Value="Transparent" />
+                </Style>
+                <Style Selector="Border:pointerover > Grid >  Button">
+                    <Setter Property="IsVisible" Value="True" />
+                </Style>
+                <Style Selector="Border:pointerover">
+                    <Setter Property="Background" Value="#55888888" />
+                </Style>
+
+            </Border.Styles>
+        </Border>
+    </DataTemplate>
 </ResourceDictionary>

@@ -1,8 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.Extensions.DependencyInjection;
 using WinSonic.Gui.Common.GuiServices;
-using WinSonic.Service.Playlist;
 
 namespace WinSonic.Gui.Common.ViewModels;
 

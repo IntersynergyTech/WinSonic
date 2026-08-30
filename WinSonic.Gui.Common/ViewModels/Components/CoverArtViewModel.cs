@@ -1,5 +1,4 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using WinSonic.Data.DbModels;
 using WinSonic.Service.Artwork;
 
 namespace WinSonic.Gui.Common.ViewModels.Components;
