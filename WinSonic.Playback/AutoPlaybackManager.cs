@@ -120,7 +120,7 @@ public class AutoPlaybackManager
         var queuedSong = Queue.Dequeue();
         if (queuedSong != null)
         {
-            _logger.LogDebug("Playing next song: {songTitle}", queuedSong.Title);
+            _logger.LogInformation("Playing next song: {songTitle}", queuedSong.Title);
             var stream = Fetcher.FetchSong(queuedSong);
             Player.LoadStream(stream, queuedSong);
             Player.Play();
@@ -133,7 +133,7 @@ public class AutoPlaybackManager
                     if (nextUp != null)
                     {
                         _systemMediaBroadcastService.SetCanGoNext(true);
-                        _logger.LogDebug("Async prefetch next song: {songTitle}", nextUp.Title);
+                        _logger.LogInformation("Async prefetch next song: {songTitle}", nextUp.Title);
                         Fetcher.PrefetchSong(nextUp);
                     }
                     else

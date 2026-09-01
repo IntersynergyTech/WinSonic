@@ -75,7 +75,7 @@ public class SongFetcher
     public void PrefetchSong(Song song, SongRequest? request, bool acceptAnyCached = true)
     {
         var songId = song.Id;
-        _logger.LogDebug(
+        _logger.LogInformation(
             "Prefetching song {SongId} via song service (format={Format}, maxBitRate={BitRate}, acceptAnyCached={AcceptAnyCached}, original={Original}).",
             songId,
             request?.Format,
@@ -89,6 +89,6 @@ public class SongFetcher
             .GetAwaiter()
             .GetResult();
 
-        _logger.LogDebug("Prefetch complete for song {SongId}.", songId);
+        _logger.LogInformation("Prefetch complete for song {SongId}.", songId);
     }
 }

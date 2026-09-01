@@ -40,7 +40,7 @@ public partial class App : Application
                 Path.Combine(new StorageManager().GetLogsDirectory(), "log.txt"),
                 rollingInterval: RollingInterval.Day,
                 retainedFileCountLimit: 7,
-                restrictedToMinimumLevel: LogEventLevel.Warning
+                restrictedToMinimumLevel: LogEventLevel.Information
             )
             .CreateLogger();
 

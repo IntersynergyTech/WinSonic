@@ -81,7 +81,7 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
     {
         if (_currentActivePlayer == null)
         {
-            _logger.LogDebug("No active player, selecting output device without preserving state.");
+            _logger.LogInformation("No active player, selecting output device without preserving state.");
             SelectOutputDevice(deviceId);
             return;
         }
@@ -99,7 +99,7 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
 
         var playbackDevice = GetFormatPlaybackDevice(_currentFormat);
 
-        _logger.LogDebug("Starting playback device for format [{format}]", _currentFormat.ToShortString());
+        _logger.LogInformation("Starting playback device for format [{format}]", _currentFormat.ToShortString());
         _currentActivePlaybackDevice = playbackDevice;
         _currentActivePlaybackDevice.Start();
 
@@ -124,7 +124,7 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
         float timestamp = 0
     )
     {
-        _logger.LogDebug("Creating sound player for stream {title}", _currentActiveProvider.FormatInfo.Tags?.Title);
+        _logger.LogInformation("Creating sound player for stream {title}", _currentActiveProvider.FormatInfo.Tags?.Title);
         var player = new SoundPlayer(_engine, _currentFormat, _currentActiveProvider);
         player.Volume = volume;
         player.Mute = mute;
@@ -132,7 +132,7 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
 
         _currentActivePlaybackDevice.MasterMixer.AddComponent(player);
 
-        _logger.LogDebug(
+        _logger.LogInformation(
             "Created player for format [{format}] with volume {volume} (RG: {replayGainedVolume}). Ready to go",
             _currentFormat.ToShortString(),
             VolumeLevel,
@@ -235,7 +235,7 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
 
     private void InitFormatPlaybackDevice(AudioFormat format)
     {
-        _logger.LogDebug(
+        _logger.LogInformation(
             "Initializing playback device for format [{format}] on {outputDevice}",
             format.ToShortString(),
             _outputDevice.Name
@@ -309,7 +309,7 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
 
     private SoundPlayer GetPlayerForStream(Stream stream, Song song)
     {
-        _logger.LogDebug("GPFS");
+        _logger.LogInformation("Loading {streamType} stream for song {songTitle} by {songArtist}", stream.GetType().Name, song.Title, song.Artist);
         _currentActiveProvider = new StreamDataProvider(_engine, stream, new ReadOptions{DurationAccuracy = DurationAccuracy.FastEstimate, ReadTags = false});
         var providerFormat = _currentActiveProvider.FormatInfo!;
 
@@ -319,7 +319,7 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
         {
             if (_currentActivePlaybackDevice != null)
             {
-                _logger.LogDebug(
+                _logger.LogInformation(
                     "Switching format from [{currentFormat}] to [{format}]",
                     _currentFormat.ToShortString(),
                     format.ToShortString()
@@ -327,22 +327,22 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
 
                 if (_currentActivePlaybackDevice.IsRunning)
                 {
-                    _logger.LogDebug(
+                    _logger.LogInformation(
                         "Stopping current playback device for format [{currentFormat}] : currently isRunning {isRunning}",
                         _currentFormat.ToShortString(),
                         _currentActivePlaybackDevice.IsRunning
                     );
 
                     _currentActivePlaybackDevice.Stop();
-                    _logger.LogDebug("Current playback device stopped");
+                    _logger.LogInformation("Current playback device stopped");
                 }
             }
 
-            _logger.LogDebug("Getting playback device for format [{format}]", format.ToShortString());
+            _logger.LogInformation("Getting playback device for format [{format}]", format.ToShortString());
 
             var playbackDevice = GetFormatPlaybackDevice(format);
 
-            _logger.LogDebug("Starting playback device for format [{format}]", format.ToShortString());
+            _logger.LogInformation("Starting playback device for format [{format}]", format.ToShortString());
             _currentActivePlaybackDevice = playbackDevice;
             _currentActivePlaybackDevice.Start();
         }
@@ -393,7 +393,7 @@ public class SoundFlowMultiPlayer : ISoundFlowPlayer
             Layout = channelLayout
         };
 
-        _logger.LogDebug("Parsed format from info: {newFormat}", newFormat.ToShortString());
+        _logger.LogInformation("Parsed format from info: {newFormat}", newFormat.ToShortString());
         return newFormat;
     }
 

@@ -266,15 +266,14 @@ public class CachedSongService : ISongService
         var requestedFormat = request.Format;
         var cachedFormat = cachedSong.Format;
         var formatMatches = requestedFormat == null || string.Equals(requestedFormat, cachedFormat, StringComparison.OrdinalIgnoreCase);
-        var bitrateMatches = !request.MaxBitRate.HasValue || cachedSong.Bitrate == request.MaxBitRate.Value;
+        var bitrateMatches = !request.MaxBitRate.HasValue || cachedSong.Bitrate >= request.MaxBitRate.Value;
 
         return formatMatches && bitrateMatches;
     }
 
     private static string GenerateFilename(Guid id, SongRequest request)
     {
-        var extension = IsOriginalRequest(request) ? "raw" : request.Format ?? "bin";
-        return $"{id:N}.{extension}";
+        return $"{id:N}.wss";
     }
 
     private static bool HasSpecificVariantRequest(SongRequest request)
