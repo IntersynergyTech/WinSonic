@@ -57,13 +57,9 @@
             <Grid HorizontalAlignment="Stretch"
                   VerticalAlignment="Stretch">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="10" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
-                <StackPanel Grid.Row="0" VerticalAlignment="Stretch">
-                    
-                </StackPanel>
-                <TransitioningContentControl VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Row="1" Content="{Binding CurrentViewModel}" />
+                <TransitioningContentControl VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Row="0" Content="{Binding CurrentViewModel}" />
             </Grid>
             
         </SplitView.Content>
